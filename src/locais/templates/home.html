@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="border-b-4 flex space-x-4 items-center justify-between px-6 py-2 mb-8">
+    <img class="w-48 ml-2" src="{% static '/assets/ContaCertaHV.png' %}" alt="logo">
+    <div class="space-x-8">
+        <a><i class="fa-solid fa-building fa-xl" style="color: #111729;"></i></a>
+        <a><i class="fa-solid fa-wallet fa-xl" style="color: #111729;"></i></a>
+        <a><i class="fa-solid fa-circle-user fa-xl" style="color: #111729; padding-right: 30px;"></i></a>
+    </div>
+</div>
+<h1 class="mt-4 text-3xl font-semibold text-center">Olá, {{ user.nome }}!</h1>
+<div class="container mx-12 mt-8">
+    <div class="flex space-x-4 items-center justify-between">
+        <h1 class="text-3xl font-semibold">Obras</h1>
+        <button id="addObraBtn" class="mt-4 bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-50 hover:text-[#edf0e9]" onclick="toggleModal('create')">
+            Cadastrar Obra
+        </button>
+    </div>
+    {% include "criar_obra.html" %}
+    
+    {% for obra in obras %}
+        <div class="bg-white shadow-lg rounded-[20px] overflow-hidden flex flex-col h-[420px] w-full">
+            <div class="bg-[#EFF1F3] py-12 flex items-center justify-center h-full">
+                
+            </div>
+            <div class="flex-1 p-4 py-6 bg-white text-center text-black">
+                <h3 class="font-bold text-lg">{{ obra.nome }}</h3>
+                <p class="text-sm break-words">{{ obra.valor }}</p>
+            </div>
+            <div class="p-4 flex justify-between">
+                {% comment %} {% url 'dashboard' community.id %} {% endcomment %}
+                <a href="" class="bg-[#8ABF17] text-white h-[45px] font-semibold px-4 py-2 rounded-[9px] flex-1 mx-1 flex justify-center items-center text-center hover:bg-[#7cad10] hover:text-[#edf0e9]">
+                    Entrar
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+    function toggleModal(action) {
+        const modal = document.getElementById('communityModal');
+
+        if (action === 'create') {
+            modal.classList.toggle('hidden');
+            document.getElementById('communityForm').reset();
+        } else if (action === 'close') {
+            modal.classList.add('hidden');
+        }
+    }
+</script>
+
+
+{% endblock content %}

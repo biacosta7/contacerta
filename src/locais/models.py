@@ -9,11 +9,11 @@ class Obra(models.Model):
     data_inicio = models.DateField()
     data_final = models.DateField(blank=True, null=True)
     valor_inicial = models.DecimalField(max_digits=10, decimal_places=2)
-    valor_total = models.DecimalField(max_digits=10, decimal_places=2) # valor_inicial - aditivos
-    valor_receber = models.DecimalField(max_digits=10, decimal_places=2) # valor_total - (sum(adiantamentos) + sum(BMs))
-    debito_mensal = models.DecimalField(max_digits=10, decimal_places=2) # mensal, despesas com status de 'à pagar' somadas
-    debito_geral = models.DecimalField(max_digits=10, decimal_places=2) # todas as despesas com status de 'à pagar' somadas
-    custo_total = models.DecimalField(max_digits=10, decimal_places=2) # todas as despesas somadas geral (independente do status)
+    valor_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # valor_inicial - aditivos
+    valor_receber = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # valor_total - (sum(adiantamentos) + sum(BMs))
+    debito_mensal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # mensal, despesas com status de 'à pagar' somadas
+    debito_geral = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # todas as despesas com status de 'à pagar' somadas
+    custo_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # todas as despesas somadas geral (independente do status)
     prazo_inicial = models.DateField()
     prazo_atual = models.DateField(blank=True, null=True) #prazo_inicial + dias de aditivo do tipo prazo
 
