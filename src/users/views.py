@@ -52,3 +52,29 @@ def criar_user(request):
             return render(request, 'cadastro.html', {'error': 'As senhas não coincidem.'})
     else:
         return render(request, 'cadastro.html')
+    
+def login(request):
+    # if request.user.is_authenticated:
+    #     return redirect('home')
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        remember_me = request.POST.get('remember')
+
+        user = authenticate(email=email, password=password)
+
+        if user:
+            login_django(request, user)
+            messages.success(request, 'Autenticado com sucesso.')
+            if remember_me: 
+                request.session.set_expiry(None)  
+            else:
+                request.session.set_expiry(0) 
+
+            #return redirect('home')
+        else:
+            messages.error(request, 'Email ou senha inválidos. Tente novamente.')
+            return render(request, 'login.html')
+    else:
+        return render(request, 'login.html')
