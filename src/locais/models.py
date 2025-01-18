@@ -1,7 +1,7 @@
 from django.db import models
 from financeiro.models import Aditivo, Adiantamento, BM, Despesa
 from django.contrib.contenttypes.models import ContentType
-from datetime import date
+from datetime import date, timedelta
 
 class Obra(models.Model):
     nome = models.CharField(max_length=100)
@@ -15,7 +15,7 @@ class Obra(models.Model):
     debito_geral = models.DecimalField(max_digits=10, decimal_places=2) # todas as despesas com status de 'à pagar' somadas
     custo_total = models.DecimalField(max_digits=10, decimal_places=2) # todas as despesas somadas geral (independente do status)
     prazo_inicial = models.DateField()
-    prazo_atual = models.DateField(blank=True, null=True)
+    prazo_atual = models.DateField(blank=True, null=True) #prazo_inicial + dias de aditivo do tipo prazo
 
     def calcular_valor_total(self):
         aditivos = Aditivo.objects.filter(obra=self)
@@ -72,6 +72,15 @@ class Obra(models.Model):
 
         self.custo_total = total_despesas
         self.save()
+    
+    def calcular_prazo_atual(self):
+        aditivos = Aditivo.objects.filter(obra=self, modalidade='prazo')
+
+        total_dias_aditivos = sum(aditivo.dias for aditivo in aditivos)
+
+        if self.prazo_inicial:
+            self.prazo_atual = self.prazo_inicial + timedelta(days=total_dias_aditivos)
+            self.save()
 
     def __str__(self):
         return self.nome
