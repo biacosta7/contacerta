@@ -1,5 +1,4 @@
 from django.db import models
-from locais.models import Escritorio, Obra
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
@@ -9,10 +8,7 @@ class Adiantamento(models.Model):
     data = models.DateField()
     banco = models.CharField(max_length=100)
     observacao = models.TextField(blank=True)
-    obra = models.ForeignKey(Obra, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return f"{self.data} | {self.nome} (R${self.valor})"
+    obra = models.ForeignKey('locais.Obra', on_delete=models.CASCADE)
 
 class Aditivo(models.Model):
     nome = models.CharField(max_length=100)
@@ -24,8 +20,8 @@ class Aditivo(models.Model):
         ('valor', 'Valor'),
     ])
     observacao = models.TextField(blank=True)
-    obra = models.ForeignKey(Obra, on_delete=models.CASCADE)
-    
+    obra = models.ForeignKey('locais.Obra', on_delete=models.CASCADE)   
+
     def __str__(self):
         return f"{self.data} | {self.nome} (R${self.valor})"
 
@@ -36,14 +32,14 @@ class BM(models.Model):
     banco = models.CharField(max_length=100)
     codigo = models.CharField(max_length=50, blank=True)
     observacao = models.TextField(blank=True)
-    obra = models.ForeignKey(Obra, on_delete=models.CASCADE)
-    
+    obra = models.ForeignKey('locais.Obra', on_delete=models.CASCADE)  
+      
     def __str__(self):
         return f"{self.data} | {self.nome} (R${self.valor})"
 
 
 class Despesa(models.Model):
-    descricao = models.CharField(max_length=100)
+    nome = models.CharField(max_length=100)
     forma_pag = models.CharField(max_length=20, choices=[
         ('boleto', 'Boleto'),
         ('cartao', 'Cartão'),
@@ -70,10 +66,10 @@ class Despesa(models.Model):
     local = GenericForeignKey('tipo_local', 'id_local')
 
     def __str__(self):
-        descricao_limite = self.descricao[:20]
-        if len(self.descricao) > 20:
-            descricao_limite += '...'
-        return f"{self.local} | {descricao_limite} ({self.modalidade} | R${self.valor})"
+        nome_limite = self.nome[:20]
+        if len(self.nome) > 20:
+            nome_limite += '...'
+        return f"{self.local} | {nome_limite} ({self.modalidade} | R${self.valor})"
 
 class Cartao(models.Model):
     nome = models.CharField(max_length=100)
@@ -112,7 +108,7 @@ class Funcionario(models.Model):
         return f"{self.nome} - {self.cargo}"
     
 class MaoDeObra(Despesa):
-    funcionario = models.ForeignKey(Funcionario, on_delete=models.CASCADE)
+    funcionario = models.ForeignKey(Funcionario, on_delete=models.SET_NULL, null=True)
     categoria = models.CharField(
         max_length=20,
         choices=[
