@@ -35,14 +35,15 @@ def criar_user(request):
 
         if password == confirm_password:
             try:
-                user = User.objects.create_user(
+                user = User(
                     nome=nome,
                     sobrenome=sobrenome,
                     email=email,
                     cargo=cargo,
-                    password=password
                 )
+                user.set_password(password)  # Criptografa a senha
                 user.save()
+                messages.success(request, 'Usuário criado com sucesso!')
                 return redirect('login')
             except IntegrityError:
                 messages.error(request, 'Já existe um usuário com este email. Tente novamente.')
