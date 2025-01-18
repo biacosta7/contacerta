@@ -3,7 +3,7 @@ from locais.models import Escritorio, Obra
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
-class Adiantamentos(models.Model):
+class Adiantamento(models.Model):
     nome = models.CharField(max_length=100)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     data = models.DateField()
