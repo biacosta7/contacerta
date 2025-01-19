@@ -1,0 +1,67 @@
+<!-- Modal editarobra.html -->
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalEditarObra">
+    <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
+        <div class="flex space-x-8 justify-between items-center mb-4">
+            <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Editar {{ obra.nome }}</h5>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="obraModal('fecharEditar')"></i>
+        </div>
+        <form method="POST" id="formEditarObra" action="" class="p-6">
+            {% csrf_token %}
+            <!-- Campo oculto para ID da obra -->
+            <input type="hidden" id="obraId" name="obra_id" value="">
+
+            <!-- Nome da Obra -->
+            <div class="mb-4">
+                <label for="nome" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
+                <input type="text" id="nomeObra" name="nome" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+            </div>
+
+            <!-- Local -->
+            <div class="mb-4">
+                <label for="local" class="block mb-2 text-sm font-medium text-gray-900">Local</label>
+                <input type="text" id="localObra" name="local" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+            </div>
+
+            <!-- Valor Inicial -->
+            <div class="mb-4">
+                <label for="valor_inicial" class="block mb-2 text-sm font-medium text-gray-900">Valor Inicial</label>
+                <input type="number" id="valorInicialObra" name="valor_inicial" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+            </div>
+
+            <!-- Data de Início -->
+            <div class="mb-4">
+                <label for="data_inicio" class="block mb-2 text-sm font-medium text-gray-900">Data de Início</label>
+                <input type="date" id="datepicker-start" name="data_inicio" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+            </div>
+
+            <!-- Data de Término -->
+            <div class="mb-4">
+                <label for="data_final" class="block mb-2 text-sm font-medium text-gray-900">Data de Término</label>
+                <input type="date" id="datepicker-end" name="data_final" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+            </div>
+
+            <!-- Prazo Inicial -->
+            <div class="mb-4">
+                <label for="prazo_inicial" class="block mb-2 text-sm font-medium text-gray-900">Prazo Inicial</label>
+                <input type="number" id="datepicker-prazo" name="prazo_inicial" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" placeholder="Número de dias" required>
+            </div>
+
+            <!-- Botões -->
+            <div class="flex justify-end">
+                <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="obraModal('fecharEditar')">Cancelar</button>
+                <button type="submit" class="px-4 py-2 bg-[#287F71] text-white rounded-lg hover:bg-[#4DBCAA]">Salvar</button>
+            </div>
+        </form>
+        
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#datepicker-start, #datepicker-end, #datepicker-prazo').datepicker({
+            dateFormat: 'dd/mm/yy', // Formato de data
+            changeMonth: true,      // Habilita troca de mês
+            changeYear: true        // Habilita troca de ano
+        });
+    });
+</script>

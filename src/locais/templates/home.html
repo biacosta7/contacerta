@@ -21,30 +21,42 @@
         </button>
     </div>
     {% include "criar_obra.html" %}
+    
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {% for obra in obras %}                
+        {% for obra in obras %}
             <div class="pt-3.5 pb-2 p-4 py-6 bg-gray-50 text-black rounded-[9px] border relative">
                 <div>
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-lg">{{ obra.nome }}</h3>
-                        <i id="dots" class="bg-gray-200 fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]"></i>
+                        <i id="dots-{{ forloop.counter }}" class="bg-gray-200 fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]" onclick="toggleDotsMenu(event, {{ forloop.counter }})"></i>
                     </div>
                     <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-1"></i>{{ obra.local }}</p>
                 </div>
                 <div class="pt-2 pb-2 text-right">
                     <i class="fa-solid fa-arrow-right bg-[#287F71] text-black p-3 rounded-full cursor-pointer hover:bg-[#4DBCAA]" onclick="" style="color:rgb(255, 255, 255);"></i>
                 </div>
-                <div id="dots-menu" class="drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
-                    <button class="text-base text-left py-2 border-b">Informações</button>
-                    <button class="text-base text-left pb-1">Editar</button>
+                <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
+                    <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>
+                    <button class="text-base text-left pb-1" onclick="setObraId({{ obra.id }})">Editar</button>
                 </div>
-            </div> 
-            
+            </div>
+            {% include "editar_obra.html" %}
+            {% include "info_obra.html" %}
         {% endfor %}
-    </div>    
+    </div>  
+    
+
 </div>
 
 <script>
+    const obras = JSON.parse('{{ obras_json|safe }}');
+
+    console.log('Obras carregadas:', obras);  // Verifique o conteúdo de obras
+
+    function setObraId(id) {
+        document.getElementById('obraId').value = id;
+    }
+
     function toggleModal(action) {
         const modal = document.getElementById('modalCriarObra');
 
@@ -56,11 +68,95 @@
         }
 
         else if (action === 'open_dots') {
-            modal.classList.toggle('hidden');
+            dotsMenu.classList.toggle('hidden');
         } else if (action === 'close_dots') {
-            modal.classList.add('hidden');
+            dotsMenu.classList.add('hidden');
         }
     }
+
+    function obraModal(action, id){
+        const infoModal = document.getElementById('modalInfoObra');
+        const editarModal = document.getElementById('modalEditarObra');
+        var obraId = id;
+        console.log(obraId);
+
+        if (action === 'infoObra') {
+            infoModal.classList.toggle('hidden');
+            var obra = obras.find(o => o.id === obraId);
+            console.log(obra);
+            console.log(obra.nome);
+            
+            document.getElementById('obraTituloInfo').innerHTML = "Obra " + obra.nome;
+
+            document.getElementById('nomeObraInfo').innerHTML = "<b>Nome:</b> " + obra.nome;
+
+            document.getElementById('localObraInfo').innerHTML = "<b>Local:</b> " + obra.local;
+            document.getElementById('valorInicialObraInfo').innerHTML = "<b>Valor inicial:</b> R$" + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(obra.valor_inicial);
+            document.getElementById('dataInicioObraInfo').innerHTML = "<b>Data de início:</b> " + obra.data_inicio;
+            document.getElementById('dataFinalObraInfo').innerHTML = "<b>Data de término:</b> " + (obra.data_final || "-");
+            document.getElementById('prazoInicialObraInfo').innerHTML = "<b>Prazo inicial (Data de término estipulada):</b> " + obra.prazo_inicial; 
+
+        } else if (action === 'fecharInfo') {
+            infoModal.classList.add('hidden');
+        }
+
+        else if (action === 'editarObra') {    
+            console.log('obraId:', obraId);  // Verifique o valor de obraId
+            const obra = obras.find(o => o.id === obraId);
+        
+            if (!obra) {
+                console.error('Obra não encontrada:', obraId);
+                return;  // Retorna caso não encontre a obra
+            }
+        
+            console.log('Obra encontrada:', obra);
+            console.log('ID da obra:', obra.id);  // Verifique se a obra tem o id
+            
+
+            
+            // Obtenha os dados da obra correspondente
+            document.getElementById('formEditarObra').action = `/editar/obra/${id}`;
+            // Preencha os campos do formulário
+            document.getElementById('obraId').value = obra.id;
+            document.getElementById('nomeObra').value = obra.nome;
+            document.getElementById('localObra').value = obra.local;
+            document.getElementById('valorInicialObra').value = obra.valor_inicial;
+            document.getElementById('datepicker-start').value = obra.data_inicio;
+            document.getElementById('datepicker-end').value = obra.data_final;
+            document.getElementById('datepicker-prazo').value = obra.prazo_inicial;
+
+            // Exiba o modal
+            editarModal.classList.remove('hidden');
+        } else if (action === 'fecharEditar') {
+            editarModal.classList.add('hidden');
+        }
+
+    }
+
+    // Função para alternar o menu de 3 pontos
+    function toggleDotsMenu(event, index) {
+        // Impede a propagação do clique para o documento
+        event.stopPropagation();
+        
+        const dotsMenu = document.getElementById(`dotsMenu-${index}`);
+        
+        // Alterna o menu ao clicar no ícone
+        dotsMenu.classList.toggle('hidden');
+        dotsMenu.classList.toggle('drop-shadow');  // Alterna também a sombra
+
+        // Adiciona um listener para fechar o menu ao clicar fora
+        document.addEventListener('click', function handleClickOutside(e) {
+            // Verifica se o clique foi fora do menu e do ícone
+            if (!dotsMenu.contains(e.target) && e.target.id !== `dots-${index}`) {
+                dotsMenu.classList.add('hidden'); // Fecha o menu
+                dotsMenu.classList.remove('drop-shadow'); // Remove a sombra
+                document.removeEventListener('click', handleClickOutside); // Remove o listener
+            }
+        });
+    }
+
+    
+    
 </script>
 
 

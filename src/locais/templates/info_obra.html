@@ -1,0 +1,18 @@
+<!-- Modal em info.html -->
+
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalInfoObra">
+    <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
+        <div class="flex space-x-8 justify-between items-center mb-4">
+            <h5 id="obraTituloInfo" class="text-2xl font-semibold text-center flex-grow ml-8">Obra {{ obra.nome }}</h5>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="obraModal('fecharInfo')"></i>
+        </div>
+        <div class="flex flex-col space-y-4">
+            <p id="nomeObraInfo" class="block text-sm font-medium text-gray-900"><b>Nome:</b> {{ obra.nome }}</p>
+            <p id="localObraInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Local:</b> {{ obraId.local }}</p>
+            <p id="valorInicialObraInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Valor inicial:</b> R${{ obra.valor_inicial }}</p>
+            <p id="dataInicioObraInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Data de início:</b> {{ obraId.data_inicio|date:"d/m/Y" }}</p>
+            <p id="dataFinalObraInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Data de término:</b> {{ obra.data_final|default:"-"|date:"d/m/Y" }}</p>
+            <p id="prazoInicialObraInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Prazo inicial (Data de término estipulada):</b> {{ obra.prazo_inicial|date:"d/m/Y" }}</p>            
+        </div>        
+    </div>
+</div>

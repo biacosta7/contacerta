@@ -1,7 +1,9 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from locais.models import Obra, Escritorio
 from datetime import datetime
+from django.core.serializers.json import DjangoJSONEncoder
+import json
 
 def criar_obra(request):
     if request.method == 'POST':
@@ -41,6 +43,52 @@ def criar_obra(request):
         return redirect('home')
     
     return render(request, 'home.html') 
+
+def editar_obra(request, obra_id):
+    obra = get_object_or_404(Obra, id=obra_id)
+    
+    obras = Obra.objects.all().values('id', 'nome', 'local', 'valor_inicial', 'data_inicio', 'data_final', 'prazo_inicial')
+    context = {
+        'obras': json.dumps(list(obras), cls=DjangoJSONEncoder),  # Serializando o QuerySet
+    }
+    return render(request, 'seu_template.html', context)
+
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        local = request.POST.get('local')
+        data_inicio = request.POST.get('data_inicio')
+        data_final = request.POST.get('data_final')
+        valor_inicial = request.POST.get('valor_inicial')
+        prazo_inicial = request.POST.get('prazo_inicial')
+
+        # Validar e converter as datas
+        try:
+            data_inicio = datetime.strptime(data_inicio, '%Y-%m-%d').date()
+            if data_final:
+                data_final = datetime.strptime(data_final, '%Y-%m-%d').date()
+            else:
+                data_final = None
+        except ValueError:
+            messages.error(request, 'Formato de data inválido. Use o formato yyyy-mm-dd.')
+            return redirect('home')
+
+        # Atualizar os campos da obra
+        obra.nome = nome
+        obra.local = local
+        obra.data_inicio = data_inicio
+        obra.data_final = data_final
+        obra.valor_inicial = valor_inicial
+        obra.prazo_inicial = prazo_inicial
+
+        # Salvar as alterações
+        obra.save()
+        messages.success(request, 'Obra atualizada com sucesso.')
+        return redirect('home')
+
+    # Renderizar o template com os dados da obra para edição
+    return render(request, 'editar_obra.html', {'obra': obra})
+
 
 def criar_escritorio(request):
     if request.method == 'POST':
