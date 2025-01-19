@@ -10,45 +10,54 @@
         <a><i class="fa-solid fa-building fa-xl" style="color: #111729;"></i></a>
         <a><i class="fa-solid fa-wallet fa-xl" style="color: #111729;"></i></a>
         <a><i class="fa-solid fa-circle-user fa-xl" style="color: #111729; padding-right: 30px;"></i></a>
-    </div>
+    </div>  
 </div>
 <h1 class="mt-4 text-3xl font-semibold text-center">Olá, {{ user.nome }}!</h1>
 <div class="container mx-12 mt-8">
     <div class="flex space-x-4 items-center justify-between">
         <h1 class="text-3xl font-semibold">Obras</h1>
-        <button id="addObraBtn" class="mt-4 bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-50 hover:text-[#edf0e9]" onclick="toggleModal('create')">
+        <button id="addObraBtn" class="mt-4 bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="toggleModal('criar')">
             Cadastrar Obra
         </button>
     </div>
     {% include "criar_obra.html" %}
-    
-    {% for obra in obras %}
-        <div class="bg-white shadow-lg rounded-[20px] overflow-hidden flex flex-col h-[420px] w-full">
-            <div class="bg-[#EFF1F3] py-12 flex items-center justify-center h-full">
-                
-            </div>
-            <div class="flex-1 p-4 py-6 bg-white text-center text-black">
-                <h3 class="font-bold text-lg">{{ obra.nome }}</h3>
-                <p class="text-sm break-words">{{ obra.valor }}</p>
-            </div>
-            <div class="p-4 flex justify-between">
-                {% comment %} {% url 'dashboard' community.id %} {% endcomment %}
-                <a href="" class="bg-[#8ABF17] text-white h-[45px] font-semibold px-4 py-2 rounded-[9px] flex-1 mx-1 flex justify-center items-center text-center hover:bg-[#7cad10] hover:text-[#edf0e9]">
-                    Entrar
-                </a>
-            </div>
-        </div>
-    {% endfor %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for obra in obras %}                
+            <div class="pt-3.5 pb-2 p-4 py-6 bg-gray-50 text-black rounded-[9px] border relative">
+                <div>
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-lg">{{ obra.nome }}</h3>
+                        <i id="dots" class="bg-gray-200 fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]"></i>
+                    </div>
+                    <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-1"></i>{{ obra.local }}</p>
+                </div>
+                <div class="pt-2 pb-2 text-right">
+                    <i class="fa-solid fa-arrow-right bg-[#287F71] text-black p-3 rounded-full cursor-pointer hover:bg-[#4DBCAA]" onclick="" style="color:rgb(255, 255, 255);"></i>
+                </div>
+                <div id="dots-menu" class="drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
+                    <button class="text-base text-left py-2 border-b">Informações</button>
+                    <button class="text-base text-left pb-1">Editar</button>
+                </div>
+            </div> 
+            
+        {% endfor %}
+    </div>    
 </div>
 
 <script>
     function toggleModal(action) {
-        const modal = document.getElementById('communityModal');
+        const modal = document.getElementById('modalCriarObra');
 
-        if (action === 'create') {
+        if (action === 'criar') {
             modal.classList.toggle('hidden');
-            document.getElementById('communityForm').reset();
-        } else if (action === 'close') {
+            document.getElementById('formCriarObra').reset();
+        } else if (action === 'fechar') {
+            modal.classList.add('hidden');
+        }
+
+        else if (action === 'open_dots') {
+            modal.classList.toggle('hidden');
+        } else if (action === 'close_dots') {
             modal.classList.add('hidden');
         }
     }

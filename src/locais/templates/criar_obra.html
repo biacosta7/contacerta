@@ -1,70 +1,68 @@
 <!-- Modal em criar.html -->
-<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
-                <div class="modal-header">
-                    <h5 class="text-2xl font-semibold text-center" id="createModalLabel">Cadastrar Nova Obra</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="POST" action="{% url 'criar_obra' %}">
-                    {% csrf_token %}
-                    <div class="flex flex-col space-y-4">
-                        <div>
-                            <label for="nome" class="block mb-2 text-sm font-medium text-gray-900">Nome*</label>
-                            <input type="text" name="nome" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
-                        </div>
-                        <div>
-                            <label for="local" class="block mb-2 text-sm font-medium text-gray-900">Local*</label>
-                            <input type="text" name="local" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
-                        </div>
-                        <div>
-                            <label for="valor_inicial" class="block mb-2 text-sm font-medium text-gray-900">Valor inicial*</label>
-                            <input type="number" name="valor_inicial" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
-                        </div>
-                        <div>
-                            <label for="data_inicio" class="block mb-2 text-sm font-medium text-gray-900">Data de início*</label>
-                            <input
-                                type="text"
-                                id="datepicker-start"
-                                name="data_inicio"
-                                value="{{ obra.data_inicio|date:'d-m-Y' }}"
-                                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
-                                required 
-                                data-date-format="dd-mm-yyyy"
-                            />
-                        </div>
-                        
-                        <div>
-                            <label for="data_final" class="block mb-2 text-sm font-medium text-gray-900">Data de término<span class="text-xs text-gray-400">  (opcional)</span></label>
-                            <input
-                                type="text"
-                                id="datepicker-end"
-                                name="data_final"
-                                value="{{ obra.data_final|date:'d-m-Y' }}" 
-                                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
-                                data-date-format="dd-mm-yyyy"
-                            />
-                        </div>
-                        <div>
-                            <label for="prazo_inicial" class="block mb-2 text-sm font-medium text-gray-900">Prazo inicial  (Data de término estipulada)* </label>
-                            <input
-                                type="text"
-                                id="datepicker-prazo"
-                                name="prazo_inicial"
-                                value="{{ obra.prazo_inicial|date:'d-m-Y' }}" 
-                                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
-                                required
-                                data-date-format="dd-mm-yyyy"
-                            />
-                        </div>
-                    </div>
-                    <button type="submit" class=" mt-4 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Cadastrar</button>         
-                </form>
-            </div>
+
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalCriarObra">
+    <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
+        <div class="flex space-x-8 justify-between items-center mb-4">
+            <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Nova Obra</h5>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="toggleModal('fechar')"></i>
         </div>
+        <form method="POST" id="formCriarObra" action="{% url 'criar_obra' %}">
+            {% csrf_token %}
+            <div class="flex flex-col space-y-4">
+                <div>
+                    <label for="nome" class="block mb-2 text-sm font-medium text-gray-900">Nome*</label>
+                    <input type="text" name="nome" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
+                </div>
+                <div>
+                    <label for="local" class="block mb-2 text-sm font-medium text-gray-900">Local*</label>
+                    <input type="text" name="local" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
+                </div>
+                <div>
+                    <label for="valor_inicial" class="block mb-2 text-sm font-medium text-gray-900">Valor inicial*</label>
+                    <input type="number" name="valor_inicial" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
+                </div>
+                <div>
+                    <label for="data_inicio" class="block mb-2 text-sm font-medium text-gray-900">Data de início*</label>
+                    <input
+                        type="text"
+                        id="datepicker-start"
+                        name="data_inicio"
+                        value="{{ obra.data_inicio|date:'d-m-Y' }}"
+                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                        required 
+                        data-date-format="dd-mm-yyyy"
+                    />
+                </div>
+                
+                <div>
+                    <label for="data_final" class="block mb-2 text-sm font-medium text-gray-900">Data de término<span class="text-xs text-gray-400">  (opcional)</span></label>
+                    <input
+                        type="text"
+                        id="datepicker-end"
+                        name="data_final"
+                        value="{{ obra.data_final|date:'d-m-Y' }}" 
+                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                        data-date-format="dd-mm-yyyy"
+                    />
+                </div>
+                <div>
+                    <label for="prazo_inicial" class="block mb-2 text-sm font-medium text-gray-900">Prazo inicial  (Data de término estipulada)* </label>
+                    <input
+                        type="text"
+                        id="datepicker-prazo"
+                        name="prazo_inicial"
+                        value="{{ obra.prazo_inicial|date:'d-m-Y' }}" 
+                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                        required
+                        data-date-format="dd-mm-yyyy"
+                    />
+                </div>
+            </div>
+            <button type="submit" class=" mt-4 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Cadastrar</button>         
+        </form>
     </div>
 </div>
+
 
 <script>
     $(document).ready(function() {
