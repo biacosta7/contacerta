@@ -20,7 +20,7 @@
             Cadastrar Obra
         </button>
     </div>
-    {% include "criar_obra.html" %}
+    {% include "modais/criar_obra.html" %}
     
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {% for obra in obras %}
@@ -33,16 +33,17 @@
                     <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-1"></i>{{ obra.local }}</p>
                 </div>
                 <div class="pt-2 pb-2 text-right">
-                    <i class="fa-solid fa-arrow-right bg-[#287F71] text-black p-3 rounded-full cursor-pointer hover:bg-[#4DBCAA]" onclick="" style="color:rgb(255, 255, 255);"></i>
+                    <!-- botão de ir -->
+                    <a href="{% url 'detalhe_obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-[#287F71] text-black p-3 rounded-full cursor-pointer hover:bg-[#4DBCAA]" style="color:rgb(255, 255, 255);"></i></a>
                 </div>
                 <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
                     <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>
                     <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})">Editar</button>
                 </div>
             </div>
-            {% include "editar_obra.html" %}
-            {% include "info_obra.html" %}
-            {% include "deletar_obra.html" %}
+            {% include "modais/editar_obra.html" %}
+            {% include "modais/info_obra.html" %}
+            {% include "modais/deletar_obra.html" %}
         {% endfor %}
     </div>  
     
@@ -50,41 +51,6 @@
 </div>
 
 <script>
-    const obras = JSON.parse('{{ obras_json|safe }}');
-
-    console.log('Obras carregadas:', obras);  // Verifique o conteúdo de obras
-
-    function ToBRCurrency(ElementID, valor){
-        const input = document.getElementById(ElementID);
-        let numero = valor; 
-    
-        // Verifica se o valor não está vazio
-        if (input) {
-            console.log(numero);
-            // Converte para número e formata no formato pt-BR
-            numero = Number(numero).toLocaleString('pt-BR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-            });
-            console.log(numero);
-            // Atualiza o valor no campo de entrada
-            input.value = numero;
-        } else {
-            console.log("Não há valor inicial.");
-        }
-    
-        // Aplica a máscara para permitir edição no formato brasileiro
-        IMask(input, {
-            mask: Number, // Tipo de máscara
-            scale: 2, // Casas decimais
-            signed: false, // Valores negativos
-            thousandsSeparator: '.', // Separador de milhar
-            padFractionalZeros: true, // Preencher zeros após a vírgula
-            normalizeZeros: true, // Remover zeros desnecessários
-            radix: ',', // Separador decimal
-        });
-    }
-
     function toggleModal(action) {
         const modal = document.getElementById('modalCriarObra');
 

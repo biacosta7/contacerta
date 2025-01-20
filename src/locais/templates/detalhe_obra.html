@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Detalhes - {{ obra.nome }}{% endblock %}
+
+{% block content %}
+<div class="border-b-4 h-full">
+    <div class="flex flex-col h-full w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl mx-auto">
+        <div class="flex w-full p-4 items-center">
+            <!-- Ícone de seta para voltar -->
+            <i class="fa-solid fa-arrow-left fa-xl p-3 pt-3.5 pb-3.5 ml-4 mr-10 flex-grow-0"></i>
+            
+            <!-- Div principal com flex-grow-1 -->
+            <div class="flex flex-grow items-center">
+                <!-- Conteúdo alinhado à esquerda -->
+                <div class="border-l-4 border-gray-200 px-4 flex-grow">
+                    <h1 class="text-2xl font-bold mb-2">Obra {{ obra.nome }}</h1>
+                    <div>
+                        <p class="text-sm break-words mb-2 text-lg">
+                            <i class="fa-solid fa-location-dot fa-xl px-1"></i> {{ obra.local }}
+                        </p>
+                        <p id="valorInicialObraInfo" class="text-sm break-words text-lg">
+                            <i class="fa-solid fa-dollar-sign mr-1"></i> R${{ obra.valor_inicial }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Ícone de opções no canto direito -->
+            <i class="fa-solid fa-ellipsis-vertical fa-xl p-3 pt-3.5 pb-3.5 rounded-[9px] mr-4 flex-grow-0"></i>
+        </div>
+        
+
+        <div class="flex mt-4 items-center justify-center text-center w-full space-x-20">
+            <button class="px-8 py-2 text-center">Geral</button>
+            <button class="px-8 py-2 text-center">Aditivos</button>
+            <button class="px-8 py-2 text-center">Adiantamentos/BMs</button>
+            <button class="px-8 py-2 text-center">Despesas</button>
+        </div>  
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    // Obtenha o caminho completo da URL
+    const path = window.location.pathname;
+
+    // Divida o caminho em partes usando '/' como separador
+    const pathParts = path.split('/');
+
+    // O ID está na última parte do caminho
+    const obraId = parseInt(pathParts[pathParts.length - 1], 10);
+
+    let obra = obras.find(o => o.id === obraId);
+
+    document.getElementById('valorInicialObraInfo').innerHTML = 
+    `<i class="fa-solid fa-dollar-sign mr-1 bg-gray-800 py-1 px-2 rounded-full" style="color:rgb(255, 255, 255);"></i> <b>Valor inicial:</b> R$ ${new Intl.NumberFormat('pt-BR', { 
+        style: 'decimal', 
+        minimumFractionDigits: 2, 
+        maximumFractionDigits: 2 
+    }).format(obra.valor_inicial)}`;
+
+</script>
+{% endblock script %}
