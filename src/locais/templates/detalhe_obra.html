@@ -32,15 +32,26 @@
         
 
         <div class="flex mt-4 items-center justify-center text-center w-full space-x-20">
-            <button class="px-8 py-2 text-center bg-gray-200 rounded-t-[9px]">Geral</button>
-            <button class="px-8 py-2 text-center">Aditivos</button>
-            <button class="px-8 py-2 text-center">Adiantamentos/BMs</button>
-            <button class="px-8 py-2 text-center">Despesas</button>
-        </div>  
+            <button id="geralBtn" class="px-8 py-2 text-center bg-gray-200 rounded-t-[9px]" onclick="sectionModal('geralSection')">Geral</button>
+            <button id="aditivosBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('aditivosSection')">Aditivos</button>
+            <button id="adiabmBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('adiabmSection')">Adiantamentos/BMs</button>
+            <button id="despesasBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('despesasSection')">Despesas</button>
+        </div>
     </div>
 </div>
-<div class="flex w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl mx-auto justify-center items-center">
-    {% include "modais/geral_obra.html" %}
+<div class="flex flex-col w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl mx-auto justify-center items-center">
+    <div id="geralSection" class="block"> <!-- Inicialmente visível -->
+        {% include "modais/menuObra/geral_obra.html" %}
+    </div>
+    <div id="aditivosSection" class="hidden">
+        {% include "modais/menuObra/aditivos.html" %}
+    </div>
+    <div id="adiabmSection" class="hidden">
+        {% include "modais/menuObra/adiantamentos_bms.html" %}
+    </div>
+    <div id="despesasSection" class="hidden">
+        {% include "modais/menuObra/despesas_obra.html" %}
+    </div>
 </div>
 
 {% endblock content %}
@@ -65,7 +76,28 @@
         maximumFractionDigits: 2 
     }).format(obra.valor_inicial)}`;
 
+    function sectionModal(action) {
+        const sections = ["geralSection", "aditivosSection", "despesasSection", "adiabmSection"];
+        const buttons = [ "geralBtn", "aditivosBtn", "despesasBtn", "adiabmBtn"]
 
+        // Oculta todas as seções
+        sections.forEach(section => {
+            document.getElementById(section).classList.add("hidden");
+        });
+    
+        // Mostra apenas a seção correspondente
+        document.getElementById(action).classList.remove("hidden");
+
+
+        // Remove a classe bg-gray-200 de todos os botões
+        buttons.forEach(button => {
+            document.getElementById(button).classList.remove("bg-gray-200");
+        });
+
+        // Adiciona a classe bg-gray-200 ao botão selecionado
+        const selectedButton = `${action.replace("Section", "Btn")}`;
+        document.getElementById(selectedButton).classList.add("bg-gray-200");
+    }    
 
 </script>
 {% endblock script %}
