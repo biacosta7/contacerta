@@ -4,11 +4,11 @@
 {% block title %}Detalhes - {{ obra.nome }}{% endblock %}
 
 {% block content %}
-<div class="border-b-4 h-full">
+<div class="border-b-4 h-full mb-10">
     <div class="flex flex-col h-full w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl mx-auto">
         <div class="flex w-full p-4 items-center">
             <!-- Ícone de seta para voltar -->
-            <i class="fa-solid fa-arrow-left fa-xl p-3 pt-3.5 pb-3.5 ml-4 mr-10 flex-grow-0"></i>
+            <a href={% url 'home' %}><i class="fa-solid fa-arrow-left fa-xl p-3 pt-3.5 pb-3.5 ml-4 mr-10 flex-grow-0"></i></a>
             
             <!-- Div principal com flex-grow-1 -->
             <div class="flex flex-grow items-center">
@@ -32,12 +32,15 @@
         
 
         <div class="flex mt-4 items-center justify-center text-center w-full space-x-20">
-            <button class="px-8 py-2 text-center">Geral</button>
+            <button class="px-8 py-2 text-center bg-gray-200 rounded-t-[9px]">Geral</button>
             <button class="px-8 py-2 text-center">Aditivos</button>
             <button class="px-8 py-2 text-center">Adiantamentos/BMs</button>
             <button class="px-8 py-2 text-center">Despesas</button>
         </div>  
     </div>
+</div>
+<div class="flex w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl mx-auto justify-center items-center">
+    {% include "modais/geral_obra.html" %}
 </div>
 
 {% endblock content %}
@@ -61,6 +64,8 @@
         minimumFractionDigits: 2, 
         maximumFractionDigits: 2 
     }).format(obra.valor_inicial)}`;
+
+
 
 </script>
 {% endblock script %}
