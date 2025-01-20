@@ -11,12 +11,12 @@
             <div class="flex flex-col space-y-4">
                 <div>
                     <label for="descricao" class="block mb-2 text-sm font-medium text-gray-900">Título*</label>
-                    <input type="text" name="descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
+                    <input type="text" name="descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
                 </div>
                 <div class="flex space-x-4 justify-between w-full">
                     <div class="flex-1">
                         <label for="forma_pag" class="block mb-2 text-sm font-medium text-gray-900">Forma de pagamento*</label>
-                        <select id="forma_pag" name="forma_pag" class="w-full border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                        <select id="forma_pag" name="forma_pag" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
                             <option value="" selected disabled hidden>Selecione a forma</option>
                             <option value="cartao">Cartão</option>
                             <option value="boleto">Boleto</option>
@@ -27,17 +27,109 @@
                 
                     <div class="flex-1">
                         <label for="status" class="block mb-2 text-sm font-medium text-gray-900">Status*</label>
-                        <select id="status" name="status" class="w-full border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                        <select id="status" name="status" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
                             <option value="a_pagar">À pagar</option>
                             <option value="pago">Pago</option>
                         </select>
                     </div>
                 </div>
                 
+
+                <!-- Divs que serão mostradas/ocultadas com base na seleção -->
+                <div id="cartaoSection" class="hidden mt-4">
+                    <div>
+                        <label for="cartao" class="block mb-2 text-sm font-medium text-gray-900">Cartão*</label>
+                        <select id="cartao" name="cartao" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none mb-2">
+                            <option value="" selected disabled hidden>Selecione o cartao</option>
+                            <option value="1234">1234</option>
+                            {% for cartao in cartoes %}
+                            <option class="" value="{{cartao}}">{{cartao}}</option> 
+                            {% comment %} adicionar formato Nome (final) {% endcomment %}
+                            {% endfor %}
+                            
+                        </select>
+                    </div>
+                    <div class="flex space-x-4 justify-between w-full">
+                        <div>
+                            <label for="quant_parcelas" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de parcelas*</label>
+                            <input type="number" id="quant_parcelas" placeholder="0" name="quant_parcelas" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                        </div>
+                        <div>
+                            <label for="valor_parcela" class="block mb-2 text-sm font-medium text-gray-900">Valor da parcela*</label>
+                            <input type="text" id="valor_parcela" placeholder="1.200,50" name="valor_parcela" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="boletoSection" class="hidden mt-4">
+                    <div>
+                        <label for="recipiente" class="block mb-2 text-sm font-medium text-gray-900">Recipiente*</label>
+                        <input type="text" name="recipiente" class="mb-2 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                    </div>
+                    <div class="flex space-x-4 justify-between w-full">
+                        <div class="flex-1 mb-2">
+                            <label for="quant_boletos" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de boletos*</label>
+                            <input type="number" id="quant_boletos" placeholder="0" name="quant_boletos" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                        </div>
+                        <div class="flex-1 mb-2">
+                            <label for="vencimento" class="block mb-2 text-sm font-medium text-gray-900">Data de vencimento*</label>
+                            <input
+                                type="text"
+                                id="vencimento"
+                                name="vencimento"
+                                value="{{ despesa.vencimento|date:'d-m-Y' }}"
+                                class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3 "
+                                required 
+                                data-date-format="dd-mm-yyyy"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-4 justify-between w-full">
+                        <div class="flex-1 mb-2">
+                            <label for="banco" class="block mb-2 text-sm font-medium text-gray-900">Banco*</label>
+                            <select id="banco" name="banco" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                                <option value="" selected disabled hidden>Selecione o banco</option>
+                                <option value="banco_teste">Banco Teste</option>
+                                {% for banco in bancos %}
+                                <option class="" value="{{banco}}">{{banco}}</option> 
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="num_notafiscal" class="block mb-2 text-sm font-medium text-gray-900">Número da Nota Fiscal*</label>
+                            <input type="text" name="num_notafiscal" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div id="pixSection" class="hidden mt-4">
+                    <div>
+                        <label for="banco" class="block mb-2 text-sm font-medium text-gray-900">Banco*</label>
+                        <select id="banco" name="banco" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                            <option value="" selected disabled hidden>Selecione o banco</option>
+                            <option value="banco_teste">Banco Teste</option>
+                            {% for banco in bancos %}
+                            <option class="" value="{{banco}}">{{banco}}</option> 
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div id="especieSection" class="hidden mt-4">
+                    <div>
+                        <label for="pagador" class="block mb-2 text-sm font-medium text-gray-900">Pagador*</label>
+                        <input type="text" name="pagador" class="mb-2 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                    </div>
+                </div>
+                
+
                 {% comment %} chamar funcao br currency {% endcomment %}
                 <div>
                     <label for="valor_despesa" class="block mb-2 text-sm font-medium text-gray-900">Valor*</label>
-                    <input type="text" id="valor_despesa" placeholder="1.200,50" name="valor" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
+                    <input type="text" id="valor_despesa" placeholder="1.200,50" name="valor" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
                 </div>
 
                 {% comment %} converter data ? {% endcomment %}
@@ -49,7 +141,7 @@
                             id="data"
                             name="data"
                             value="{{ despesa.data|date:'d-m-Y' }}"
-                            class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                            class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3 "
                             required 
                             data-date-format="dd-mm-yyyy"
                         />
@@ -61,7 +153,7 @@
                             id="data_pagamento"
                             name="data_pagamento"
                             value="{{ despesa.data_pagamento|date:'d-m-Y' }}" 
-                            class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                            class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3 "
                             data-date-format="dd-mm-yyyy"
                         />
                     </div>
@@ -72,7 +164,7 @@
                 
                 <div>
                     <label for="modalidade" class="block mb-2 text-sm font-medium text-gray-900">Modalidade*</label>
-                    <select id="modalidade" name="modalidade" class=" border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
+                    <select id="modalidade" name="modalidade" class=" border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
                         <option value="" selected disabled hidden>Selecione a modalidade</option>
                         <option value="mao_de_obra">Mão de Obra</option>
                         <option value="insumos">Insumos</option>
@@ -84,7 +176,7 @@
                 
                 <div>
                     <label for="observacao" class="block mb-2 text-sm font-medium text-gray-900">Observação<span class="text-xs text-gray-400">  (opcional)</span></label>
-                    <textarea id="observacao" name="observacao" rows="4" class="block p-2.5 w-full text-sm text-gray-900 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>
+                    <textarea id="observacao" name="observacao" rows="4" class="block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>
                 </div>
 
             </div>
@@ -92,3 +184,32 @@
         </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializa a função assim que a página for carregada
+        togglePaymentSection();
+
+        // Adiciona o evento para monitorar mudanças no select
+        document.getElementById('forma_pag').addEventListener('change', togglePaymentSection);
+    });
+
+    function togglePaymentSection() {
+        const formaPag = document.getElementById('forma_pag').value;
+
+        // Oculta todas as divs de forma padrão
+        const sections = ['cartao', 'boleto', 'pix', 'especie'];
+        sections.forEach(section => {
+            const sectionDiv = document.getElementById(`${section}Section`);
+            sectionDiv.classList.add('hidden');
+        });
+
+        // Mostra a div correspondente à forma selecionada
+        if (formaPag) {
+            const selectedSection = document.getElementById(`${formaPag}Section`);
+            if (selectedSection) {
+                selectedSection.classList.remove('hidden');
+            }
+        }
+    }
+</script>
