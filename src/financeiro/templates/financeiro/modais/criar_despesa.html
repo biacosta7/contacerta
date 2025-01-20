@@ -1,0 +1,94 @@
+<!-- Modal de criação de despesa -->
+
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalCriarDespesa">
+    <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
+        <div class="flex space-x-8 justify-between items-center mb-4">
+            <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Nova Despesa</h5>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="toggleModal('fechar')"></i>
+        </div>
+        <form method="POST" id="formCriarDespesa" action="{% url 'financeiro:criar_despesa' %}">
+            {% csrf_token %}
+            <div class="flex flex-col space-y-4">
+                <div>
+                    <label for="descricao" class="block mb-2 text-sm font-medium text-gray-900">Título*</label>
+                    <input type="text" name="descricao" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
+                </div>
+                <div class="flex space-x-4 justify-between w-full">
+                    <div class="flex-1">
+                        <label for="forma_pag" class="block mb-2 text-sm font-medium text-gray-900">Forma de pagamento*</label>
+                        <select id="forma_pag" name="forma_pag" class="w-full border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                            <option value="" selected disabled hidden>Selecione a forma</option>
+                            <option value="cartao">Cartão</option>
+                            <option value="boleto">Boleto</option>
+                            <option value="pix">Pix</option>
+                            <option value="especie">Espécie</option>
+                        </select>
+                    </div>
+                
+                    <div class="flex-1">
+                        <label for="status" class="block mb-2 text-sm font-medium text-gray-900">Status*</label>
+                        <select id="status" name="status" class="w-full border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                            <option value="a_pagar">À pagar</option>
+                            <option value="pago">Pago</option>
+                        </select>
+                    </div>
+                </div>
+                
+                {% comment %} chamar funcao br currency {% endcomment %}
+                <div>
+                    <label for="valor_despesa" class="block mb-2 text-sm font-medium text-gray-900">Valor*</label>
+                    <input type="text" id="valor_despesa" placeholder="1.200,50" name="valor" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
+                </div>
+
+                {% comment %} converter data ? {% endcomment %}
+                <div class="flex space-x-4 justify-between">
+                    <div>
+                        <label for="data" class="block mb-2 text-sm font-medium text-gray-900">Data de emissão*</label>
+                        <input
+                            type="text"
+                            id="data"
+                            name="data"
+                            value="{{ despesa.data|date:'d-m-Y' }}"
+                            class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                            required 
+                            data-date-format="dd-mm-yyyy"
+                        />
+                    </div>
+                    <div>
+                        <label for="data_pagamento" class="block mb-2 text-sm font-medium text-gray-900">Data de pagamento<span class="text-xs text-gray-400">  (opcional)</span></label>
+                        <input
+                            type="text"
+                            id="data_pagamento"
+                            name="data_pagamento"
+                            value="{{ despesa.data_pagamento|date:'d-m-Y' }}" 
+                            class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                            data-date-format="dd-mm-yyyy"
+                        />
+                    </div>
+                </div>
+
+
+                
+                
+                <div>
+                    <label for="modalidade" class="block mb-2 text-sm font-medium text-gray-900">Modalidade*</label>
+                    <select id="modalidade" name="modalidade" class=" border border-gray-300 text-gray-400 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
+                        <option value="" selected disabled hidden>Selecione a modalidade</option>
+                        <option value="mao_de_obra">Mão de Obra</option>
+                        <option value="insumos">Insumos</option>
+                        <option value="combustivel">Combustível</option>
+                    </select>
+                </div>
+                {% comment %} abrir mais campos se mao_de_obra for selecionada {% endcomment %}
+                {% comment %} enviar tipo (obra) e id do local pelo back {% endcomment %}
+                
+                <div>
+                    <label for="observacao" class="block mb-2 text-sm font-medium text-gray-900">Observação<span class="text-xs text-gray-400">  (opcional)</span></label>
+                    <textarea id="observacao" name="observacao" rows="4" class="block p-2.5 w-full text-sm text-gray-900 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>
+                </div>
+
+            </div>
+            <button type="submit" class=" mt-4 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Cadastrar</button>         
+        </form>
+    </div>
+</div>

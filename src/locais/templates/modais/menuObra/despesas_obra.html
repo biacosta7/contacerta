@@ -36,9 +36,9 @@
                     <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="mr-1 fa-solid fa-filter"></i>
                         Filtrar
                     </button>
-                    <button id="" class="text-base bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="">
+                    <button id="" class="text-base bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="toggleModal('criarDespesa')">
                         Adicionar
-                    </button>
+                    </button>                    
                 </div>
             </div>
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -100,4 +100,19 @@
         <h3 class="text-base font-medium block">Total <span class="text-base font-light">(filtro)</span></h3>
         <span class="text-2xl font-semibold block">R$ {{ obra.debito_mensal|default:"0" }}</span>
     </div>
+    {% include 'financeiro/modais/criar_despesa.html' %}
 </div>
+<script>
+    function toggleModal(action) {
+        const modalCriarDespesa = document.getElementById('modalCriarDespesa');
+
+        if (action === 'criarDespesa') {
+            modalCriarDespesa.classList.toggle('hidden');
+            {% comment %} ToBRCurrency('valorInicialObra2', 0); {% endcomment %}
+            document.getElementById('formCriarDespesa').reset();
+        } else if (action === 'fechar') {
+            modalCriarDespesa.classList.add('hidden');
+        }
+
+    }
+</script>
