@@ -28,7 +28,7 @@
                 <div>
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-lg">{{ obra.nome }}</h3>
-                        <i id="dots-{{ forloop.counter }}" class="bg-gray-200 fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]" onclick="toggleDotsMenu(event, {{ forloop.counter }})"></i>
+                        <i id="dots-{{ forloop.counter }}" class="fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]" onclick="toggleDotsMenu(event, {{ forloop.counter }})"></i>
                     </div>
                     <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-1"></i>{{ obra.local }}</p>
                 </div>
@@ -42,6 +42,7 @@
             </div>
             {% include "editar_obra.html" %}
             {% include "info_obra.html" %}
+            {% include "deletar_obra.html" %}
         {% endfor %}
     </div>  
     
@@ -97,32 +98,33 @@
 
     }
 
-    function obraModal(action, id){
+    function obraModal(action, id) {
         const infoModal = document.getElementById('modalInfoObra');
         const editarModal = document.getElementById('modalEditarObra');
+        const deletarModal = document.getElementById('modalDeletarObra');
+    
+        // Use 'id' diretamente, não precisa de 'obraId'
         var obraId = id;
-
+    
         if (action === 'infoObra') {
             infoModal.classList.toggle('hidden');
-            var obra = obras.find(o => o.id === obraId);
+            let obra = obras.find(o => o.id === obraId);
             console.log(obra);
             
             document.getElementById('obraTituloInfo').innerHTML = "Obra " + obra.nome;
-
             document.getElementById('nomeObraInfo').innerHTML = "<b>Nome:</b> " + obra.nome;
-
             document.getElementById('localObraInfo').innerHTML = "<b>Local:</b> " + obra.local;
             document.getElementById('valorInicialObraInfo').innerHTML = "<b>Valor inicial:</b> R$" + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(obra.valor_inicial);
             document.getElementById('dataInicioObraInfo').innerHTML = "<b>Data de início:</b> " + obra.data_inicio;
             document.getElementById('dataFinalObraInfo').innerHTML = "<b>Data de término:</b> " + (obra.data_final || "-");
-            document.getElementById('prazoInicialObraInfo').innerHTML = "<b>Prazo inicial (Data de término estipulada):</b> " + obra.prazo_inicial; 
-
+            document.getElementById('prazoInicialObraInfo').innerHTML = "<b>Prazo inicial (Data de término estipulada):</b> " + obra.prazo_inicial;
+    
         } else if (action === 'fecharInfo') {
             infoModal.classList.add('hidden');
         }
-
+    
         else if (action === 'editarObra') {    
-            const obra = obras.find(o => o.id === obraId);
+            let obra = obras.find(o => o.id === obraId);
         
             if (!obra) {
                 console.error('Obra não encontrada:', obraId);
@@ -132,13 +134,12 @@
             console.log('Obra encontrada:', obra);
             console.log('ID da obra:', obra.id);  // Verifique se a obra tem o id
             
-            // Obtenha os dados da obra correspondente
             document.getElementById('formEditarObra').action = `/editar/obra/${id}`;
-            // Preencha os campos do formulário
+    
             document.getElementById('obraId').value = obra.id;
             document.getElementById('nomeObra').value = obra.nome;
             document.getElementById('localObra').value = obra.local;
-
+    
             ToBRCurrency('valorInicialObra', obra.valor_inicial);
               
             // Atribuir os valores formatados aos campos do formulário
@@ -147,64 +148,78 @@
             
             document.getElementById('prazoObraE').value = obra.prazo_inicial;
 
-            // Exiba o modal
+            document.getElementById('deletarObraBtn').setAttribute('onclick', `obraModal('deletarObra', ${obraId})`);
+
             editarModal.classList.remove('hidden');
         } else if (action === 'fecharEditar') {
             editarModal.classList.add('hidden');
         }
+        else if (action === 'deletarObra') {
+            // Remover o modal de edição, pois estamos abrindo o de exclusão
+            editarModal.classList.add('hidden');
+            
+            console.log('ID da obra para exclusão:', obraId);
+            console.log('Obras disponíveis:', obras);
+            
+            let obra = obras.find(o => o.id === obraId); // Certifique-se de que obraId existe no array 'obras'
+        
+            if (!obra) {
+                console.error('Obra não encontrada:', obraId);
+                return;  // Retorna caso não encontre a obra
+            }
+        
+            console.log('Obra encontrada:', obra);
+            console.log('ID da obra:', obra.id);  // Verifique se a obra tem o id
 
+            document.getElementById('tituloDeletarObra').innerHTML = `Deletar "${obra.nome}"`; 
+
+            document.getElementById('textDeletarObra').innerHTML = `Tem certeza de que deseja excluir a Obra "${obra.nome}"? Esta ação não pode ser desfeita.`; 
+            
+            // Defina a URL do formulário de exclusão com o ID correto
+            document.getElementById('formDeletarObra').action = `/deletar/obra/${id}`;
+            
+            // Mostra o modal de exclusão
+            deletarModal.classList.remove('hidden');
+        } else if (action === 'fecharDeletar') {
+            deletarModal.classList.add('hidden');
+        }
+        
     }
-
+    
     // Função para alternar o menu de 3 pontos
     function toggleDotsMenu(event, index) {
         // Impede a propagação do clique para o documento
         event.stopPropagation();
         
         const dotsMenu = document.getElementById(`dotsMenu-${index}`);
+        const dotsIcon = document.getElementById(`dots-${index}`);
         
         // Alterna o menu ao clicar no ícone
         dotsMenu.classList.toggle('hidden');
-        dotsMenu.classList.toggle('drop-shadow');  // Alterna também a sombra
+        dotsMenu.classList.toggle('drop-shadow'); 
+        dotsIcon.classList.toggle('bg-gray-200');
 
         // Adiciona um listener para fechar o menu ao clicar fora
         document.addEventListener('click', function handleClickOutside(e) {
-            // Verifica se o clique foi fora do menu e do ícone
-            if (!dotsMenu.contains(e.target) && e.target.id !== `dots-${index}`) {
-                dotsMenu.classList.add('hidden'); // Fecha o menu
-                dotsMenu.classList.remove('drop-shadow'); // Remove a sombra
+            // Verifica se o clique foi fora do ícone
+            if (e.target.id !== `dots-${index}`) {
+                dotsMenu.classList.add('hidden'); 
+                dotsMenu.classList.remove('drop-shadow'); 
+                dotsIcon.classList.remove('bg-gray-200');
+                dotsMenu.classList.remove('border');
                 document.removeEventListener('click', handleClickOutside); // Remove o listener
             }
         });
     }
 
     $(document).ready(function () {
-        $('#dataInicioObraE, #dataFinalObraE, #prazoObraE').datepicker({
-            dateFormat: 'dd/mm/yy', // Formato de data
-            changeMonth: true,      // Habilita troca de mês
-            changeYear: true        // Habilita troca de ano
+        $('#dataInicioObraE, #dataFinalObraE, #prazoObraE', '#datepicker-start', '#datepicker-end', '#datepicker-prazo').datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,     
+            changeYear: true     
         });
     });
 
-    $(document).ready(function() {
-        $('#datepicker-start').datepicker({
-            dateFormat: 'dd/mm/yy',  // Define o formato para dd-mm-yyyy
-            changeMonth: true,        // Habilita a troca de mês
-            changeYear: true          // Habilita a troca de ano
-        });
-    
-        $('#datepicker-end').datepicker({
-            dateFormat: 'dd/mm/yy',  // Define o formato para dd-mm-yyyy
-            changeMonth: true,        // Habilita a troca de mês
-            changeYear: true          // Habilita a troca de ano
-        });
-
-        $('#datepicker-prazo').datepicker({
-            dateFormat: 'dd/mm/yy',  // Define o formato para dd-mm-yyyy
-            changeMonth: true,        // Habilita a troca de mês
-            changeYear: true          // Habilita a troca de ano
-        });
-    });  
-    
 </script>
 
 

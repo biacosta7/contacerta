@@ -104,6 +104,14 @@ def editar_obra(request, obra_id):
     return render(request, 'home.html', {'obra': obra})
 
 
+def deletar_obra(request, obra_id):
+    obra = get_object_or_404(Obra, id=obra_id)
+
+    obra.delete()
+    messages.success(request, 'Obra deletada com sucesso.')
+    return redirect('home')
+
+
 def criar_escritorio(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
