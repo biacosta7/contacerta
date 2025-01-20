@@ -1,4 +1,4 @@
-<!-- Modal editarobra.html -->
+<!-- Modal editar_obra.html -->
 <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalEditarObra">
     <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
         <div class="flex space-x-8 justify-between items-center mb-4">
@@ -25,25 +25,47 @@
             <!-- Valor Inicial -->
             <div class="mb-4">
                 <label for="valor_inicial" class="block mb-2 text-sm font-medium text-gray-900">Valor Inicial</label>
-                <input type="number" id="valorInicialObra" name="valor_inicial" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+                <input type="text" id="valorInicialObra" name="valor_inicial" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>              
             </div>
 
             <!-- Data de Início -->
             <div class="mb-4">
                 <label for="data_inicio" class="block mb-2 text-sm font-medium text-gray-900">Data de Início</label>
-                <input type="date" id="datepicker-start" name="data_inicio" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+                <input
+                        type="text"
+                        id="dataInicioObraE"
+                        name="data_inicio"
+                        value=""
+                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                        required 
+                        data-date-format="dd-mm-yyyy"
+                    />
             </div>
 
             <!-- Data de Término -->
             <div class="mb-4">
                 <label for="data_final" class="block mb-2 text-sm font-medium text-gray-900">Data de Término</label>
-                <input type="date" id="datepicker-end" name="data_final" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+                <input
+                        type="text"
+                        id="dataFinalObraE"
+                        name="data_final"
+                        value="{{ obra.data_final|date:'d-m-Y' }}" 
+                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                        data-date-format="dd-mm-yyyy"
+                />
             </div>
 
             <!-- Prazo Inicial -->
             <div class="mb-4">
                 <label for="prazo_inicial" class="block mb-2 text-sm font-medium text-gray-900">Prazo Inicial</label>
-                <input type="number" id="datepicker-prazo" name="prazo_inicial" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" placeholder="Número de dias" required>
+                <input
+                        type="text"
+                        id="prazoObraE"
+                        name="prazo_inicial"
+                        value="{{ obra.data_final|date:'d-m-Y' }}" 
+                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                        data-date-format="dd-mm-yyyy"
+                />
             </div>
 
             <!-- Botões -->
@@ -55,13 +77,3 @@
         
     </div>
 </div>
-
-<script>
-    $(document).ready(function () {
-        $('#datepicker-start, #datepicker-end, #datepicker-prazo').datepicker({
-            dateFormat: 'dd/mm/yy', // Formato de data
-            changeMonth: true,      // Habilita troca de mês
-            changeYear: true        // Habilita troca de ano
-        });
-    });
-</script>

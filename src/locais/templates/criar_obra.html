@@ -19,7 +19,7 @@
                 </div>
                 <div>
                     <label for="valor_inicial" class="block mb-2 text-sm font-medium text-gray-900">Valor inicial*</label>
-                    <input type="number" name="valor_inicial" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
+                    <input type="text" id="valorInicialObra2" name="valor_inicial" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
                 </div>
                 <div>
                     <label for="data_inicio" class="block mb-2 text-sm font-medium text-gray-900">Data de início*</label>
@@ -62,26 +62,3 @@
         </form>
     </div>
 </div>
-
-
-<script>
-    $(document).ready(function() {
-        $('#datepicker-start').datepicker({
-            dateFormat: 'dd/mm/yy',  // Define o formato para dd-mm-yyyy
-            changeMonth: true,        // Habilita a troca de mês
-            changeYear: true          // Habilita a troca de ano
-        });
-    
-        $('#datepicker-end').datepicker({
-            dateFormat: 'dd/mm/yy',  // Define o formato para dd-mm-yyyy
-            changeMonth: true,        // Habilita a troca de mês
-            changeYear: true          // Habilita a troca de ano
-        });
-
-        $('#datepicker-prazo').datepicker({
-            dateFormat: 'dd/mm/yy',  // Define o formato para dd-mm-yyyy
-            changeMonth: true,        // Habilita a troca de mês
-            changeYear: true          // Habilita a troca de ano
-        });
-    });    
-</script>

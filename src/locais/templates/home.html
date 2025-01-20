@@ -37,7 +37,7 @@
                 </div>
                 <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
                     <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>
-                    <button class="text-base text-left pb-1" onclick="setObraId({{ obra.id }})">Editar</button>
+                    <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})">Editar</button>
                 </div>
             </div>
             {% include "editar_obra.html" %}
@@ -53,8 +53,35 @@
 
     console.log('Obras carregadas:', obras);  // Verifique o conteúdo de obras
 
-    function setObraId(id) {
-        document.getElementById('obraId').value = id;
+    function ToBRCurrency(ElementID, valor){
+        const input = document.getElementById(ElementID);
+        let numero = valor; 
+    
+        // Verifica se o valor não está vazio
+        if (input) {
+            console.log(numero);
+            // Converte para número e formata no formato pt-BR
+            numero = Number(numero).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+            });
+            console.log(numero);
+            // Atualiza o valor no campo de entrada
+            input.value = numero;
+        } else {
+            console.log("Não há valor inicial.");
+        }
+    
+        // Aplica a máscara para permitir edição no formato brasileiro
+        IMask(input, {
+            mask: Number, // Tipo de máscara
+            scale: 2, // Casas decimais
+            signed: false, // Valores negativos
+            thousandsSeparator: '.', // Separador de milhar
+            padFractionalZeros: true, // Preencher zeros após a vírgula
+            normalizeZeros: true, // Remover zeros desnecessários
+            radix: ',', // Separador decimal
+        });
     }
 
     function toggleModal(action) {
@@ -62,29 +89,23 @@
 
         if (action === 'criar') {
             modal.classList.toggle('hidden');
+            ToBRCurrency('valorInicialObra2', 0);
             document.getElementById('formCriarObra').reset();
         } else if (action === 'fechar') {
             modal.classList.add('hidden');
         }
 
-        else if (action === 'open_dots') {
-            dotsMenu.classList.toggle('hidden');
-        } else if (action === 'close_dots') {
-            dotsMenu.classList.add('hidden');
-        }
     }
 
     function obraModal(action, id){
         const infoModal = document.getElementById('modalInfoObra');
         const editarModal = document.getElementById('modalEditarObra');
         var obraId = id;
-        console.log(obraId);
 
         if (action === 'infoObra') {
             infoModal.classList.toggle('hidden');
             var obra = obras.find(o => o.id === obraId);
             console.log(obra);
-            console.log(obra.nome);
             
             document.getElementById('obraTituloInfo').innerHTML = "Obra " + obra.nome;
 
@@ -101,7 +122,6 @@
         }
 
         else if (action === 'editarObra') {    
-            console.log('obraId:', obraId);  // Verifique o valor de obraId
             const obra = obras.find(o => o.id === obraId);
         
             if (!obra) {
@@ -112,18 +132,20 @@
             console.log('Obra encontrada:', obra);
             console.log('ID da obra:', obra.id);  // Verifique se a obra tem o id
             
-
-            
             // Obtenha os dados da obra correspondente
             document.getElementById('formEditarObra').action = `/editar/obra/${id}`;
             // Preencha os campos do formulário
             document.getElementById('obraId').value = obra.id;
             document.getElementById('nomeObra').value = obra.nome;
             document.getElementById('localObra').value = obra.local;
-            document.getElementById('valorInicialObra').value = obra.valor_inicial;
-            document.getElementById('datepicker-start').value = obra.data_inicio;
-            document.getElementById('datepicker-end').value = obra.data_final;
-            document.getElementById('datepicker-prazo').value = obra.prazo_inicial;
+
+            ToBRCurrency('valorInicialObra', obra.valor_inicial);
+              
+            // Atribuir os valores formatados aos campos do formulário
+            document.getElementById('dataInicioObraE').value = obra.data_inicio;
+            document.getElementById('dataFinalObraE').value = obra.data_final || ""; // Caso não exista, deixa vazio
+            
+            document.getElementById('prazoObraE').value = obra.prazo_inicial;
 
             // Exiba o modal
             editarModal.classList.remove('hidden');
@@ -155,7 +177,33 @@
         });
     }
 
+    $(document).ready(function () {
+        $('#dataInicioObraE, #dataFinalObraE, #prazoObraE').datepicker({
+            dateFormat: 'dd/mm/yy', // Formato de data
+            changeMonth: true,      // Habilita troca de mês
+            changeYear: true        // Habilita troca de ano
+        });
+    });
+
+    $(document).ready(function() {
+        $('#datepicker-start').datepicker({
+            dateFormat: 'dd/mm/yy',  // Define o formato para dd-mm-yyyy
+            changeMonth: true,        // Habilita a troca de mês
+            changeYear: true          // Habilita a troca de ano
+        });
     
+        $('#datepicker-end').datepicker({
+            dateFormat: 'dd/mm/yy',  // Define o formato para dd-mm-yyyy
+            changeMonth: true,        // Habilita a troca de mês
+            changeYear: true          // Habilita a troca de ano
+        });
+
+        $('#datepicker-prazo').datepicker({
+            dateFormat: 'dd/mm/yy',  // Define o formato para dd-mm-yyyy
+            changeMonth: true,        // Habilita a troca de mês
+            changeYear: true          // Habilita a troca de ano
+        });
+    });  
     
 </script>
 
