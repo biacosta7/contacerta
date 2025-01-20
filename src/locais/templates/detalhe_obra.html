@@ -40,7 +40,7 @@
     </div>
 </div>
 <div class="flex flex-col w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl mx-auto justify-center items-center">
-    <div id="geralSection" class="block"> <!-- Inicialmente visível -->
+    <div id="geralSection" class="hidden"> <!-- Inicialmente visível -->
         {% include "modais/menuObra/geral_obra.html" %}
     </div>
     <div id="aditivosSection" class="hidden">
@@ -49,7 +49,7 @@
     <div id="adiabmSection" class="hidden">
         {% include "modais/menuObra/adiantamentos_bms.html" %}
     </div>
-    <div id="despesasSection" class="hidden">
+    <div id="despesasSection" class="block">
         {% include "modais/menuObra/despesas_obra.html" %}
     </div>
 </div>

@@ -1,3 +1,4 @@
+<!-- Modal de despesas section -->
 <div class="flex space-x-8 justify-between mb-4">
     <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
         <h3 class="text-base font-medium">Custo Total</h3>
@@ -26,88 +27,71 @@
 <div class="flex space-x-8 justify-between mb-4 ">
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[900px]">
         <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <caption class="p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-                Despesas
-                <div>
-                    <button id="" class="mt-4 px-6 py-3 font-semibold mb-6 hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="fa-solid fa-filter"></i>
+            <div class="flex justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
+                <div class="flex space-x-2 items-center">
+                    <i class="fa-solid fa-chart-simple" style="color: #63E6BE;"></i>
+                    <h1 class="text-xl">Despesas</h1>
+                </div>
+                <div class="flex space-x-2 items-center">
+                    <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="mr-1 fa-solid fa-filter"></i>
                         Filtrar
                     </button>
-                    <button id="" class="mt-4 bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="">
+                    <button id="" class="text-base bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="">
                         Adicionar
                     </button>
                 </div>
-            </caption>
+            </div>
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="px-6 py-3">
-                        Product name
+                        Descrição
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Color
+                        Forma
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Category
+                        Valor
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        Price
+                        Status
                     </th>
                     <th scope="col" class="px-6 py-3">
-                        <span class="sr-only">Edit</span>
+                        Data
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Observação
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        <span class="sr-only">Editar</span>
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        Apple MacBook Pro 17"
-                    </th>
-                    <td class="px-6 py-4">
-                        Silver
-                    </td>
-                    <td class="px-6 py-4">
-                        Laptop
-                    </td>
-                    <td class="px-6 py-4">
-                        $2999
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                    </td>
-                </tr>
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        Microsoft Surface Pro
-                    </th>
-                    <td class="px-6 py-4">
-                        White
-                    </td>
-                    <td class="px-6 py-4">
-                        Laptop PC
-                    </td>
-                    <td class="px-6 py-4">
-                        $1999
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                    </td>
-                </tr>
-                <tr class="bg-white dark:bg-gray-800">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        Magic Mouse 2
-                    </th>
-                    <td class="px-6 py-4">
-                        Black
-                    </td>
-                    <td class="px-6 py-4">
-                        Accessories
-                    </td>
-                    <td class="px-6 py-4">
-                        $99
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
-                    </td>
-                </tr>
+                {% for despesa in despesas %}
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ despesa.descricao }}
+                        </th>
+                        <td class="px-6 py-4">
+                            {{ despesa.forma }}
+                        </td>
+                        <td class="px-6 py-4">
+                            R${{ despesa.valor }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ despesa.status }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ despesa.data }}
+                        </td>
+                        <td class="px-6 py-4">
+                            {{ despesa.observacao }}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
