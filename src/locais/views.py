@@ -2,10 +2,10 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from locais.models import Obra, Escritorio
 from datetime import datetime
-from django.core.serializers.json import DjangoJSONEncoder
-import json
+from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
 
+@login_required
 def criar_obra(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
@@ -54,6 +54,7 @@ def criar_obra(request):
     
     return render(request, 'home.html') 
 
+@login_required
 def editar_obra(request, obra_id):
     obra = get_object_or_404(Obra, id=obra_id)
 
@@ -103,7 +104,7 @@ def editar_obra(request, obra_id):
     # Renderizar o template com os dados da obra para edição
     return render(request, 'home.html', {'obra': obra})
 
-
+@login_required
 def deletar_obra(request, obra_id):
     obra = get_object_or_404(Obra, id=obra_id)
 
@@ -111,7 +112,7 @@ def deletar_obra(request, obra_id):
     messages.success(request, 'Obra deletada com sucesso.')
     return redirect('home')
 
-
+@login_required
 def criar_escritorio(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
@@ -137,6 +138,7 @@ def criar_escritorio(request):
 
     return redirect('home')
 
+@login_required
 def listar_obras(request):
     obras = Obra.objects.all()
     return render(request, 'home.html', {'obras': obras})
