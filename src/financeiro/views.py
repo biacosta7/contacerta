@@ -1,3 +1,6 @@
+from datetime import datetime
+from decimal import Decimal, InvalidOperation
+from pyexpat.errors import messages
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Despesa, Cartao, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra
@@ -87,7 +90,17 @@ def criar_cartao(request):
         final = request.POST.get('final')
         vencimento = request.POST.get('vencimento')
         quant_dias = request.POST.get('quant_dias')
-        melhor_dia = request.POST.get('melhor_dia')
+        # melhor_dia = request.POST.get('melhor_dia')
+
+        print(vencimento)
+
+        # Converter as datas do formato dd/mm/yyyy para yyyy-mm-dd
+        try:
+            vencimento = datetime.strptime(vencimento, '%d/%m/%Y').date()
+        except ValueError:
+            messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
+            return redirect('home')
+        
 
         # Criando o cartão
         cartao = Cartao.objects.create(
@@ -96,11 +109,12 @@ def criar_cartao(request):
             final=final,
             vencimento=vencimento,
             quant_dias=quant_dias,
-            melhor_dia=melhor_dia
         )
+        cartao.save()
 
         # Retorne para a página de cartões ou uma página de sucesso
         return redirect('financeiro:cartoes')  # Altere para o nome correto da URL que lista os cartões.
+    
 
     else:
         # Caso o método não seja POST, apenas renderiza a página do formulário

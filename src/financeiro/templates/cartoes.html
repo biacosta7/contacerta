@@ -12,30 +12,42 @@
 </div>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
     {% for cartao in cartoes %}
-        <div class="pt-3.5 pb-2 p-4 py-6 bg-gray-50 text-black rounded-[9px] border relative">
+        <div class="m-4 credit-card w-64 h-38 rounded-lg bg-gradient-to-r from-purple-800 to-purple-500 text-white p-4 flex flex-col justify-between shadow-lg">
+            <div class="bank-logo">
+            <img src="{% static 'assets/nubank-icon.png' %}" alt="Bank Logo" class="w-16 h-auto">
+            </div>
+            <div class="card-number text-lg font-bold tracking-widest">
+            •••• •••• •••• <span>{{ cartao.final }}</span>
+            </div>
+            <div class="card-footer flex justify-between items-center">
+            <div class="bank-name text-sm font-semibold uppercase">{{ cartao.nome }}</div>
+            </div>
+        </div>
+        <div>
+
+        {% comment %} <div class="pt-3.5 pb-2 p-4 py-6 bg-gray-50 text-black rounded-[9px] border relative">
             <div>
                 <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-lg">{{ obra.nome }}</h3>
+                    <h3 class="font-bold text-lg">{{ cartao.nome }}</h3>
                     <i id="dots-{{ forloop.counter }}" class="fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]" onclick="toggleDotsMenu(event, {{ forloop.counter }})"></i>
                 </div>
-                <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-1"></i>{{ obra.local }}</p>
-            </div>
-            <div class="pt-2 pb-2 text-right">
+                <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-1"></i>{{ cartao.final }}</p>
+            </div> {% endcomment %}
+            {% comment %} <div class="pt-2 pb-2 text-right">
                 <!-- botão de ir -->
                 <a href="{% url 'detalhe_obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-[#287F71] text-black p-3 rounded-full cursor-pointer hover:bg-[#4DBCAA]" style="color:rgb(255, 255, 255);"></i></a>
-            </div>
+            </div> 
             <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
                 <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>
                 <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})">Editar</button>
-            </div>
+            </div>{% endcomment %}
         </div>
     {% endfor %}
 </div>  
 {% include 'financeiro/modais/criar_cartao.html' %}
 <div>
-
 </div>
-<div>
+
 </div>
 <script>
     function toggleModal(action) {
@@ -50,5 +62,13 @@
         }
 
     }
+    $(document).ready(function () {
+        $('#vencimento').datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,     
+            changeYear: true     
+        });
+    });
+
 </script>
 {% endblock content %}

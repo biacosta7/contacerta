@@ -78,7 +78,7 @@ class Cartao(models.Model):
     final = models.CharField(max_length=4)
     vencimento = models.DateField()
     quant_dias = models.IntegerField()
-    melhor_dia = models.DateField() # vencimento - quant_dias
+    melhor_dia = models.DateField(blank=True, null=True) # vencimento - quant_dias
 
     def __str__(self):
         return f"{self.final} | {self.nome} | {self.banco}"
