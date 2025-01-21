@@ -33,6 +33,6 @@ def bancos(request):
     return {'bancos': bancos}
 
 def cartoes(request):
-    cartoes = Banco.objects.all().values()
+    cartoes = Cartao.objects.all().values()
 
     return {'cartoes': cartoes}

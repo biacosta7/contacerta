@@ -37,17 +37,17 @@
 
                 <!-- Divs que serão mostradas/ocultadas com base na seleção -->
                 <div id="cartaoSection" class="hidden mt-4">
-                    <div>
+                    <div class="mb-4">
                         <label for="cartao" class="block mb-2 text-sm font-medium text-gray-900">Cartão*</label>
-                        <select id="cartao" name="cartao" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none mb-2">
-                            <option value="" selected disabled hidden>Selecione o cartao</option>
+                        <select id="cartao" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 mb-2">
+                            <option value="" selected disabled hidden>Selecione o cartão</option>
                             {% for cartao in cartoes %}
-                            <option class="" value="{{cartao.id}}">{{cartao.nome}}</option> 
-                            {% comment %} adicionar formato Nome (final) {% endcomment %}
+                            <option value="{{ cartao.id }}">{{cartao.final}} - {{ cartao.nome }}</option>
                             {% endfor %}
                             
                         </select>
                     </div>
+                    
                     <div class="flex space-x-4 justify-between w-full">
                         <div>
                             <label for="quant_parcelas" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de parcelas*</label>
@@ -107,7 +107,7 @@
                     <div>
                         <label for="banco" class="block mb-2 text-sm font-medium text-gray-900">Banco*</label>
                         <select id="banco" name="banco" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
-                            <option value="" selected disabled hidden>Selecione o banco</option>
+                            <option value="" selected disabled hidden></option>
                             <option value="banco_teste">Banco Teste</option>
                             {% for banco in bancos %}
                             <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
@@ -175,6 +175,9 @@
                     <textarea id="observacao" name="observacao" rows="4" class="block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>
                 </div>
 
+
+                
+                
             </div>
             <button type="submit" class=" mt-4 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Cadastrar</button>         
         </form>
@@ -208,4 +211,25 @@
             }
         }
     }
+
+    
+    new TomSelect("#cartao", {
+        allowEmptyOption: false,
+        maxItems: 1,   
+        render:{
+            no_results: function( data, escape ){
+                return '<div class="no-results">Nenhum cartão encontrado</div>';
+            },
+        }
+    });
+
+    
 </script>
+<style>
+    .ts-control {
+        border: none !important;
+        width: 100% !important;
+        background-color: transparent !important;
+        padding: 0 !important;
+    }
+</style>
