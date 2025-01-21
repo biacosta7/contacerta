@@ -1,59 +1,111 @@
-from datetime import datetime
 from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.http import HttpResponse
+from .models import Despesa, Cartao, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra
 from django.contrib.contenttypes.models import ContentType
-from .models import Despesa
 
 def criar_despesa(request):
     if request.method == 'POST':
-        # Obtenção de campos do formulário
         descricao = request.POST.get('descricao')
         forma_pag = request.POST.get('forma_pag')
-        data = request.POST.get('data')
-        valor = request.POST.get('valor')
-        observacao = request.POST.get('observacao', '')  # Campo opcional
         status = request.POST.get('status')
-        data_pagamento = request.POST.get('data_pagamento')  # Pode ser vazio
+        valor = request.POST.get('valor')
+        observacao = request.POST.get('observacao', '')
         modalidade = request.POST.get('modalidade')
-        tipo_local_id = request.POST.get('tipo_local')  # ContentType ID
-        id_local = request.POST.get('id_local')  # ID do local associado
 
-        # Validações básicas
-        if not descricao or not forma_pag or not data or not valor or not status or not modalidade or not tipo_local_id or not id_local:
-            messages.error(request, 'Todos os campos obrigatórios devem ser preenchidos.')
-            return redirect('criar_despesa')
+        # Obtendo os dados de cartão, boleto, pix e espécie, caso existam
+        cartao_id = request.POST.get('cartao')
+        recipiente = request.POST.get('recipiente')
+        quant_boletos = request.POST.get('quant_boletos')
+        vencimento = request.POST.get('vencimento')
+        banco = request.POST.get('banco')
+        num_notafiscal = request.POST.get('num_notafiscal')
+        quant_parcelas = request.POST.get('quant_parcelas')
+        valor_parcela = request.POST.get('valor_parcela')
 
-        try:
-            # Conversão de valores
-            tipo_local = ContentType.objects.get(id=tipo_local_id)
-            valor = float(valor)  # Certificar que o valor é numérico
-            data = datetime.strptime(data, '%Y-%m-%d').date()
+        # O tipo de local é passado por meio do ContentType, você precisará obter
+        tipo_local = request.POST.get('tipo_local')
+        id_local = request.POST.get('id_local')
+        local = ContentType.objects.get(id=tipo_local).get_object_for_this_type(id=id_local)
 
-            # Validação do status e data de pagamento
-            if status == 'pago' and not data_pagamento:
-                messages.error(request, 'Uma despesa marcada como "Pago" deve ter uma data de pagamento.')
-                return redirect('criar_despesa')
-            data_pagamento = datetime.strptime(data_pagamento, '%Y-%m-%d').date() if data_pagamento else None
+        # Criando a despesa
+        despesa = Despesa.objects.create(
+            nome=descricao,
+            forma_pag=forma_pag,
+            data=request.POST.get('data'),
+            valor=valor,
+            observacao=observacao,
+            status=status,
+            modalidade=modalidade,
+            tipo_local=ContentType.objects.get(id=tipo_local),
+            id_local=id_local,
+            local=local
+        )
 
-            # Criação da despesa
-            despesa = Despesa.objects.create(
-                descricao=descricao,
-                forma_pag=forma_pag,
-                data=data,
-                valor=valor,
-                observacao=observacao,
-                status=status,
-                data_pagamento=data_pagamento,
-                modalidade=modalidade,
-                tipo_local=tipo_local,
-                id_local=id_local,
+        # Dependendo da forma de pagamento, você pode querer criar instâncias de modelos relacionados
+        if forma_pag == 'cartao':
+            cartao = Cartao.objects.get(id=cartao_id)
+            NotaCartao.objects.create(
+                cartao=cartao,
+                despesa=despesa,
+                quant_parcelas=quant_parcelas,
+                valor_parcela=valor_parcela
             )
-            messages.success(request, 'Despesa criada com sucesso.')
-            return redirect('locais:home')
-        except ContentType.DoesNotExist:
-            messages.error(request, 'O tipo de local especificado é inválido.')
-        except ValueError:
-            messages.error(request, 'Certifique-se de que os valores numéricos e datas estão no formato correto.')
+        elif forma_pag == 'boleto':
+            NotaBoleto.objects.create(
+                despesa=despesa,
+                recipiente=recipiente,
+                quant_boletos=quant_boletos,
+                vencimento=vencimento,
+                num_notafiscal=num_notafiscal,
+                banco=banco
+            )
+        elif forma_pag == 'pix':
+            NotaPix.objects.create(
+                despesa=despesa,
+                banco=banco
+            )
+        elif forma_pag == 'especie':
+            NotaEspecie.objects.create(
+                despesa=despesa,
+                pagador=recipiente
+            )
 
-    # Renderizar formulário
-    return redirect('locais:home')
+        # Retorne para a página de despesas ou uma página de sucesso
+        return redirect('locais:home')  # Altere para o nome correto da URL que lista as despesas.
+
+    else:
+        # Caso o método não seja POST, apenas renderiza a página do formulário
+        return render(request, 'financeiro/criar_despesa.html', {
+            'cartoes': Cartao.objects.all(),
+            'bancos': ['Banco Teste', 'Outro Banco']  # Lista de bancos, você pode ajustar isso conforme sua necessidade
+        })
+
+def criar_cartao(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        banco = request.POST.get('banco')
+        final = request.POST.get('final')
+        vencimento = request.POST.get('vencimento')
+        quant_dias = request.POST.get('quant_dias')
+        melhor_dia = request.POST.get('melhor_dia')
+
+        # Criando o cartão
+        cartao = Cartao.objects.create(
+            nome=nome,
+            banco=banco,
+            final=final,
+            vencimento=vencimento,
+            quant_dias=quant_dias,
+            melhor_dia=melhor_dia
+        )
+
+        # Retorne para a página de cartões ou uma página de sucesso
+        return redirect('financeiro:cartoes')  # Altere para o nome correto da URL que lista os cartões.
+
+    else:
+        # Caso o método não seja POST, apenas renderiza a página do formulário
+        return render(request, 'financeiro/modais/criar_cartao.html')
+    
+def ver_cartoes(request):
+    cartoes = Cartao.objects.all()
+    return render(request, 'cartoes.html', {'cartoes': cartoes})

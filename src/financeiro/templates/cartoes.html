@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Cartões{% endblock %}
+{% block content %}
+<div class="flex space-x-4 items-center justify-between">
+    <h1 class="text-3xl font-semibold">Cartões</h1>
+    <button id="addObraBtn" class="bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="toggleModal('criarCartao')">
+        Cadastrar Cartão
+    </button>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+    {% for cartao in cartoes %}
+        <div class="pt-3.5 pb-2 p-4 py-6 bg-gray-50 text-black rounded-[9px] border relative">
+            <div>
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-lg">{{ obra.nome }}</h3>
+                    <i id="dots-{{ forloop.counter }}" class="fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]" onclick="toggleDotsMenu(event, {{ forloop.counter }})"></i>
+                </div>
+                <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-1"></i>{{ obra.local }}</p>
+            </div>
+            <div class="pt-2 pb-2 text-right">
+                <!-- botão de ir -->
+                <a href="{% url 'detalhe_obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-[#287F71] text-black p-3 rounded-full cursor-pointer hover:bg-[#4DBCAA]" style="color:rgb(255, 255, 255);"></i></a>
+            </div>
+            <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
+                <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>
+                <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})">Editar</button>
+            </div>
+        </div>
+    {% endfor %}
+</div>  
+{% include 'financeiro/modais/criar_cartao.html' %}
+<div>
+
+</div>
+<div>
+</div>
+<script>
+    function toggleModal(action) {
+        const modalCriarCartao = document.getElementById('modalCriarCartao');
+
+        if (action === 'criarCartao') {
+            modalCriarCartao.classList.toggle('hidden');
+            {% comment %} ToBRCurrency('valorInicialObra2', 0); {% endcomment %}
+            document.getElementById('formCriarCartao').reset();
+        } else if (action === 'fechar') {
+            modalCriarCartao.classList.add('hidden');
+        }
+
+    }
+</script>
+{% endblock content %}
