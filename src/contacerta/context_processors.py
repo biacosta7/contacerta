@@ -1,6 +1,7 @@
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from locais.models import Obra
+from financeiro.models import Cartao, Banco
 from datetime import datetime
 
 def info_obras(request):
@@ -25,3 +26,13 @@ def info_obras(request):
     return {
         'obras_json': json.dumps(list(obras), cls=DjangoJSONEncoder),
     }
+
+def bancos(request):
+    bancos = Banco.objects.all().values()
+
+    return {'bancos': bancos}
+
+def cartoes(request):
+    cartoes = Banco.objects.all().values()
+
+    return {'cartoes': cartoes}

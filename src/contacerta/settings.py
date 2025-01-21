@@ -68,6 +68,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'contacerta.context_processors.info_obras',
+                'contacerta.context_processors.bancos',
+                'contacerta.context_processors.cartoes',
             ],
         },
     },

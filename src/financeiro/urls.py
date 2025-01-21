@@ -4,9 +4,14 @@ from . import views
 app_name = 'financeiro'
 
 urlpatterns = [
-    path('/criar/despesa/', views.criar_despesa, name='criar_despesa'),
+    # Despesas
+    path('/despesa/criar/', views.criar_despesa, name='criar_despesa'),
+
+    # Cartões
     path('cartoes/', views.ver_cartoes, name='cartoes'),
     path('cartoes/criar/', views.criar_cartao, name='criar_cartao'),
-    path('banco/criar/', views.criar_banco, name='criar_banco'),
 
+    # Bancos
+    #path('banco/', views.ver_banco, name='banco'),
+    path('banco/criar/', views.criar_banco, name='criar_banco'),
 ]
