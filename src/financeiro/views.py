@@ -3,7 +3,7 @@ from decimal import Decimal, InvalidOperation
 from pyexpat.errors import messages
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Despesa, Cartao, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra
+from .models import Despesa, Cartao, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
 from django.contrib.contenttypes.models import ContentType
 
 def criar_despesa(request):
@@ -123,3 +123,13 @@ def criar_cartao(request):
 def ver_cartoes(request):
     cartoes = Cartao.objects.all()
     return render(request, 'cartoes.html', {'cartoes': cartoes})
+
+
+def criar_banco(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        banco = Banco.objects.create(nome=nome)
+        banco.save()
+        return redirect('financeiro:cartoes')
+    else:
+        return render(request, 'financeiro/modais/criar_banco.html')

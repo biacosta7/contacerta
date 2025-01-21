@@ -16,7 +16,11 @@
 <div class="container mx-12 mt-8">
     <div class="flex space-x-4 items-center justify-between">
         <h1 class="text-3xl font-semibold">Obras</h1>
-        <button id="addObraBtn" class="mt-4 bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="toggleModal('criar')">
+        <button id="addObraBtn" class="mt-4 bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+                    modalName: 'modalCriarObra',
+                    formId: 'formCriarObra',
+                    currencyFields: ['valorInicialObra2']
+                });">
             Cadastrar Obra
         </button>
     </div>
@@ -51,25 +55,11 @@
 </div>
 
 <script>
-    function toggleModal(action) {
-        const modal = document.getElementById('modalCriarObra');
-
-        if (action === 'criar') {
-            modal.classList.toggle('hidden');
-            ToBRCurrency('valorInicialObra2', 0);
-            document.getElementById('formCriarObra').reset();
-        } else if (action === 'fechar') {
-            modal.classList.add('hidden');
-        }
-
-    }
-
     function obraModal(action, id) {
         const infoModal = document.getElementById('modalInfoObra');
         const editarModal = document.getElementById('modalEditarObra');
         const deletarModal = document.getElementById('modalDeletarObra');
     
-        // Use 'id' diretamente, não precisa de 'obraId'
         var obraId = id;
     
         if (action === 'infoObra') {

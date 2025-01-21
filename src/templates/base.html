@@ -59,6 +59,35 @@
             });
         }
 
+        //Modal de formulário
+        function modalformCriacao(action, { modalName, formId, hiddenClass = 'hidden', currencyFields = [] } = {}) {
+            const modal = document.getElementById(modalName);
+            const form = formId ? document.getElementById(formId) : null;
+        
+            if (!modal) {
+                console.error(`Modal com ID "${modalName}" não encontrado.`);
+                return;
+            }
+        
+            if (action === 'abrir') {
+                modal.classList.toggle(hiddenClass);
+                if (form) form.reset();
+        
+                // Se currencyFields for um array e contiver valores, aplica ToBRCurrency
+                if (Array.isArray(currencyFields) && currencyFields.length > 0) {
+                    currencyFields.forEach(field => {
+                        const element = document.getElementById(field);
+                        if (element) ToBRCurrency(field, 0);
+                    });
+                }
+            } else if (action === 'fechar') {
+                modal.classList.add(hiddenClass);
+            } else {
+                console.warn(`Ação "${action}" não reconhecida.`);
+            }
+        }
+        
+
     </script>
     {% block script %}
     {% endblock script %}

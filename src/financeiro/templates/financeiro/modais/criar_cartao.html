@@ -3,7 +3,7 @@
     <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
         <div class="flex space-x-8 justify-between items-center mb-4">
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Novo Cartão</h5>
-            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="toggleModal('fechar')"></i>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarCartao'});"></i>
         </div>
         <form method="POST" id="formCriarCartao" action="{% url 'financeiro:criar_cartao' %}">
             {% csrf_token %}
@@ -50,7 +50,7 @@
                     <label for="quant_dias" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de dias para o melhor dia</label>
                     <input type="number" id="quant_dias" placeholder="15" name="quant_dias" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
                 </div>
-                <div class="flex-1 mb-2">
+                {% comment %} <div class="flex-1 mb-2">
                     <label for="melhor_dia" class="block mb-2 text-sm font-medium text-gray-900">Melhor dia</label>
                     <input 
                         type="number" 
@@ -61,7 +61,7 @@
                         max="31" 
                         class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" 
                         >
-                </div>
+                </div> {% endcomment %}
 
             </div>
             <button type="submit" class=" mt-4 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Cadastrar</button>         

@@ -4,12 +4,43 @@
 
 {% block title %}Cartões{% endblock %}
 {% block content %}
-<div class="flex space-x-4 items-center justify-between">
-    <h1 class="text-3xl font-semibold">Cartões</h1>
-    <button id="addObraBtn" class="bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="toggleModal('criarCartao')">
-        Cadastrar Cartão
-    </button>
+<div class="border-b-4 h-full mb-10">
+    <div class="flex flex-col h-full w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl mx-auto">
+        <div class="flex w-full p-4 items-center">
+            <!-- Ícone de seta para voltar -->
+            <a href={% url 'home' %}><i class="fa-solid fa-arrow-left fa-xl p-3 pt-3.5 pb-3.5 ml-4 mr-10 flex-grow-0"></i></a>
+            <div class="flex space-x-4 items-center justify-between">
+                <h1 class="text-3xl font-semibold">Cartões</h1>
+                <button id="addObraBtn" class="bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+                            modalName: 'modalCriarCartao',
+                            formId: 'formCriarCartao'
+                        });">
+                    Cadastrar Cartão
+                </button>
+            </div>
+            <!-- Ícone de opções no canto direito -->
+            <i class="fa-solid fa-ellipsis-vertical fa-xl p-3 pt-3.5 pb-3.5 rounded-[9px] mr-4 flex-grow-0"></i>
+        </div>
+        
+
+        <div class="flex mt-4 items-center justify-center text-center w-full space-x-20">
+            <button id="geralBtn" class="px-8 py-2 text-center bg-gray-200 rounded-t-[9px]" onclick="sectionModal('geralSection')">Geral</button>
+            <button id="aditivosBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('aditivosSection')">Aditivos</button>
+            <button id="adiabmBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('adiabmSection')">Adiantamentos/BMs</button>
+            <button id="despesasBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('despesasSection')">Despesas</button>
+        </div>
+    </div>
 </div>
+
+
+
+<button id="addObraBtn" class="bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+                            modalName: 'modalCriarBanco',
+                            formId: 'formCriarBanco'
+                        });">
+    Cadastrar Banco
+</button>
+
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
     {% for cartao in cartoes %}
         <div class="m-4 credit-card w-64 h-38 rounded-lg bg-gradient-to-r from-purple-800 to-purple-500 text-white p-4 flex flex-col justify-between shadow-lg">
@@ -45,6 +76,8 @@
     {% endfor %}
 </div>  
 {% include 'financeiro/modais/criar_cartao.html' %}
+{% include 'financeiro/modais/criar_banco.html' %}
+
 <div>
 </div>
 
@@ -62,6 +95,29 @@
         }
 
     }
+    $(document).ready(function () {
+        $('#vencimento').datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,     
+            changeYear: true     
+        });
+    });
+
+
+    function formModal(action, openaction, modalName, formId) {
+        const modal = document.getElementById(modalName);
+
+        if (action === openaction) {
+            modal.classList.toggle('hidden');
+
+            document.getElementById(formId).reset();
+
+        } else if (action === 'fechar') {
+            modal.classList.add('hidden');
+        }
+
+    }
+
     $(document).ready(function () {
         $('#vencimento').datepicker({
             dateFormat: 'dd/mm/yy',

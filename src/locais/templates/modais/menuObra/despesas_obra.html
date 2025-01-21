@@ -36,7 +36,11 @@
                     <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="mr-1 fa-solid fa-filter"></i>
                         Filtrar
                     </button>
-                    <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="toggleModal('criarDespesa')">
+                    <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+                                modalName: 'modalCriarDespesa',
+                                formId: 'formCriarDespesa',
+                                currencyFields: ['valor_parcela', 'valor_despesa']
+                            });">
                         Adicionar
                     </button>                    
                 </div>
@@ -103,16 +107,4 @@
     {% include 'financeiro/modais/criar_despesa.html' %}
 </div>
 <script>
-    function toggleModal(action) {
-        const modalCriarDespesa = document.getElementById('modalCriarDespesa');
-
-        if (action === 'criarDespesa') {
-            modalCriarDespesa.classList.toggle('hidden');
-            {% comment %} ToBRCurrency('valorInicialObra2', 0); {% endcomment %}
-            document.getElementById('formCriarDespesa').reset();
-        } else if (action === 'fechar') {
-            modalCriarDespesa.classList.add('hidden');
-        }
-
-    }
 </script>

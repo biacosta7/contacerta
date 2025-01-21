@@ -2,11 +2,17 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
+class Banco(models.Model):
+    nome = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nome
+
 class Adiantamento(models.Model):
     nome = models.CharField(max_length=100)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     data = models.DateField()
-    banco = models.CharField(max_length=100)
+    banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
     observacao = models.TextField(blank=True)
     obra = models.ForeignKey('locais.Obra', on_delete=models.CASCADE)
 
@@ -15,7 +21,7 @@ class Aditivo(models.Model):
     valor = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     dias = models.IntegerField(null=True, blank=True)
     data = models.DateField()
-    banco = models.CharField(max_length=100)
+    banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
     modalidade = models.CharField(max_length=10, choices=[
         ('prazo', 'Prazo'),
         ('valor', 'Valor'),
@@ -30,7 +36,7 @@ class BM(models.Model):
     nome = models.CharField(max_length=100)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     data = models.DateField()
-    banco = models.CharField(max_length=100)
+    banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
     codigo = models.CharField(max_length=50, blank=True)
     observacao = models.TextField(blank=True)
     obra = models.ForeignKey('locais.Obra', on_delete=models.CASCADE)  
@@ -74,7 +80,7 @@ class Despesa(models.Model):
 
 class Cartao(models.Model):
     nome = models.CharField(max_length=100)
-    banco = models.CharField(max_length=100)
+    banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
     final = models.CharField(max_length=4)
     vencimento = models.DateField()
     quant_dias = models.IntegerField()
@@ -93,10 +99,10 @@ class NotaBoleto(Despesa):
     quant_boletos = models.IntegerField()
     vencimento = models.DateField()
     num_notafiscal = models.CharField(max_length=50)
-    banco = models.CharField(max_length=100)
+    banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
 
 class NotaPix(Despesa):
-    banco = models.CharField(max_length=100)
+    banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
 
 class NotaEspecie(Despesa):
     pagador = models.CharField(max_length=100)
@@ -122,3 +128,5 @@ class MaoDeObra(Despesa):
 
     def __str__(self):
         return f"{self.funcionario} - {self.categoria}"
+    
+

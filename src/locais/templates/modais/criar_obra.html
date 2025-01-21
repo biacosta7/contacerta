@@ -4,7 +4,7 @@
     <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
         <div class="flex space-x-8 justify-between items-center mb-4">
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Nova Obra</h5>
-            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="toggleModal('fechar')"></i>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarObra'});"></i>
         </div>
         <form method="POST" id="formCriarObra" action="{% url 'criar_obra' %}">
             {% csrf_token %}

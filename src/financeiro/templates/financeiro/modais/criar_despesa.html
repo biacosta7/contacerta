@@ -4,7 +4,7 @@
     <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
         <div class="flex space-x-8 justify-between items-center mb-4">
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Nova Despesa</h5>
-            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="toggleModal('fechar')"></i>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarDespesa'});"></i>
         </div>
         <form method="POST" id="formCriarDespesa" action="{% url 'financeiro:criar_despesa' %}">
             {% csrf_token %}
@@ -160,8 +160,6 @@
                 </div>
 
 
-                
-                
                 <div>
                     <label for="modalidade" class="block mb-2 text-sm font-medium text-gray-900">Modalidade*</label>
                     <select id="modalidade" name="modalidade" class=" border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
