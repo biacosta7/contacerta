@@ -83,17 +83,28 @@
                             {{ despesa.valor }}
                         </td>
                         <td class="px-6 py-4">
-                            {% if despesa.status == 'a_pagar' %}
-                                À pagar
+                            <form action="{% url 'financeiro:atualizar_status' tipo='obra' id=obra.id despesa_id=despesa.id %}" method=POST>
+                                {% csrf_token %}
+                                {% if despesa.status == 'a_pagar' %}
+                                <button type="submit" 
+                                        class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2 text-center me-2 mb-2">
+                                    À pagar
+                                </button>
+                            
                             {% elif despesa.status == 'pago' %}
-                                Pago
+                                <button type="submit" 
+                                        class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2 text-center me-2 mb-2">
+                                    Pago
+                                </button>
                             {% endif %}
+                            </form>
+                            
                         </td>
                         <td class="px-6 py-4">
                             {{ despesa.data }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ despesa.observacao }}
+                            {{ despesa.observacao|default:'-' }}
                         </td>
                         <td class="px-6 py-4 text-right">
                             <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
@@ -111,3 +122,5 @@
 </div>
 
 {% include 'financeiro/modais/criar_despesa.html' %}
+<script>
+</script>

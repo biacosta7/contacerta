@@ -6,6 +6,7 @@ app_name = 'financeiro'
 urlpatterns = [
     # Despesas
     path('detalhes/<str:tipo>/<int:id>/criar-despesa/', views.criar_despesa, name='criar_despesa'),
+    path('detalhes/<str:tipo>/<int:id>/atualizar-status/<int:despesa_id>/', views.atualizar_status, name='atualizar_status'),
 
     # Cartões
     path('cartoes/', views.ver_cartoes, name='cartoes'),

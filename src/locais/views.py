@@ -1,4 +1,5 @@
 import locale
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from locais.models import Obra, Escritorio, Despesa
@@ -62,7 +63,7 @@ def criar_obra(request):
 @login_required
 def listar_obras(request):
     obras = Obra.objects.all()
-    return render(request, 'home.html', {'obras': obras})
+    return render(request, 'locais/home.html', {'obras': obras})
 
 @login_required
 def editar_obra(request, obra_id):

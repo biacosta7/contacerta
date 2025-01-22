@@ -222,3 +222,22 @@ def criar_banco(request):
     
     else:
         return render(request, 'financeiro/modais/criar_banco.html')
+    
+
+def atualizar_status(request, tipo, id, despesa_id):
+    # Pega a despesa com o id fornecido, ou retorna 404 se não existir
+    despesa = get_object_or_404(Despesa, id=despesa_id)
+    
+    # Alterna o status da despesa entre 'a_pagar' e 'pago'
+    if despesa.status == 'a_pagar':
+        despesa.status = 'pago'
+    else:
+        despesa.status = 'a_pagar'
+    
+    # Salva a despesa com o novo status
+    despesa.save()
+    
+    if tipo == 'obra':
+        return redirect('locais:detalhe_obra', tipo='obra', id=id)
+    else:
+        return redirect('locais:detalhe_escritorio', tipo='escritorio', id=id)

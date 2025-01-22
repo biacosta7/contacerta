@@ -24,7 +24,7 @@
             Cadastrar Obra
         </button>
     </div>
-    {% include "modais/criar_obra.html" %}
+    {% include "locais/modais/criar_obra.html" %}
     
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {% for obra in obras %}
@@ -38,16 +38,16 @@
                 </div>
                 <div class="pt-2 pb-2 text-right">
                     <!-- botão de ir -->
-                    <a href="{% url 'detalhe_obra' 'obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-[#287F71] text-black p-3 rounded-full cursor-pointer hover:bg-[#4DBCAA]" style="color:rgb(255, 255, 255);"></i></a>
+                    <a href="{% url 'locais:detalhe_obra' 'obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-[#287F71] text-black p-3 rounded-full cursor-pointer hover:bg-[#4DBCAA]" style="color:rgb(255, 255, 255);"></i></a>
                 </div>
                 <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
                     <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>
                     <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})">Editar</button>
                 </div>
             </div>
-            {% include "modais/editar_obra.html" %}
-            {% include "modais/info_obra.html" %}
-            {% include "modais/deletar_obra.html" %}
+            {% include "locais/modais/editar_obra.html" %}
+            {% include "locais/modais/info_obra.html" %}
+            {% include "locais/modais/deletar_obra.html" %}
         {% endfor %}
     </div>  
     
