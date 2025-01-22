@@ -2,7 +2,7 @@
 <div class="flex space-x-8 justify-between mb-4">
     <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
         <h3 class="text-base font-medium">Custo Total</h3>
-        <span class="text-2xl font-bold">R$ {{ obra.custo_total|default:"0" }}</span>
+        <span class="text-2xl font-bold">{{ obra.custo_total_formatado|default:"0" }}</span>
     </div>
     <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
         <a class="absolute top-4 right-4 text-right">
@@ -10,7 +10,7 @@
         </a>
         <div>
             <h3 class="text-base font-medium block">Débito</h3>
-            <span class="text-2xl font-semibold block">R$ {{ obra.debito_mensal|default:"0" }}</span>
+            <span class="text-2xl font-semibold block">{{ obra.debito_mensal_formatado|default:"0" }}</span>
         </div>
     </div>
     <a href={% url 'financeiro:cartoes' %}><div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
@@ -117,7 +117,7 @@
 
     <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
         <h3 class="text-base font-medium block">Total <span class="text-base font-light">(filtro)</span></h3>
-        <span class="text-2xl font-semibold block">R$ {{ obra.debito_mensal|default:"0" }}</span>
+        <span class="text-2xl font-semibold block">{{ obra.debito_mensal_formatado|default:"0" }}</span>
     </div>
 </div>
 

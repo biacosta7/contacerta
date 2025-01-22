@@ -17,13 +17,17 @@ class Obra(models.Model):
     prazo_inicial = models.DateField()
     prazo_atual = models.DateField(blank=True, null=True) #prazo_inicial + dias de aditivo do tipo prazo
 
+    # Função para calcular o valor total
     def calcular_valor_total(self):
         aditivos = Aditivo.objects.filter(obra=self)
         total_aditivos = sum(aditivo.valor for aditivo in aditivos)
         
-        self.valor_total = self.valor_inicial - total_aditivos
+        # Verifica se valor_inicial e total_aditivos não são None
+        self.valor_total = self.valor_inicial - total_aditivos if self.valor_inicial is not None else 0
         self.save()
+        return self.valor_total
     
+    # Função para calcular o valor a receber
     def calcular_valor_receber(self):
         adiantamentos = Adiantamento.objects.filter(obra=self)
         total_adiantamentos = sum(adiantamento.valor for adiantamento in adiantamentos)
@@ -31,8 +35,10 @@ class Obra(models.Model):
         bms = BM.objects.filter(obra=self)
         total_bms = sum(bm.valor for bm in bms)
         
-        self.valor_receber = self.valor_total - (total_adiantamentos + total_bms)
+        # Verifica se valor_total, total_adiantamentos e total_bms não são None
+        self.valor_receber = (self.valor_total or 0) - (total_adiantamentos + total_bms)
         self.save()
+        return self.valor_receber
     
     def calcular_debito_geral(self):
         despesas_gerais = Despesa.objects.filter(
@@ -44,11 +50,11 @@ class Obra(models.Model):
 
         self.debito_geral = total_despesas_gerais
         self.save()
+        return self.debito_geral
 
     def calcular_debito_mensal(self, mes=None, ano=None):
         hoje = date.today()
 
-        # Se mês ou ano não forem passados, utiliza o mês e ano atual
         mes = mes if mes else hoje.month
         ano = ano if ano else hoje.year
 
@@ -62,6 +68,7 @@ class Obra(models.Model):
         total_mensal = sum(despesa.valor for despesa in despesas_mensais)
         self.debito_mensal = total_mensal
         self.save()
+        return self.debito_mensal
 
     def calcular_custo_total(self):
         despesas = Despesa.objects.filter(
@@ -72,6 +79,7 @@ class Obra(models.Model):
 
         self.custo_total = total_despesas
         self.save()
+        return self.custo_total
     
     def calcular_prazo_atual(self):
         aditivos = Aditivo.objects.filter(obra=self, modalidade='prazo')
@@ -81,10 +89,12 @@ class Obra(models.Model):
         if self.prazo_inicial:
             self.prazo_atual = self.prazo_inicial + timedelta(days=total_dias_aditivos)
             self.save()
+        return self.prazo_atual
 
     def __str__(self):
         return self.nome
 
+        
 class Escritorio(models.Model):
     nome = models.CharField(max_length=100)
     email = models.EmailField()

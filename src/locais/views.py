@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
 
 def formatar_valor(valor):
+    if valor is None:
+        valor = 0  # Substitua por 0 ou outro valor desejado
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 
@@ -134,6 +136,22 @@ def detalhar_obra(request, tipo, id):
         despesa_dict = despesa.__dict__.copy()  # Converte o objeto em dicionário
         despesa_dict['valor'] = formatar_valor(despesa.valor)  # Formata o valor
         despesas_formatadas.append(despesa_dict)
+
+        # Calcula os valores para a obra, mas não formata aqui
+        obra.debito_mensal = obra.calcular_debito_mensal()
+        obra.valor_total = obra.calcular_valor_total()
+        obra.valor_receber = obra.calcular_valor_receber()
+        obra.debito_geral = obra.calcular_debito_geral()
+        obra.custo_total = obra.calcular_custo_total()
+        obra.prazo_atual = obra.calcular_prazo_atual()
+
+        # Formata os valores para exibição
+        obra.debito_mensal_formatado = formatar_valor(obra.debito_mensal)
+        obra.valor_total_formatado = formatar_valor(obra.valor_total)
+        obra.valor_receber_formatado = formatar_valor(obra.valor_receber)
+        obra.debito_geral_formatado = formatar_valor(obra.debito_geral)
+        obra.custo_total_formatado = formatar_valor(obra.custo_total)
+        obra.prazo_atual_formatado = obra.prazo_atual  # Caso precise formatar, adicione a função de formatação
 
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
