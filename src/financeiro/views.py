@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 
 from locais.models import Obra, Escritorio
-from .models import Aditivo, Despesa, Cartao, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
+from .models import Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
 from django.contrib.contenttypes.models import ContentType
 
 import logging
@@ -161,9 +161,9 @@ def criar_despesa(request, tipo, id):
                 )
 
             if tipo == 'obra':
-                return redirect('locais:detalhe_obra', tipo='obra', id=id)
+                return redirect('locais:detalhe_obra', id=id)
             else:
-                return redirect('locais:detalhe_escritorio', tipo='escritorio', id=id)
+                return redirect('locais:detalhe_escritorio', id=id)
 
 
         except IntegrityError as e:
@@ -248,9 +248,9 @@ def atualizar_status(request, tipo, id, despesa_id):
     despesa.save()
     
     if tipo == 'obra':
-        return redirect('locais:detalhe_obra', tipo='obra', id=id)
+        return redirect('locais:detalhe_obra', id=id)
     else:
-        return redirect('locais:detalhe_escritorio', tipo='escritorio', id=id)
+        return redirect('locais:detalhe_escritorio', id=id)
     
 
 def criar_aditivo(request, tipo, id):
@@ -303,3 +303,20 @@ def criar_aditivo(request, tipo, id):
         return render(request, 'locais/detalhe_obra.html', {
             'obra': obra,
         })
+    
+def criar_fucionario(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        cargo = request.POST.get('cargo')
+
+        funcionario = Funcionario.objects.create(
+            nome=nome,
+            cargo=cargo
+        )
+        funcionario.save()
+
+        return redirect('locais:detalhe_obra', tipo='escritorio', id=id)
+
+    else:
+        return render(request, 'financeiro/modais/criar_funcionario.html')
+    

@@ -1,0 +1,155 @@
+
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Escritório{% endblock %}
+
+{% block content %}
+    <div class="fixed top-0 z-50 w-full border-b-4 bg-gray-800 flex space-x-4 items-center justify-between px-6 py-2 mb-12">
+        <img class="w-44 ml-2" src="{% static '/assets/contacerta-logoH.png' %}" alt="logo">
+        <div class="space-x-8">
+            <a href="{% url 'locais:detalhe_escritorio' 1 %}"><i class="fa-solid fa-building fa-xl" style="color: #7ED957;"></i></a>
+            <a><i class="fa-solid fa-wallet fa-xl" style="color: #7ED957;"></i></a>
+            <a><i class="fa-solid fa-circle-user fa-xl" style="color: #7ED957; padding-right: 30px;"></i></a>
+        </div>  
+    </div>
+  
+  <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-28 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0" aria-label="Sidebar">
+     <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
+        <ul class="space-y-4 font-medium">
+           <li class="bg-gray-100 rounded-lg">
+              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+                <i class="fa-solid fa-building fa-xl text-gray-600"></i>
+                 <span class="ms-3">Escritório</span>
+              </a>
+           </li>
+           <li>
+              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <i class="fa-solid fa-chart-simple text-gray-600"></i>
+                <span class="flex-1 ms-3 whitespace-nowrap">Despesas</span>
+              </a>
+           </li>
+           <li>
+              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <i class="fa-solid fa-users text-gray-600"></i>
+                <span class="flex-1 ms-3 whitespace-nowrap">Funcionários</span>
+              </a>
+           </li>
+           <li>
+              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <i class="fa-solid fa-building-columns text-gray-600"></i>
+                <span class="flex-1 ms-3 whitespace-nowrap">Bancos</span>
+              </a>
+           </li>
+           <li>
+              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+                <i class="fa-solid fa-wallet text-gray-600"></i>
+                <span class="flex-1 ms-3 whitespace-nowrap">Cartões</span>
+              </a>
+           </li>
+        </ul>
+     </div>
+  </aside>
+  
+  <div class="p-4 sm:ml-64">
+     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+        <div class="grid grid-cols-3 gap-4 mb-4">
+           <div class="flex items-center justify-center h-24 rounded bg-gray-50">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+           <div class="flex items-center justify-center h-24 rounded bg-gray-50">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+           <div class="flex items-center justify-center h-24 rounded bg-gray-50">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+        </div>
+        <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50">
+           <p class="text-2xl text-gray-400">
+              <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+              </svg>
+           </p>
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+        </div>
+        <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50">
+           <p class="text-2xl text-gray-400">
+              <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+              </svg>
+           </p>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
+              <p class="text-2xl text-gray-400">
+                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                 </svg>
+              </p>
+           </div>
+        </div>
+     </div>
+  </div>
+{% endblock content %}

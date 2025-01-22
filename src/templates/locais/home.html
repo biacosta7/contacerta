@@ -4,12 +4,12 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-<div class="border-b-4 flex space-x-4 items-center justify-between px-6 py-2 mb-8">
-    <img class="w-48 ml-2" src="{% static '/assets/ContaCertaHV.png' %}" alt="logo">
+<div class="border-b-4 bg-gray-800 flex space-x-4 items-center justify-between px-6 py-2 mb-8">
+    <img class="w-44 ml-2" src="{% static '/assets/contacerta-logoH.png' %}" alt="logo">
     <div class="space-x-8">
-        <a><i class="fa-solid fa-building fa-xl" style="color: #111729;"></i></a>
-        <a><i class="fa-solid fa-wallet fa-xl" style="color: #111729;"></i></a>
-        <a><i class="fa-solid fa-circle-user fa-xl" style="color: #111729; padding-right: 30px;"></i></a>
+        <a href="{% url 'locais:detalhe_escritorio' 1 %}"><i class="fa-solid fa-building fa-xl" style="color: #7ED957;"></i></a>
+        <a><i class="fa-solid fa-wallet fa-xl" style="color: #7ED957;"></i></a>
+        <a><i class="fa-solid fa-circle-user fa-xl" style="color: #7ED957; padding-right: 30px;"></i></a>
     </div>  
 </div>
 <h1 class="mt-4 text-3xl font-semibold text-center">Olá, {{ user.nome }}!</h1>
@@ -38,7 +38,7 @@
                 </div>
                 <div class="pt-2 pb-2 text-right">
                     <!-- botão de ir -->
-                    <a href="{% url 'locais:detalhe_obra' 'obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-[#287F71] text-black p-3 rounded-full cursor-pointer hover:bg-[#4DBCAA]" style="color:rgb(255, 255, 255);"></i></a>
+                    <a href="{% url 'locais:detalhe_obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-gray-700 text-black p-3 rounded-full cursor-pointer hover:bg-gray-500" style="color:rgb(255, 255, 255);"></i></a>
                 </div>
                 <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
                     <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>

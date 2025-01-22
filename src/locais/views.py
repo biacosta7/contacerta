@@ -126,7 +126,7 @@ def deletar_obra(request, obra_id):
     return redirect('locais:home')
 
 @login_required
-def detalhar_obra(request, tipo, id):
+def detalhar_obra(request, id):
     obra = get_object_or_404(Obra, id=id)
     despesas = Despesa.objects.filter(id_local=id)
     
@@ -155,7 +155,6 @@ def detalhar_obra(request, tipo, id):
 
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
-        'tipo': tipo,
         'despesas': despesas_formatadas,
     })
 
@@ -186,3 +185,17 @@ def criar_escritorio(request):
 
     return redirect('locais:home')
 
+
+
+def detalhar_escritorio(request, id=None):
+    escritorio = Escritorio.objects.first()
+    if escritorio:
+        escritorio_id = escritorio.id
+        escritorio = get_object_or_404(Escritorio, id=id)
+    else:
+        # Trate o caso em que não há nenhum escritório
+        escritorio_id = None
+    
+    return render(request, 'locais/detalhe_escritorio.html', {
+            'escritorio': escritorio,
+    })
