@@ -164,8 +164,37 @@
                         <option value="combustivel">Combustível</option>
                     </select>
                 </div>
+
+
                 {% comment %} abrir mais campos se mao_de_obra for selecionada {% endcomment %}
                 
+
+                <div id="maoDeObraSection" class="hidden mt-4">
+                    <div class="flex space-x-4 justify-between w-full">
+                        <div class="flex-1 mb-2">
+                            <label for="funcionario" class="block mb-2 text-sm font-medium text-gray-900">Funcionario*</label>
+                            <select id="funcionario" name="funcionario" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                                <option value="" selected disabled hidden>Selecione o funcionario</option>
+                                {% for funcionario in funcionarios %}
+                                <option class="" value="{{funcionario.id}}">{{funcionario.nome}}</option> 
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="flex-1 mb-2">
+                            <label for="categoria" class="block mb-2 text-sm font-medium text-gray-900">Categoria*</label>
+                            <select id="categoria" name="categoria" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                                <option value="" selected disabled hidden>Selecione a categoria</option>
+                                <option value="adiantamento">Adiantamento</option>
+                                <option value="passagem">Passagem</option>
+                                <option value="alimentacao">Alimentacao</option>
+                                <option value="reembolso">Reembolso</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 <div>
                     <label for="observacao" class="block mb-2 text-sm font-medium text-gray-900">Observação<span class="text-xs text-gray-400">  (opcional)</span></label>
                     <textarea id="observacao" name="observacao" rows="4" class="block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>
@@ -199,7 +228,7 @@
         });
     }
 
-    // Exemplo de evento de mudança (forma de pagamento)
+    // Evento de mudança (forma de pagamento)
     document.getElementById('forma_pag').addEventListener('change', function () {
         const value = this.value;
         const sectionMap = {
@@ -231,6 +260,42 @@
             }
         }
     });
+
+    function handleModalidadeChange(value) {
+        const maoDeObraSection = document.getElementById('maoDeObraSection');
+    
+        if (maoDeObraSection) {
+            const inputs = maoDeObraSection.querySelectorAll('input, select');
+    
+            if (value === 'mao_de_obra') {
+                // Tornar os campos obrigatórios e exibir a seção
+                inputs.forEach(input => {
+                    input.required = true;
+                });
+                maoDeObraSection.classList.remove('hidden');
+            } else {
+                // Remover obrigatoriedade e ocultar a seção
+                inputs.forEach(input => {
+                    input.required = false;
+                });
+                maoDeObraSection.classList.add('hidden');
+            }
+        }
+    }
+    
+    // Evento de mudança no select 'modalidade'
+    document.getElementById('modalidade').addEventListener('change', function () {
+        handleModalidadeChange(this.value);
+    });
+    
+    // Inicializar com o valor atual de 'modalidade' ao carregar a página
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalidadeSelect = document.getElementById('modalidade');
+        if (modalidadeSelect) {
+            handleModalidadeChange(modalidadeSelect.value);
+        }
+    });
+    
 
     
     new TomSelect("#cartao", {

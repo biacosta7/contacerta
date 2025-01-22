@@ -12,6 +12,10 @@ urlpatterns = [
     path('cartoes/', views.ver_cartoes, name='cartoes'),
     path('cartoes/criar/', views.criar_cartao, name='criar_cartao'),
 
+    # Aditivos
+    #path('aditivos/', views.ver_aditivos, name='aditivos'),
+    path('aditivos/criar/', views.criar_aditivo, name='criar_aditivo'),
+
     # Bancos
     #path('banco/', views.ver_banco, name='banco'),
     path('banco/criar/', views.criar_banco, name='criar_banco'),

@@ -33,7 +33,7 @@ def criar_obra(request):
                 data_final = None
         except ValueError:
             messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
-            return redirect('home')
+            return redirect('locais:home')
         
         # Limpar e converter o valor inicial para decimal
         valor_inicial = valor_inicial.replace('.', '').replace(',', '.')
@@ -42,11 +42,11 @@ def criar_obra(request):
             valor_inicial = Decimal(valor_inicial)
         except InvalidOperation:
             messages.error(request, 'Valor inicial inválido.')
-            return redirect('home')
+            return redirect('locais:home')
 
         if Obra.objects.filter(nome=nome).exists():
             messages.error(request, 'Já existe uma obra com esse nome.')
-            return redirect('home')
+            return redirect('locais:home')
 
         obra = Obra.objects.create(
             nome=nome,
@@ -58,9 +58,9 @@ def criar_obra(request):
         )
         obra.save()
         messages.success(request, 'Obra cadastrada com sucesso.')
-        return redirect('home')
+        return redirect('locais:home')
     
-    return render(request, 'home.html') 
+    return render(request, 'locais/home.html') 
 
 @login_required
 def listar_obras(request):
@@ -91,7 +91,7 @@ def editar_obra(request, obra_id):
                 data_final = None 
         except ValueError:
             messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
-            return redirect('home')
+            return redirect('locais:home')
         
         # Limpar e converter o valor inicial para decimal
         valor_inicial = valor_inicial.replace('.', '').replace(',', '.')
@@ -101,7 +101,7 @@ def editar_obra(request, obra_id):
         except InvalidOperation:
             print("erro valor inicial")
             messages.error(request, 'Valor inicial inválido.')
-            return redirect('home')
+            return redirect('locais:home')
 
         obra.nome = nome
         obra.local = local
@@ -112,10 +112,10 @@ def editar_obra(request, obra_id):
 
         obra.save()
         messages.success(request, 'Obra atualizada com sucesso.')
-        return redirect('home')
+        return redirect('locais:home')
 
     # Renderizar o template com os dados da obra para edição
-    return render(request, 'home.html', {'obra': obra})
+    return render(request, 'locais/home.html', {'obra': obra})
 
 @login_required
 def deletar_obra(request, obra_id):
@@ -123,7 +123,7 @@ def deletar_obra(request, obra_id):
 
     obra.delete()
     messages.success(request, 'Obra deletada com sucesso.')
-    return redirect('home')
+    return redirect('locais:home')
 
 @login_required
 def detalhar_obra(request, tipo, id):
@@ -171,7 +171,7 @@ def criar_escritorio(request):
 
         if Escritorio.objects.filter(nome=nome).exists():
             messages.error(request, 'Já existe um escritório com esse nome.')
-            return redirect('home')
+            return redirect('locais:home')
 
         escritorio = Escritorio.objects.create(
             nome=nome,
@@ -182,7 +182,7 @@ def criar_escritorio(request):
         )
         escritorio.save()
         messages.success(request, 'Escritório cadastrado com sucesso.')
-        return redirect('home')
+        return redirect('locais:home')
 
-    return redirect('home')
+    return redirect('locais:home')
 

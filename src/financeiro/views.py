@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 
 from locais.models import Obra, Escritorio
-from .models import Despesa, Cartao, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
+from .models import Aditivo, Despesa, Cartao, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
 from django.contrib.contenttypes.models import ContentType
 
 import logging
@@ -149,6 +149,17 @@ def criar_despesa(request, tipo, id):
                     pagador=request.POST.get('recipiente')
                 )
 
+            if modalidade == 'mao_de_obra':
+                logger.debug("Processando modalidade Mão de obra...")
+                funcionario_id = request.POST.get('funcionario')
+                funcionario = get_object_or_404(Banco, id=funcionario_id)
+
+                MaoDeObra.objects.create(
+                    **campos_despesa,
+                    funcionario=funcionario,
+                    categoria=request.POST.get('categoria')
+                )
+
             if tipo == 'obra':
                 return redirect('locais:detalhe_obra', tipo='obra', id=id)
             else:
@@ -167,7 +178,6 @@ def criar_despesa(request, tipo, id):
             'obra': obra,
             'despesas': despesas,
         })
-
 
 def criar_cartao(request):
     if request.method == 'POST':
@@ -241,3 +251,55 @@ def atualizar_status(request, tipo, id, despesa_id):
         return redirect('locais:detalhe_obra', tipo='obra', id=id)
     else:
         return redirect('locais:detalhe_escritorio', tipo='escritorio', id=id)
+    
+
+def criar_aditivo(request, tipo, id):
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        valor = request.POST.get('valor')
+        dias = request.POST.get('dias')
+        data = request.POST.get('data')
+        banco_id = request.POST.get('banco')
+        modalidade = request.POST.get('modalidade')
+        observacao = request.POST.get('observacao')
+        obra_id = request.POST.get('obra')
+
+        # Converter as datas do formato dd/mm/yyyy para yyyy-mm-dd
+        try:
+            data = datetime.strptime(data, '%d/%m/%Y').date()
+            
+        except ValueError:
+            messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
+            return redirect('locais:home')
+
+        valor = limpar_e_converter_valor(valor, request, redirect_url='locais:home')
+
+        # Obtenha a instância do banco ou retorne um erro 404 se não existir
+        banco = get_object_or_404(Banco, id=banco_id)
+
+        # Obtenha a instância da obra ou retorne um erro 404 se não existir
+        obra = get_object_or_404(Obra, id=obra_id)
+
+        # Criando o aditivo
+        aditivo = Aditivo.objects.create(
+            nome=nome,
+            valor=valor,
+            dias=dias,
+            data=data,
+            banco=banco,
+            observacao=observacao,
+            modalidade=modalidade,
+            obra=obra
+        )
+        aditivo.save()
+
+        if tipo == 'obra':
+            return redirect('locais:detalhe_obra', tipo='obra', id=id)
+        else:
+            return redirect('locais:detalhe_escritorio', tipo='escritorio', id=id)
+
+    else:
+        return render(request, 'locais/detalhe_obra.html', {
+            'obra': obra,
+        })
