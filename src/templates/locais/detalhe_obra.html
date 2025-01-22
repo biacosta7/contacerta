@@ -27,7 +27,7 @@
             </div>
         
             <!-- Ícone de opções no canto direito -->
-            <i class="fa-solid fa-ellipsis-vertical fa-xl p-3 pt-3.5 pb-3.5 rounded-[9px] mr-4 flex-grow-0"></i>
+            <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})"><i class="fa-solid fa-ellipsis-vertical fa-xl p-3 pt-3.5 pb-3.5 rounded-[9px] mr-4 flex-grow-0"></i></button>
         </div>
 
         <div class="flex mt-4 items-center justify-center text-center w-full space-x-20">
@@ -52,9 +52,10 @@
         {% include "locais/modais/menuObra/despesas_obra.html" %}
     </div>
 </div>
+{% include "locais/modais/editar_obra.html" %}
+{% include "locais/modais/deletar_obra.html" %}
 
 {% endblock content %}
-
 {% block script %}
 <script>    
     // Obtenha o caminho completo da URL
