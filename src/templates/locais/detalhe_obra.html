@@ -8,7 +8,7 @@
     <div class="flex flex-col h-full w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl mx-auto">
         <div class="flex w-full p-4 items-center">
             <!-- Ícone de seta para voltar -->
-            <a href={% url 'home' %}><i class="fa-solid fa-arrow-left fa-xl p-3 pt-3.5 pb-3.5 ml-4 mr-10 flex-grow-0"></i></a>
+            <a href={% url 'locais:home' %}><i class="fa-solid fa-arrow-left fa-xl p-3 pt-3.5 pb-3.5 ml-4 mr-10 flex-grow-0"></i></a>
             
             <!-- Div principal com flex-grow-1 -->
             <div class="flex flex-grow items-center">
@@ -41,16 +41,16 @@
 </div>
 <div class="flex flex-col w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl mx-auto justify-center items-center">
     <div id="geralSection" class="hidden"> <!-- Inicialmente visível -->
-        {% include "modais/menuObra/geral_obra.html" %}
+        {% include "locais/modais/menuObra/geral_obra.html" %}
     </div>
     <div id="aditivosSection" class="hidden">
-        {% include "modais/menuObra/aditivos.html" %}
+        {% include "locais/modais/menuObra/aditivos.html" %}
     </div>
     <div id="adiabmSection" class="hidden">
-        {% include "modais/menuObra/adiantamentos_bms.html" %}
+        {% include "locais/modais/menuObra/adiantamentos_bms.html" %}
     </div>
     <div id="despesasSection" class="block">
-        {% include "modais/menuObra/despesas_obra.html" %}
+        {% include "locais/modais/menuObra/despesas_obra.html" %}
     </div>
 </div>
 

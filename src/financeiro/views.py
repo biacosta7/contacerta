@@ -1,6 +1,7 @@
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from pyexpat.errors import messages
+from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 
@@ -12,7 +13,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def limpar_e_converter_valor(valor, request, redirect_url='home'):
+def limpar_e_converter_valor(valor, request, redirect_url='locais:home'):
     # Substituir separadores para o formato decimal
     valor = valor.replace('.', '').replace(',', '.')
     
@@ -24,7 +25,7 @@ def limpar_e_converter_valor(valor, request, redirect_url='home'):
         messages.error(request, 'Valor inválido.')
         return redirect(redirect_url)
 
-def limpar_e_converter_data(data_str, request, redirect_url='home', formato='%d/%m/%Y'):
+def limpar_e_converter_data(data_str, request, redirect_url='locais:home', formato='%d/%m/%Y'):
     try:
         # Converter para datetime.date usando o formato especificado
         return datetime.strptime(data_str, formato).date()
@@ -35,6 +36,7 @@ def limpar_e_converter_data(data_str, request, redirect_url='home', formato='%d/
 
 def criar_despesa(request, tipo, id):
     obra = get_object_or_404(Obra, id=id)
+    despesas = Despesa.objects.filter(tipo_local=ContentType.objects.get_for_model(obra), id_local=id)
 
     if request.method == 'POST':
         try:
@@ -44,7 +46,7 @@ def criar_despesa(request, tipo, id):
             valor = request.POST.get('valor')
             observacao = request.POST.get('observacao')
             modalidade = request.POST.get('modalidade')
-            data = request.POST.get('data')
+            data = request.POST.get('data_emissao')
             data_pagamento = request.POST.get('data_pagamento')
 
             # Obtendo o local baseado no tipo
@@ -57,15 +59,21 @@ def criar_despesa(request, tipo, id):
                 return redirect('locais:home')  # Redirecione ou levante um erro se o tipo for inválido
             
             try:
-                data = request.POST.get('data')
+                if data:
+                    data = datetime.strptime(data, '%d/%m/%Y').date()
+                    print(f"Data válida: {data} ({type(data)})")
+                else:
+                    print("Campo de data não preenchido")
+
                 if data_pagamento:
                     data_pagamento = datetime.strptime(data_pagamento, '%d/%m/%Y').date()
                     print(f"Data válida: {data_pagamento} ({type(data_pagamento)})")
                 else:
-                    print("Campo de data não preenchido")
+                    data_pagamento = None
+                    print("Campo de data_pagamento não preenchido")
             except ValueError as e:
                 messages.error(request, f'Erro na data: {str(e)}')
-                return redirect('home')
+                return redirect('locais:home')
 
 
             tipo_local = ContentType.objects.get_for_model(local)
@@ -75,21 +83,19 @@ def criar_despesa(request, tipo, id):
 
             print(f"Data final antes da criação: {data} ({type(data)})")
 
-
-            despesa = Despesa.objects.create(
-                nome=descricao,
-                forma_pag=forma_pag,
-                data=data,
-                valor=valor,
-                observacao=observacao,
-                status=status,
-                modalidade=modalidade,
-                tipo_local=tipo_local,
-                id_local=id,
-                local=local,
-                data_pagamento=data_pagamento,
-            )
-            logger.info(f"Despesa criada com sucesso: {despesa}")
+            campos_despesa = {
+                "nome": descricao,
+                "forma_pag": forma_pag,
+                "data": data,
+                "valor": valor,
+                "observacao": observacao,
+                "status": status,
+                "modalidade": modalidade,
+                "tipo_local": tipo_local,
+                "id_local": id,
+                "local": local,
+                "data_pagamento": data_pagamento,
+            }
 
             # Tratando formas de pagamento
             if forma_pag == 'cartao':
@@ -99,14 +105,15 @@ def criar_despesa(request, tipo, id):
                 valor_parcela = request.POST.get('valor_parcela')
 
                 cartao = get_object_or_404(Cartao, id=cartao_id)
-                valor_parcela = limpar_e_converter_valor(valor_parcela, request, redirect_url='home')
+                valor_parcela = limpar_e_converter_valor(valor_parcela, request, redirect_url='locais:home')
         
                 NotaCartao.objects.create(
+                    **campos_despesa,
                     cartao=cartao,
                     quant_parcelas=quant_parcelas,
                     valor_parcela=valor_parcela
                 )
-                logger.info(f"NotaCartao criada para despesa {despesa.id} com cartão {cartao.id}")
+                logger.info(f"NotaCartao criada para despesa com cartão {cartao.id}")
             
             elif forma_pag == 'boleto':
                 logger.debug("Processando pagamento com boleto...")
@@ -118,6 +125,7 @@ def criar_despesa(request, tipo, id):
                 banco = get_object_or_404(Banco, id=banco_id)
 
                 NotaBoleto.objects.create(
+                    **campos_despesa,
                     recipiente=request.POST.get('recipiente'),
                     quant_boletos=request.POST.get('quant_boletos'),
                     vencimento=vencimento,
@@ -131,29 +139,33 @@ def criar_despesa(request, tipo, id):
                 banco = get_object_or_404(Banco, id=banco_id)
 
                 NotaPix.objects.create(
+                    **campos_despesa,
                     banco=banco
                 )
             elif forma_pag == 'especie':
                 logger.debug("Processando pagamento em espécie...")
                 NotaEspecie.objects.create(
+                    **campos_despesa,
                     pagador=request.POST.get('recipiente')
                 )
 
-            return redirect('locais:home')
+            if tipo == 'obra':
+                return redirect('locais:detalhe_obra', tipo='obra', id=id)
+            else:
+                return redirect('locais:detalhe_escritorio', tipo='escritorio', id=id)
 
-        except Exception as e:
+
+        except IntegrityError as e:
             logger.exception(f"Erro ao criar despesa: {e}")
-            return render(request, 'detalhe_obra.html', {
+            return render(request, 'locais/detalhe_obra.html', {
                 'obra': obra,
-                'cartoes': Cartao.objects.all(),
-                'bancos': ['Banco Teste', 'Outro Banco'],
+                'despesas': despesas,
                 'error': str(e),
             })
     else:
-        return render(request, 'despesas_obra.html', {
+        return render(request, 'locais/detalhe_obra.html', {
             'obra': obra,
-            'cartoes': Cartao.objects.all(),
-            'bancos': ['Banco Teste', 'Outro Banco']
+            'despesas': despesas,
         })
 
 
@@ -173,7 +185,7 @@ def criar_cartao(request):
             vencimento = datetime.strptime(vencimento, '%d/%m/%Y').date()
         except ValueError:
             messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
-            return redirect('home')
+            return redirect('locais:home')
         
 
         # Obtenha a instância do banco ou retorne um erro 404 se não existir
@@ -198,7 +210,7 @@ def criar_cartao(request):
     
 def ver_cartoes(request):
     cartoes = Cartao.objects.all()
-    return render(request, 'cartoes.html', {'cartoes': cartoes})
+    return render(request, 'financeiro/cartoes.html', {'cartoes': cartoes})
 
 
 def criar_banco(request):

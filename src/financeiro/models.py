@@ -57,7 +57,7 @@ class Despesa(models.Model):
         ('pix', 'Pix'),
         ('especie', 'Espécie'),
     ])
-    data = models.DateField()
+    data = models.DateField(blank=False, null=False)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
     observacao = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=[
@@ -101,7 +101,7 @@ class NotaCartao(Despesa):
 class NotaBoleto(Despesa):
     recipiente = models.CharField(max_length=100)
     quant_boletos = models.IntegerField()
-    vencimento = models.DateField()
+    vencimento = models.DateField(blank=False, null=False)
     num_notafiscal = models.CharField(max_length=50)
     banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
 

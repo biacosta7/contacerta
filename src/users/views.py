@@ -55,7 +55,7 @@ def criar_user(request):
     
 def login(request):
     if request.user.is_authenticated:
-        return redirect('home')
+        return redirect('locais:home')
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -72,7 +72,7 @@ def login(request):
             else:
                 request.session.set_expiry(0) 
 
-            return redirect('home')
+            return redirect('locais:home')
         else:
             messages.error(request, 'Email ou senha inválidos. Tente novamente.')
             return render(request, 'login.html')

@@ -48,7 +48,7 @@
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 border">
                 <tr>
                     <th scope="col" class="px-6 py-3">
-                        Descrição
+                        Título
                     </th>
                     <th scope="col" class="px-6 py-3">
                         Forma
@@ -72,12 +72,12 @@
             </thead>
             <tbody>
                 {% for despesa in despesas %}
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            {{ despesa.descricao }}
+                    <tr class="bg-white border-b">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                            {{ despesa.nome }}
                         </th>
                         <td class="px-6 py-4">
-                            {{ despesa.forma }}
+                            {{ despesa.forma_pag }}
                         </td>
                         <td class="px-6 py-4">
                             R${{ despesa.valor }}

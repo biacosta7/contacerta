@@ -39,7 +39,7 @@
                 <div id="cartaoSection" class="hidden mt-4">
                     <div class="mb-4">
                         <label for="cartao" class="block mb-2 text-sm font-medium text-gray-900">Cartão*</label>
-                        <select id="cartao" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 mb-2">
+                        <select id="cartao" name="cartao" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 mb-2">
                             <option value="" selected disabled hidden>Selecione o cartão</option>
                             {% for cartao in cartoes %}
                             <option value="{{ cartao.id }}">{{cartao.final}} - {{ cartao.nome }}</option>
@@ -123,21 +123,18 @@
                     </div>
                 </div>
                 
-
-                {% comment %} chamar funcao br currency {% endcomment %}
                 <div>
                     <label for="valor_despesa" class="block mb-2 text-sm font-medium text-gray-900">Valor*</label>
                     <input type="text" id="valor_despesa" placeholder="1.200,50" name="valor" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
                 </div>
 
-                {% comment %} converter data ? {% endcomment %}
                 <div class="flex space-x-4 justify-between">
                     <div>
                         <label for="data" class="block mb-2 text-sm font-medium text-gray-900">Data de emissão*</label>
                         <input
                             type="text"
                             id="data"
-                            name="data"
+                            name="data_emissao"
                             value="{{ despesa.data|date:'d-m-Y' }}"
                             class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3 "
                             required 
@@ -168,7 +165,6 @@
                     </select>
                 </div>
                 {% comment %} abrir mais campos se mao_de_obra for selecionada {% endcomment %}
-                {% comment %} enviar tipo (obra) e id do local pelo back {% endcomment %}
                 
                 <div>
                     <label for="observacao" class="block mb-2 text-sm font-medium text-gray-900">Observação<span class="text-xs text-gray-400">  (opcional)</span></label>
