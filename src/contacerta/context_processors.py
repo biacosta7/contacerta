@@ -3,6 +3,8 @@ import json
 from locais.models import Obra
 from financeiro.models import *
 from datetime import datetime
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 def info_obras(request):
     # Obtendo todas as obras
@@ -36,3 +38,10 @@ def cartoes(request):
     cartoes = Cartao.objects.all().values()
 
     return {'cartoes': cartoes}
+
+
+def despesas(request):
+    despesas = Despesa.objects.all().values()  # Obtém os valores crus
+    return {
+        'despesas': despesas,
+    }

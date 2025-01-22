@@ -80,10 +80,14 @@
                             {{ despesa.forma_pag }}
                         </td>
                         <td class="px-6 py-4">
-                            R${{ despesa.valor }}
+                            {{ despesa.valor }}
                         </td>
                         <td class="px-6 py-4">
-                            {{ despesa.status }}
+                            {% if despesa.status == 'a_pagar' %}
+                                À pagar
+                            {% elif despesa.status == 'pago' %}
+                                Pago
+                            {% endif %}
                         </td>
                         <td class="px-6 py-4">
                             {{ despesa.data }}
@@ -107,6 +111,3 @@
 </div>
 
 {% include 'financeiro/modais/criar_despesa.html' %}
-<script>
-    
-</script>

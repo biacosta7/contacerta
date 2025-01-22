@@ -1,9 +1,14 @@
+import locale
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from locais.models import Obra, Escritorio, Despesa
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
+
+def formatar_valor(valor):
+    return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
 
 @login_required
 def criar_obra(request):
@@ -121,8 +126,21 @@ def deletar_obra(request, obra_id):
 def detalhar_obra(request, tipo, id):
     obra = get_object_or_404(Obra, id=id)
     despesas = Despesa.objects.filter(id_local=id)
-    return render(request, 'locais/detalhe_obra.html', {'obra': obra, 'tipo': tipo, 'despesas': despesas,})
+    
+    # Formata os valores das despesas
+    despesas_formatadas = []
+    for despesa in despesas:
+        despesa_dict = despesa.__dict__.copy()  # Converte o objeto em dicionário
+        despesa_dict['valor'] = formatar_valor(despesa.valor)  # Formata o valor
+        despesas_formatadas.append(despesa_dict)
 
+    return render(request, 'locais/detalhe_obra.html', {
+        'obra': obra,
+        'tipo': tipo,
+        'despesas': despesas_formatadas,
+    })
+
+    
 @login_required
 def criar_escritorio(request):
     if request.method == 'POST':
