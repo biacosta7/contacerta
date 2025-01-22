@@ -67,37 +67,36 @@
     // O ID está na última parte do caminho
     const obraId = parseInt(pathParts[pathParts.length - 1], 10);
 
-    let obra = obras.find(o => o.id === obraId);
+    // Procura pela obra com o ID correspondente
+    const obra = obras.find(o => o.id === obraId);
 
-    document.getElementById('valorInicialObraInfo').innerHTML = 
-    `<i class="fa-solid fa-dollar-sign mr-1 bg-gray-800 py-1 px-2 rounded-full" style="color:rgb(255, 255, 255);"></i> <b>Valor inicial:</b> R$ ${new Intl.NumberFormat('pt-BR', { 
-        style: 'decimal', 
-        minimumFractionDigits: 2, 
-        maximumFractionDigits: 2 
-    }).format(obra.valor_inicial)}`;
+    // Atualiza o valor inicial da obra se a obra for encontrada
+    if (obra) {
+        document.getElementById('valorInicialObraInfo').innerHTML = 
+        `<i class="fa-solid fa-dollar-sign mr-1 bg-gray-800 py-1 px-2 rounded-full" style="color:rgb(255, 255, 255);"></i> <b>Valor inicial:</b> R$ ${new Intl.NumberFormat('pt-BR', { 
+            style: 'decimal', 
+            minimumFractionDigits: 2, 
+            maximumFractionDigits: 2 
+        }).format(obra.valor_inicial)}`;
+    } else {
+        console.error("Obra não encontrada. Verifique o ID ou os dados fornecidos.");
+    }
 
     function sectionModal(action) {
         const sections = ["geralSection", "aditivosSection", "despesasSection", "adiabmSection"];
-        const buttons = [ "geralBtn", "aditivosBtn", "despesasBtn", "adiabmBtn"]
+        const buttons = ["geralBtn", "aditivosBtn", "despesasBtn", "adiabmBtn"];
 
-        // Oculta todas as seções
-        sections.forEach(section => {
+        // Oculta todas as seções e remove o destaque dos botões
+        sections.forEach((section, index) => {
             document.getElementById(section).classList.add("hidden");
+            document.getElementById(buttons[index]).classList.remove("bg-gray-200");
         });
-    
-        // Mostra apenas a seção correspondente
+
+        // Mostra a seção correspondente e destaca o botão selecionado
         document.getElementById(action).classList.remove("hidden");
-
-
-        // Remove a classe bg-gray-200 de todos os botões
-        buttons.forEach(button => {
-            document.getElementById(button).classList.remove("bg-gray-200");
-        });
-
-        // Adiciona a classe bg-gray-200 ao botão selecionado
         const selectedButton = `${action.replace("Section", "Btn")}`;
         document.getElementById(selectedButton).classList.add("bg-gray-200");
-    }    
-
+    }
 </script>
+
 {% endblock script %}

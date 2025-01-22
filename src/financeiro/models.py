@@ -4,7 +4,11 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 
 class Banco(models.Model):
     nome = models.CharField(max_length=100)
-
+    logo_path = models.CharField(
+        max_length=255,
+        blank=True, 
+        default='assets/bancosLogo/default_logo.png'
+    )
     def __str__(self):
         return self.nome
 
@@ -35,7 +39,7 @@ class Aditivo(models.Model):
 class BM(models.Model):
     nome = models.CharField(max_length=100)
     valor = models.DecimalField(max_digits=10, decimal_places=2)
-    data = models.DateField()
+    data = models.DateField(null=False, blank=False)
     banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
     codigo = models.CharField(max_length=50, blank=True)
     observacao = models.TextField(blank=True)
@@ -76,7 +80,7 @@ class Despesa(models.Model):
         nome_limite = self.nome[:20]
         if len(self.nome) > 20:
             nome_limite += '...'
-        return f"{self.local} | {nome_limite} ({self.modalidade} | R${self.valor})"
+        return f"{self.data} | {self.local} | {nome_limite} | ({self.modalidade} | R${self.valor})"
 
 class Cartao(models.Model):
     nome = models.CharField(max_length=100)

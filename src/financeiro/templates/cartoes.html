@@ -45,7 +45,7 @@
     {% for cartao in cartoes %}
         <div class="m-4 credit-card w-64 h-38 rounded-lg bg-gradient-to-r from-purple-800 to-purple-500 text-white p-4 flex flex-col justify-between shadow-lg">
             <div class="bank-logo">
-            <img src="{% static 'assets/nubank-icon.png' %}" alt="Bank Logo" class="w-16 h-auto">
+            <img src="{% static cartao.banco.logo_path %}" alt="Bank Logo" class="w-16 h-auto">
             </div>
             <div class="card-number text-lg font-bold tracking-widest">
             •••• •••• •••• <span>{{ cartao.final }}</span>

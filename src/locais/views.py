@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from locais.models import Obra, Escritorio
+from locais.models import Obra, Escritorio, Despesa
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
@@ -118,9 +118,10 @@ def deletar_obra(request, obra_id):
     return redirect('home')
 
 @login_required
-def detalhar_obra(request, obra_id):
+def detalhar_obra(request, tipo, obra_id):
     obra = get_object_or_404(Obra, id=obra_id)
-    return render(request, 'detalhe_obra.html', {'obra': obra})
+    despesas = Despesa.objects.filter(id_local=obra_id)
+    return render(request, 'detalhe_obra.html', {'obra': obra, 'tipo': tipo, 'despesas': despesas,})
 
 @login_required
 def criar_escritorio(request):

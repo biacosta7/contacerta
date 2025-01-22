@@ -1,7 +1,7 @@
 from django.core.serializers.json import DjangoJSONEncoder
 import json
 from locais.models import Obra
-from financeiro.models import Cartao, Banco
+from financeiro.models import *
 from datetime import datetime
 
 def info_obras(request):

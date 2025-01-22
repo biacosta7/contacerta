@@ -6,7 +6,7 @@
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Nova Despesa</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarDespesa'});"></i>
         </div>
-        <form method="POST" id="formCriarDespesa" action="{% url 'financeiro:criar_despesa' %}">
+        <form method="POST" id="formCriarDespesa" action="{% url 'financeiro:criar_despesa' 'obra' obra.id %}">
             {% csrf_token %}
             <div class="flex flex-col space-y-4">
                 <div>
@@ -185,32 +185,56 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Inicializa a função assim que a página for carregada
-        togglePaymentSection();
+    function toggleRequiredFields(sectionId) {
+        const allSections = ['cartaoSection', 'boletoSection', 'pixSection', 'especieSection'];
+        
+        // Ocultar todas as seções e remover a obrigatoriedade dos campos
+        allSections.forEach(section => {
+            const sectionElement = document.getElementById(section);
+            if (sectionElement) {
+                const inputs = sectionElement.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    // Remover o campo como obrigatório
+                    input.required = false;
+                });
+                // Ocultar a seção
+                sectionElement.classList.toggle('hidden', section !== sectionId);
+            }
+        });
+    }
 
-        // Adiciona o evento para monitorar mudanças no select
-        document.getElementById('forma_pag').addEventListener('change', togglePaymentSection);
+    // Exemplo de evento de mudança (forma de pagamento)
+    document.getElementById('forma_pag').addEventListener('change', function () {
+        const value = this.value;
+        const sectionMap = {
+            cartao: 'cartaoSection',
+            boleto: 'boletoSection',
+            pix: 'pixSection',
+            especie: 'especieSection'
+        };
+
+        // Chama a função para exibir a seção adequada e tornar os campos obrigatórios
+        if (sectionMap[value]) {
+            toggleRequiredFields(sectionMap[value]);
+        }
     });
 
-    function togglePaymentSection() {
-        const formaPag = document.getElementById('forma_pag').value;
-
-        // Oculta todas as divs de forma padrão
-        const sections = ['cartao', 'boleto', 'pix', 'especie'];
-        sections.forEach(section => {
-            const sectionDiv = document.getElementById(`${section}Section`);
-            sectionDiv.classList.add('hidden');
-        });
-
-        // Mostra a div correspondente à forma selecionada
-        if (formaPag) {
-            const selectedSection = document.getElementById(`${formaPag}Section`);
-            if (selectedSection) {
-                selectedSection.classList.remove('hidden');
+    // Definir o comportamento de exibição no início com o valor inicial do 'forma_pag' se houver
+    document.addEventListener('DOMContentLoaded', function() {
+        const formaPagSelect = document.getElementById('forma_pag');
+        if (formaPagSelect.value) {
+            const selectedValue = formaPagSelect.value;
+            const sectionMap = {
+                cartao: 'cartaoSection',
+                boleto: 'boletoSection',
+                pix: 'pixSection',
+                especie: 'especieSection'
+            };
+            if (sectionMap[selectedValue]) {
+                toggleRequiredFields(sectionMap[selectedValue]);
             }
         }
-    }
+    });
 
     
     new TomSelect("#cartao", {
@@ -221,6 +245,14 @@
                 return '<div class="no-results">Nenhum cartão encontrado</div>';
             },
         }
+    });
+
+    $(document).ready(function () {
+        $('#vencimento, #data, #data_pagamento').datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,     
+            changeYear: true     
+        });
     });
 
     
