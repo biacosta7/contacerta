@@ -23,15 +23,15 @@ def criar_user(request):
         valid_name = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ")
         if not set(nome).issubset(valid_name):
             messages.error(request, 'O nome não deve conter números ou caracteres especiais')
-            return render(request, 'cadastro.html', form_data)
+            return render(request, 'users/cadastro.html', form_data)
 
         if ' ' in password:
             messages.error(request, 'A senha não pode conter espaços.')
-            return render(request, 'cadastro.html', form_data)
+            return render(request, 'users/cadastro.html', form_data)
 
         if '@' not in email or email.count('@') != 1:
             messages.error(request, 'Por favor, insira um email válido')
-            return render(request, 'cadastro.html', form_data)
+            return render(request, 'users/cadastro.html', form_data)
 
         if password == confirm_password:
             try:
@@ -49,9 +49,9 @@ def criar_user(request):
                 messages.error(request, 'Já existe um usuário com este email. Tente novamente.')
                 return render(request, 'cadastro.html', form_data)
         else:
-            return render(request, 'cadastro.html', {'error': 'As senhas não coincidem.'})
+            return render(request, 'users/cadastro.html', {'error': 'As senhas não coincidem.'})
     else:
-        return render(request, 'cadastro.html')
+        return render(request, 'users/cadastro.html')
     
 def login(request):
     if request.user.is_authenticated:
@@ -75,6 +75,7 @@ def login(request):
             return redirect('locais:home')
         else:
             messages.error(request, 'Email ou senha inválidos. Tente novamente.')
-            return render(request, 'login.html')
+            print('Email ou senha inválidos. Tente novamente.')
+            return render(request, 'users/login.html')
     else:
-        return render(request, 'login.html')
+        return render(request, 'users/login.html')
