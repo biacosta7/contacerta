@@ -304,7 +304,7 @@ def criar_aditivo(request, tipo, id):
             'obra': obra,
         })
     
-def criar_fucionario(request):
+def criar_funcionario(request):
     if request.method == 'POST':
         nome = request.POST.get('nome')
         cargo = request.POST.get('cargo')
@@ -315,7 +315,7 @@ def criar_fucionario(request):
         )
         funcionario.save()
 
-        return redirect('locais:detalhe_obra', tipo='escritorio', id=id)
+        return redirect('locais:detalhe_obra', id=id)
 
     else:
         return render(request, 'financeiro/modais/criar_funcionario.html')

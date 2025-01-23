@@ -1,0 +1,11 @@
+<!-- Modal de funcionário section -->
+<div class="flex space-x-4 items-center justify-between">
+    <h1 class="text-3xl font-semibold">Funcionários</h1>
+    <button id="addObraBtn" class="mt-4 bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+                            modalName: 'modalCriarFuncionario',
+                            formId: 'formCriarFuncionario'
+                        });">
+        Cadastrar Funcionário
+    </button>
+</div>
+{% include "financeiro/modais/criar_funcionario.html" %}

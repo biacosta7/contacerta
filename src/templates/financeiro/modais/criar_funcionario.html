@@ -1,0 +1,21 @@
+<!-- Modal de criação de funcionário -->
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalCriarFuncionario">
+    <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
+        <div class="flex space-x-8 justify-between items-center mb-4">
+            <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Novo Funcionario</h5>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarFuncionario'});"></i>
+        </div>
+        <form method="POST" id="formCriarFuncionario" action="{% url 'financeiro:criar_funcionario' %}">
+            {% csrf_token %}
+                <div>
+                    <label for="nome" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
+                    <input type="text" name="nome" class="block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
+                </div>
+                <div class="mt-4">
+                    <label for="cargo" class="block mb-2 text-sm font-medium text-gray-900">Cargo</label>
+                    <input type="text" name="cargo" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
+                </div>
+            <button type="submit" class=" mt-4 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Cadastrar</button>         
+        </form>
+    </div>
+</div>

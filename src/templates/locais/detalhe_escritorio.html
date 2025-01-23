@@ -17,139 +17,87 @@
   <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-28 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0" aria-label="Sidebar">
      <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
         <ul class="space-y-4 font-medium">
-           <li class="bg-gray-100 rounded-lg">
-              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100">
+           <li>
+              <button id="escritorioBtn" onclick="sectionModal('escritorioSection')" class="w-full flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 text-left">
                 <i class="fa-solid fa-building fa-xl text-gray-600"></i>
                  <span class="ms-3">Escritório</span>
-              </a>
+              </button>
            </li>
            <li>
-              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+              <button id="despesasBtn" onclick="sectionModal('despesasSection')" class="w-full flex items-center p-2 text-gray-900 rounded-lg group text-left">
                 <i class="fa-solid fa-chart-simple text-gray-600"></i>
                 <span class="flex-1 ms-3 whitespace-nowrap">Despesas</span>
-              </a>
+              </button>
            </li>
            <li>
-              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+              <button id="funcionariosBtn" onclick="sectionModal('funcionariosSection')" class="w-full flex items-center p-2 text-gray-900 rounded-lg group text-left">
                 <i class="fa-solid fa-users text-gray-600"></i>
                 <span class="flex-1 ms-3 whitespace-nowrap">Funcionários</span>
-              </a>
+              </button>
            </li>
            <li>
-              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+              <button id="bancosBtn" onclick="sectionModal('bancosSection')" class=" w-full flex items-center p-2 text-gray-900 rounded-lg group text-left">
                 <i class="fa-solid fa-building-columns text-gray-600"></i>
                 <span class="flex-1 ms-3 whitespace-nowrap">Bancos</span>
-              </a>
+              </button>
            </li>
            <li>
-              <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 group">
+              <button id="cartoesBtn" onclick="sectionModal('cartoesSection')" class="w-full flex items-center p-2 text-gray-900 rounded-lg group text-left">
                 <i class="fa-solid fa-wallet text-gray-600"></i>
                 <span class="flex-1 ms-3 whitespace-nowrap">Cartões</span>
-              </a>
+              </button>
            </li>
         </ul>
      </div>
   </aside>
   
   <div class="p-4 sm:ml-64">
-     <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
-        <div class="grid grid-cols-3 gap-4 mb-4">
-           <div class="flex items-center justify-center h-24 rounded bg-gray-50">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
-           <div class="flex items-center justify-center h-24 rounded bg-gray-50">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
-           <div class="flex items-center justify-center h-24 rounded bg-gray-50">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
+    <div class="p-4 mt-14">
+        <div id="escritorioSection" class="block"> <!-- Inicialmente visível -->
+            {% comment %} {% include "financeiro/modais/escritorio.html" %}  {% endcomment %}
         </div>
-        <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50">
-           <p class="text-2xl text-gray-400">
-              <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-              </svg>
-           </p>
+        <div id="despesasSection" class="hidden">
+            {% comment %} {% include "financeiro/modais/aditivos.html" %} {% endcomment %}
         </div>
-        <div class="grid grid-cols-2 gap-4 mb-4">
-           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
-           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
-           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
-           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
+        <div id="funcionariosSection" class="hidden">
+            {% include "financeiro/modais/funcionarios_section.html" %}
         </div>
-        <div class="flex items-center justify-center h-48 mb-4 rounded bg-gray-50">
-           <p class="text-2xl text-gray-400">
-              <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-              </svg>
-           </p>
+        <div id="bancosSection" class="hidden">
+            {% comment %} {% include "financeiro/modais/menuObra/despesas_obra.html" %} {% endcomment %}
         </div>
-        <div class="grid grid-cols-2 gap-4">
-           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
-           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
-           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
-           <div class="flex items-center justify-center rounded bg-gray-50 h-28">
-              <p class="text-2xl text-gray-400">
-                 <svg class="w-3.5 h-3.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
-                 </svg>
-              </p>
-           </div>
+        <div id="cartoesSection" class="hidden">
+            {% comment %} {% include "financeiro/modais/menuObra/despesas_obra.html" %} {% endcomment %}
         </div>
+        
      </div>
   </div>
+
+<script>
+    function sectionModal(action) {
+        const sections = ["escritorioSection", "despesasSection", "funcionariosSection", "bancosSection", "cartoesSection"];
+        const buttons = ["escritorioBtn", "despesasBtn", "funcionariosBtn", "bancosBtn", "cartoesBtn"];
+    
+        // Oculta todas as seções e remove o destaque dos botões
+        sections.forEach((section, index) => {
+            // Garante que o elemento correto seja acessado
+            const sectionElement = document.getElementById(section);
+            const buttonElement = document.getElementById(buttons[index]);
+    
+            // Adiciona a classe 'hidden' para ocultar a seção e remove a classe de destaque do botão
+            sectionElement.classList.add("hidden");
+            buttonElement.classList.remove("bg-gray-200");
+        });
+    
+        // Mostra a seção correspondente
+        const selectedSection = document.getElementById(action);
+        selectedSection.classList.remove("hidden");
+    
+        // Destaca o botão correspondente
+        const selectedButton = `${action.replace("Section", "Btn")}`;
+        const selectedButtonElement = document.getElementById(selectedButton);
+        selectedButtonElement.classList.add("bg-gray-200");
+    }
+    
+    
+</script>
 {% endblock content %}
