@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.core.validators import MinValueValidator, MaxValueValidator
+
 
 class Banco(models.Model):
     nome = models.CharField(max_length=100)
@@ -86,7 +88,13 @@ class Cartao(models.Model):
     nome = models.CharField(max_length=100)
     banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
     final = models.CharField(max_length=4)
-    vencimento = models.DateField()
+    vencimento = models.IntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(31)
+        ],
+        help_text="Insira um número entre 1 e 31"
+    )
     quant_dias = models.IntegerField()
     melhor_dia = models.DateField(blank=True, null=True) # vencimento - quant_dias
 

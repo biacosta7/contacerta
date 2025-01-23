@@ -1,11 +1,11 @@
-<!-- Modal de funcionário section -->
+<!-- Modal de bancos section -->
 <div class="flex space-x-4 items-center justify-between my-6">
-    <h1 class="text-3xl font-semibold">Funcionários</h1>
-    <button class=" bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
-                            modalName: 'modalCriarFuncionario',
-                            formId: 'formCriarFuncionario'
-                        });">
-        Cadastrar Funcionário
+    <h1 class="text-3xl font-semibold">Bancos</h1>
+    <button class="bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+        modalName: 'modalCriarBanco',
+        formId: 'formCriarBanco'
+        });">
+        Cadastrar Banco
     </button>
 </div>
 
@@ -25,21 +25,17 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
                     <tr>
                         <th scope="col" class="px-6 py-3">Nome</th>
-                        <th scope="col" class="px-6 py-3">Cargo</th>
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">Editar</span>
                         </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    {% for funcionario in funcionarios %}
+                    {% for banco in bancos %}
                         <tr class="bg-white border-b">
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                {{ funcionario.nome }}
+                                {{ banco.nome }}
                             </th>
-                            <td class="px-6 py-4">
-                                {{ funcionario.cargo }}
-                            </td>
                             <td class="px-6 py-4 text-right">
                                 <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
                             </td>
@@ -50,4 +46,4 @@
         </div>
     </div>
 </div>
-{% include "financeiro/modais/criar_funcionario.html" %}
+{% include "financeiro/modais/criar_banco.html" %}

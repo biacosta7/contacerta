@@ -6,7 +6,7 @@
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Nova Despesa</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarDespesa'});"></i>
         </div>
-        <form method="POST" id="formCriarDespesa" action="{% url 'financeiro:criar_despesa' 'obra' obra.id %}">
+        <form method="POST" id="formCriarDespesa" action="{% url 'financeiro:criar_despesa' 'obra' obra.id %}?next={{ request.path }}">
             {% csrf_token %}
             <div class="flex flex-col space-y-4">
                 <div>

@@ -41,7 +41,7 @@ def cartoes(request):
 
 
 def despesas(request):
-    despesas = Despesa.objects.all().values()  # Obtém os valores crus
+    despesas = Despesa.objects.all().values() 
     return {
         'despesas': despesas,
     }

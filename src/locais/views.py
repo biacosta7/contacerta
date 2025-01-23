@@ -2,6 +2,7 @@ import locale
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
+from financeiro.models import Banco, Cartao, Funcionario
 from locais.models import Obra, Escritorio, Despesa
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -65,6 +66,8 @@ def criar_obra(request):
 @login_required
 def listar_obras(request):
     obras = Obra.objects.all()
+    for obra in obras:
+        obra.valor_inicial = formatar_valor(obra.valor_inicial)
     return render(request, 'locais/home.html', {'obras': obras})
 
 @login_required
@@ -189,6 +192,10 @@ def criar_escritorio(request):
 
 def detalhar_escritorio(request, id=None):
     escritorio = Escritorio.objects.first()
+    funcionarios = Funcionario.objects.all()
+    bancos = Banco.objects.all()
+    cartoes = Cartao.objects.all()
+
     if escritorio:
         escritorio_id = escritorio.id
         escritorio = get_object_or_404(Escritorio, id=id)
@@ -197,5 +204,8 @@ def detalhar_escritorio(request, id=None):
         escritorio_id = None
     
     return render(request, 'locais/detalhe_escritorio.html', {
-            'escritorio': escritorio,
+        'escritorio': escritorio,
+        'funcionarios': funcionarios,
+        'bancos': bancos,
+        'cartoes': cartoes,
     })

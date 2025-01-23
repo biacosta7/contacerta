@@ -18,7 +18,7 @@
      <div class="h-full px-3 pb-4 overflow-y-auto bg-white">
         <ul class="space-y-4 font-medium">
            <li>
-              <button id="escritorioBtn" onclick="sectionModal('escritorioSection')" class="w-full flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 text-left">
+              <button id="escritorioBtn" onclick="sectionModal('escritorioSection')" class="bg-gray-200 w-full flex items-center p-2 text-gray-900 rounded-lg hover:bg-gray-100 text-left">
                 <i class="fa-solid fa-building fa-xl text-gray-600"></i>
                  <span class="ms-3">Escritório</span>
               </button>
@@ -54,19 +54,19 @@
   <div class="p-4 sm:ml-64">
     <div class="p-4 mt-14">
         <div id="escritorioSection" class="block"> <!-- Inicialmente visível -->
-            {% comment %} {% include "financeiro/modais/escritorio.html" %}  {% endcomment %}
+          {% comment %} {% include "financeiro/modais/escritorio.html" %}  {% endcomment %}
         </div>
         <div id="despesasSection" class="hidden">
-            {% comment %} {% include "financeiro/modais/aditivos.html" %} {% endcomment %}
+          {% comment %} {% include "financeiro/modais/aditivos.html" %} {% endcomment %}
         </div>
         <div id="funcionariosSection" class="hidden">
-            {% include "financeiro/modais/funcionarios_section.html" %}
+          {% include "financeiro/modais/funcionarios_section.html" %}
         </div>
         <div id="bancosSection" class="hidden">
-            {% comment %} {% include "financeiro/modais/menuObra/despesas_obra.html" %} {% endcomment %}
+          {% include "financeiro/modais/bancos_section.html" %}
         </div>
         <div id="cartoesSection" class="hidden">
-            {% comment %} {% include "financeiro/modais/menuObra/despesas_obra.html" %} {% endcomment %}
+          {% include "financeiro/modais/cartoes_section.html" %}
         </div>
         
      </div>

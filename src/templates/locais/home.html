@@ -34,7 +34,8 @@
                         <h3 class="font-bold text-lg">{{ obra.nome }}</h3>
                         <i id="dots-{{ forloop.counter }}" class="fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]" onclick="toggleDotsMenu(event, {{ forloop.counter }})"></i>
                     </div>
-                    <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-1"></i>{{ obra.local }}</p>
+                    <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-2"></i>{{ obra.local }}</p>
+                    <p class="text-sm break-words"><i class="fa-solid fa-circle-dollar-to-slot mr-1"></i>{{ obra.valor_inicial }}</p>
                 </div>
                 <div class="pt-2 pb-2 text-right">
                     <!-- botão de ir -->

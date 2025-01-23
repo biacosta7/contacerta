@@ -1,0 +1,69 @@
+<!-- Modal de cartões section -->
+<div class="flex space-x-4 items-center justify-between my-6">
+    <h1 class="text-3xl font-semibold">Cartões</h1>
+    <button class="bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+        modalName: 'modalCriarCartao',
+        formId: 'formCriarCartao'
+        });">
+        Cadastrar Cartão
+    </button>
+</div>
+
+<div class="flex space-x-4 justify-between mt-8">
+    <div class="relative shadow-md rounded-lg w-full">
+        <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
+            <div class="flex space-x-2 items-center">
+                <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
+                <h1 class="text-xl">Cadastros</h1>
+            </div>
+            
+        </div>
+        <div class="overflow-y-auto max-h-96">
+            
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 border">
+                
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Nome</th>
+                        <th scope="col" class="px-6 py-3">Banco</th>
+                        <th scope="col" class="px-6 py-3">Final</th>
+                        <th scope="col" class="px-6 py-3">Vencimento</th>
+                        <th scope="col" class="px-6 py-3">Quant. dias</th>
+                        <th scope="col" class="px-6 py-3">Melhor dia</th>
+                        <th scope="col" class="px-6 py-3">
+                            <span class="sr-only">Editar</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for cartao in cartoes %}
+                        <tr class="bg-white border-b">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{ cartao.nome }}
+                            </th>
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{ cartao.banco }}
+                            </th>
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{ cartao.final }}
+                            </th>
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{ cartao.vencimento }}
+                            </th>
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{ cartao.quant_dias }}
+                            </th>
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{ cartao.melhor_dia }}
+                            </th>
+                            <td class="px-6 py-4 text-right">
+                                <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% include 'financeiro/modais/criar_cartao.html' %}

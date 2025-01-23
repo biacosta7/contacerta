@@ -5,7 +5,7 @@
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Novo Banco</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarBanco'});"></i>
         </div>
-        <form method="POST" id="formCriarBanco" action="{% url 'financeiro:criar_banco' %}">
+        <form method="POST" id="formCriarBanco" action="{% url 'financeiro:criar_banco' %}?next={{ request.path }}">
             {% csrf_token %}
                 <div>
                     <label for="nome" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>

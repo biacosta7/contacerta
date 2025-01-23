@@ -5,7 +5,7 @@
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Novo Cartão</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarCartao'});"></i>
         </div>
-        <form method="POST" id="formCriarCartao" action="{% url 'financeiro:criar_cartao' %}">
+        <form method="POST" id="formCriarCartao" action="{% url 'financeiro:criar_cartao' %}?next={{ request.path }}">
             {% csrf_token %}
             <div class="flex flex-col space-y-4">
                 <div>
@@ -33,16 +33,15 @@
                             required>
                     </div>
                     <div class="flex-1 mb-2">
-                        <label for="vencimento" class="block mb-2 text-sm font-medium text-gray-900">Data de vencimento</label>
-                        <input
-                            type="text"
-                            id="vencimento"
-                            name="vencimento"
-                            value="{{ cartao.vencimento|date:'d-m-Y' }}"
-                            class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3 "
-                            required 
-                            data-date-format="dd-mm-yyyy"
-                        />
+                        <label for="vencimento" class="block mb-2 text-sm font-medium text-gray-900">Dia do vencimento</label>
+                        <input 
+                            type="number" 
+                            name="vencimento" 
+                            min="1" 
+                            max="31" 
+                            placeholder="10"
+                            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] py-2 px-3" 
+                            required>
                     </div>
                 </div>
                 <div class="flex-1 mb-2">

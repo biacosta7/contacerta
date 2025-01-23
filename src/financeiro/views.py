@@ -35,6 +35,7 @@ def limpar_e_converter_data(data_str, request, redirect_url='locais:home', forma
         return redirect(redirect_url)
 
 def criar_despesa(request, tipo, id):
+    next_url = request.GET.get('next')
     obra = get_object_or_404(Obra, id=id)
     despesas = Despesa.objects.filter(tipo_local=ContentType.objects.get_for_model(obra), id_local=id)
 
@@ -160,11 +161,14 @@ def criar_despesa(request, tipo, id):
                     categoria=request.POST.get('categoria')
                 )
 
-            if tipo == 'obra':
-                return redirect('locais:detalhe_obra', id=id)
+            if next_url:
+                return redirect(next_url)
             else:
-                return redirect('locais:detalhe_escritorio', id=id)
-
+                # Redireciona para o detalhe de obra ou escritório com base no tipo
+                if tipo == 'obra':
+                    return redirect('locais:detalhe_obra', id=id)
+                else:
+                    return redirect('locais:detalhe_escritorio', id=id)
 
         except IntegrityError as e:
             logger.exception(f"Erro ao criar despesa: {e}")
@@ -180,6 +184,7 @@ def criar_despesa(request, tipo, id):
         })
 
 def editar_despesa(request, tipo, id):
+    next_url = request.GET.get('next')
     obra = get_object_or_404(Obra, id=id)
     despesas = Despesa.objects.filter(tipo_local=ContentType.objects.get_for_model(obra), id_local=id)
 
@@ -305,10 +310,7 @@ def editar_despesa(request, tipo, id):
                     categoria=request.POST.get('categoria')
                 )
 
-            if tipo == 'obra':
-                return redirect('locais:detalhe_obra', id=id)
-            else:
-                return redirect('locais:detalhe_escritorio', id=id)
+            return redirect(next_url if next_url else 'financeiro:cartoes')
 
 
         except IntegrityError as e:
@@ -326,6 +328,8 @@ def editar_despesa(request, tipo, id):
 
 
 def criar_cartao(request):
+    next_url = request.GET.get('next')
+
     if request.method == 'POST':
         nome = request.POST.get('nome')
         banco_id = request.POST.get('banco')
@@ -333,16 +337,6 @@ def criar_cartao(request):
         vencimento = request.POST.get('vencimento')
         quant_dias = request.POST.get('quant_dias')
         # melhor_dia = request.POST.get('melhor_dia')
-
-        print(vencimento)
-
-        # Converter as datas do formato dd/mm/yyyy para yyyy-mm-dd
-        try:
-            vencimento = datetime.strptime(vencimento, '%d/%m/%Y').date()
-        except ValueError:
-            messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
-            return redirect('locais:home')
-        
 
         # Obtenha a instância do banco ou retorne um erro 404 se não existir
         banco = get_object_or_404(Banco, id=banco_id)
@@ -357,12 +351,8 @@ def criar_cartao(request):
         )
         cartao.save()
 
-        # Retorne para a página de cartões ou uma página de sucesso
-        return redirect('financeiro:cartoes')  # Altere para o nome correto da URL que lista os cartões.
+    return redirect(next_url if next_url else 'financeiro:cartoes')
 
-    else:
-        # Caso o método não seja POST, apenas renderiza a página do formulário
-        return render(request, 'financeiro/modais/criar_cartao.html')
     
 def ver_cartoes(request):
     cartoes = Cartao.objects.all()
@@ -370,17 +360,19 @@ def ver_cartoes(request):
 
 
 def criar_banco(request):
+    next_url = request.GET.get('next')
+
     if request.method == 'POST':
         nome = request.POST.get('nome')
-        banco = Banco.objects.create(nome=nome)
-        banco.save()
-        return redirect('financeiro:cartoes')
-    
-    else:
-        return render(request, 'financeiro/modais/criar_banco.html')
+        Banco.objects.create(nome=nome)    
+   
+    # Redireciona para o 'next' ou para uma página padrão 
+    return redirect(next_url if next_url else 'financeiro:cartoes')
+
     
 
-def atualizar_status(request, tipo, id, despesa_id):
+def atualizar_status(request, despesa_id):
+    next_url = request.GET.get('next')
     # Pega a despesa com o id fornecido, ou retorna 404 se não existir
     despesa = get_object_or_404(Despesa, id=despesa_id)
     
@@ -393,14 +385,10 @@ def atualizar_status(request, tipo, id, despesa_id):
     # Salva a despesa com o novo status
     despesa.save()
     
-    if tipo == 'obra':
-        return redirect('locais:detalhe_obra', id=id)
-    else:
-        return redirect('locais:detalhe_escritorio', id=id)
+    return redirect(next_url if next_url else 'financeiro:cartoes')
     
 
 def criar_aditivo(request, tipo, id):
-
     if request.method == 'POST':
         nome = request.POST.get('nome')
         valor = request.POST.get('valor')
@@ -451,6 +439,8 @@ def criar_aditivo(request, tipo, id):
         })
     
 def criar_funcionario(request):
+    next_url = request.GET.get('next')
+
     if request.method == 'POST':
         nome = request.POST.get('nome')
         cargo = request.POST.get('cargo')
@@ -461,8 +451,6 @@ def criar_funcionario(request):
         )
         funcionario.save()
 
-        return redirect('locais:detalhe_obra', id=id)
+    return redirect(next_url if next_url else 'financeiro:cartoes')
 
-    else:
-        return render(request, 'financeiro/modais/criar_funcionario.html')
     

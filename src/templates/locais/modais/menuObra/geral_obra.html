@@ -77,7 +77,7 @@
                                 {{ despesa.valor }}
                             </td>
                             <td class="px-6 py-4">
-                                <form action="{% url 'financeiro:atualizar_status' tipo='obra' id=obra.id despesa_id=despesa.id %}" method=POST>
+                                <form action="{% url 'financeiro:atualizar_status' despesa_id=despesa.id %}?next={{ request.path }}" method=POST>
                                     {% csrf_token %}
                                     {% if despesa.status == 'a_pagar' %}
                                     <button type="submit" 
