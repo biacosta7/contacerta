@@ -1,3 +1,4 @@
+from datetime import date, timedelta
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -97,9 +98,31 @@ class Cartao(models.Model):
     )
     quant_dias = models.IntegerField()
     melhor_dia = models.DateField(blank=True, null=True) # vencimento - quant_dias
+    
+    def calcular_melhor_dia(self):
+        hoje = date.today()
 
+        if self.vencimento and self.quant_dias:
+            try:
+                # Tenta criar a data com o vencimento atual
+                vencimento_data_atual = date(hoje.year, hoje.month, self.vencimento)
+            except ValueError:
+                # Caso o vencimento seja inválido (exemplo: 31 de fevereiro)
+                if hoje.month == 12:  # Se for dezembro, ajusta para janeiro do próximo ano
+                    vencimento_data_atual = date(hoje.year + 1, 1, 1) - timedelta(days=1)
+                else:
+                    # Primeiro dia do próximo mês, menos um dia (último dia do mês atual)
+                    vencimento_data_atual = date(hoje.year, hoje.month + 1, 1) - timedelta(days=1)
+
+            # Calcula o melhor dia com base em quant_dias
+            self.melhor_dia = vencimento_data_atual - timedelta(days=self.quant_dias)
+            self.save()
+
+        return self.melhor_dia
+    
     def __str__(self):
         return f"{self.final} | {self.nome} | {self.banco}"
+
 
 class NotaCartao(Despesa):
     cartao = models.ForeignKey(Cartao, on_delete=models.SET_NULL, null=True)

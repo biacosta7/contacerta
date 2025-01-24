@@ -35,9 +35,31 @@ def bancos(request):
     return {'bancos': bancos}
 
 def cartoes(request):
-    cartoes = Cartao.objects.all().values()
+    # Obtém todos os cartões com os dados necessários (evitando consultas adicionais)
+    cartoes = Cartao.objects.select_related('banco').all()
 
-    return {'cartoes': cartoes}
+    cartoes_lista = []
+    for cartao in cartoes:
+        cartao_dict = {
+            'id': cartao.id,
+            'nome': cartao.nome,
+            'final': cartao.final,
+            'vencimento': cartao.vencimento,
+            'banco': cartao.banco.nome,
+            'quant_dias': cartao.quant_dias,
+            'melhor_dia': cartao.melhor_dia.strftime('%d/%m/%Y') if cartao.melhor_dia else None,
+        }
+
+        if not cartao.melhor_dia:
+            melhor_dia = cartao.calcular_melhor_dia()
+            cartao_dict['melhor_dia'] = melhor_dia.strftime('%d/%m/%Y')
+
+        cartoes_lista.append(cartao_dict)
+
+    # Serializa os dados para JSON
+    cartoes_json = json.dumps(cartoes_lista, cls=DjangoJSONEncoder)
+
+    return {'cartoes_json': cartoes_json}
 
 
 def despesas(request):

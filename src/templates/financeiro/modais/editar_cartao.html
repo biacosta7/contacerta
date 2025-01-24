@@ -1,0 +1,75 @@
+<!-- Modal de edição de obra -->
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalEditarCartao">
+    <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
+        <div class="flex space-x-8 justify-between items-center mb-4">
+            <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Editar {{ cartao.nome }}</h5>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="cartaoModal('fecharEditar')"></i>
+        </div>
+        <form method="POST" id="formEditarCartao" action="" class="p-6">
+            {% csrf_token %}
+            <!-- Campo oculto para ID da cartao -->
+            <input type="hidden" id="cartaoId" name="cartao_id" value="">
+
+            <!-- Nome da Cartao -->
+            <div class="mb-4">
+                <label for="nome" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
+                <input type="text" id="nomeCartao" name="nome" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+            </div>
+
+            <!-- Banco -->
+            <div class="mb-4">
+                <label for="banco" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
+                <input type="text" id="bancoCartao" name="banco" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+            </div>
+
+            <!-- Final -->
+            <div class="mb-4">
+                <label for="final" class="block mb-2 text-sm font-medium text-gray-900">Final</label>
+                <input type="text" id="finalCartao" name="final" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>              
+            </div>
+
+            <!-- Vencimento -->
+            <div class="mb-4">
+                <label for="vencimento" class="block mb-2 text-sm font-medium text-gray-900">Vencimento</label>
+                <input type="number" min="1" max="31"  id="vencimentoCartao" name="vencimento" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>              
+            </div>
+
+            <!-- Quant Dias -->
+            <div class="mb-4">
+                <label for="quant_dias" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de dias</label>
+                <input type="number" id="quantdiasCartao" name="quant_dias" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>              
+            </div>
+
+            <!-- Melhor dia -->
+            <div class="mb-4">
+                <label for="melhor_dia" class="block mb-2 text-sm font-medium text-gray-900">Melhor dia</label>
+                <input
+                        type="text"
+                        id="melhordiaCartao"
+                        name="melhor_dia"
+                        value=""
+                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                        required 
+                        data-date-format="dd-mm-yyyy"
+                    />
+            </div>
+            
+            <div class="flex justify-end">
+                <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="cartaoModal('fecharEditar')">Cancelar</button>
+                <button type="submit" class="px-4 py-2 bg-[#287F71] text-white rounded-lg hover:bg-[#4DBCAA]">Salvar</button>
+                <button id="deletarCartaoBtn" type="button" class="px-4 py-2 bg-red-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="">Deletar</button>
+            </div>
+        </form>
+        
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#melhordiaCartao').datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,     
+            changeYear: true     
+        });
+    });
+</script>

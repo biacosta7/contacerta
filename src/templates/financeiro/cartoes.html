@@ -4,78 +4,94 @@
 
 {% block title %}Cartões{% endblock %}
 {% block content %}
-<div class="border-b-4 h-full mb-10">
-    <div class="flex flex-col h-full w-full max-w-2xl sm:max-w-4xl lg:max-w-6xl mx-auto">
-        <div class="flex w-full p-4 items-center">
-            <!-- Ícone de seta para voltar -->
-            <a href={% url 'locais:home' %}><i class="fa-solid fa-arrow-left fa-xl p-3 pt-3.5 pb-3.5 ml-4 mr-10 flex-grow-0"></i></a>
-            <div class="flex space-x-4 items-center justify-between">
-                <h1 class="text-3xl font-semibold">Cartões</h1>
-                <button class="bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
-                            modalName: 'modalCriarCartao',
-                            formId: 'formCriarCartao'
-                        });">
-                    Cadastrar Cartão
-                </button>
+<div class="flex border items-center justify-between p-4 py-6">
+<a href={% url 'locais:home' %}><i class="fa-solid fa-arrow-left fa-xl p-3 pt-3.5 pb-3.5 ml-4 flex-grow-0"></i></a>
+    <h1 class="text-3xl font-semibold">Cartões</h1>
+<!-- Ícone de opções no canto direito -->
+<i class="fa-solid fa-ellipsis-vertical fa-xl p-3 pt-3.5 pb-3.5 rounded-[9px] mr-4 flex-grow-0"></i>
+</div>
+
+<div class="flex flex-row p-4 pt-0">
+    <div class="border-4 border-green-100 p-4 w-3/4">
+        
+        <div class="flex justify-between bg-gray-50 text-black rounded-[9px] border p-6 mt-2">
+            <div class="flex flex-col">
+                <h1 class="text-base font-medium mb-2">Fatura do mês</h1>
+                <span class="text-4xl font-bold mb-1">R$ 10.000,00 </span> <!--{{ obra.valor_total|default:"0" }}-->
+                <span class="text-xs font-medium">(3 CARTÕES)</span> <!-- fazer função para contar quantidade de cartões à pagar-->
             </div>
-            <!-- Ícone de opções no canto direito -->
-            <i class="fa-solid fa-ellipsis-vertical fa-xl p-3 pt-3.5 pb-3.5 rounded-[9px] mr-4 flex-grow-0"></i>
+            <div class="flex items-center">
+                <button id="" class="text-base text-white bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="">
+                    Ver detalhes <i class="fa-solid fa-arrow-right-long ml-1" style="color: #ffffff;"></i>
+                </button>   
+            </div>
+        </div>
+        <div class="flex flex-col justify-between bg-gray-50 text-black rounded-[9px] border p-6 mt-2">
+            <h1 class="text-base font-medium mb-2">Cartões</h1>
+            
+            <div id="cartoes-slider" class="relative overflow-hidden">
+                <!-- Contêiner dos cartões -->
+                <div id="cartoes-container" class="flex transition-transform duration-300">
+                    {% for cartao in cartoes %}
+                        <div class="flex-none w-1/3 p-1">
+                            <div class="credit-card w-64 h-38 rounded-lg bg-gradient-to-r from-purple-800 to-purple-500 text-white p-4 flex flex-col justify-between drop-shadow shadow-lg cursor-pointer" 
+                                 onclick="cartaoModal('infoCartao', {{ cartao.id }})">
+                                <div class="bank-logo">
+                                    <img src="{% static cartao.banco.logo_path %}" alt="Bank Logo" class="w-16 h-auto">
+                                </div>
+                                <div class="card-number text-lg font-bold tracking-widest">
+                                    •••• •••• •••• <span>{{ cartao.final }}</span>
+                                </div>
+                                <div class="card-footer flex justify-between items-center">
+                                    <div class="bank-name text-sm font-semibold uppercase">{{ cartao.nome }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Contêiner das setas de navegação -->
+                <div class="flex justify-center items-center mt-4 space-x-4">
+                    <!-- Botão de navegação anterior -->
+                    <button id="prev-btn" class="text-gray-800 p-3 rounded-full">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+            
+                    <!-- Botão de navegação próximo -->
+                    <button id="next-btn" class="text-gray-800 p-3 rounded-full">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
         </div>
         
+    </div>
 
-        <div class="flex mt-4 items-center justify-center text-center w-full space-x-20">
-            <button id="geralBtn" class="px-8 py-2 text-center bg-gray-200 rounded-t-[9px]" onclick="sectionModal('geralSection')">Geral</button>
-            <button id="aditivosBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('aditivosSection')">Aditivos</button>
-            <button id="adiabmBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('adiabmSection')">Adiantamentos/BMs</button>
-            <button id="despesasBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('despesasSection')">Despesas</button>
+
+    <div class="border-4 border-purple-100 p-4 w-1/4">
+        <div class="mt-2">
+            <button class="bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+                modalName: 'modalCriarCartao',
+                formId: 'formCriarCartao'
+                });">
+                Cadastrar Cartão
+            </button>
+            
+            <button class="bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+                                        modalName: 'modalCriarBanco',
+                                        formId: 'formCriarBanco'
+                                    });">
+                Cadastrar Banco
+            </button>
         </div>
     </div>
 </div>
 
-
-
-<button class="bg-gray-700 text-white px-6 py-3 rounded-[9px] font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
-                            modalName: 'modalCriarBanco',
-                            formId: 'formCriarBanco'
-                        });">
-    Cadastrar Banco
-</button>
-
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-    {% for cartao in cartoes %}
-        <div class="m-4 credit-card w-64 h-38 rounded-lg bg-gradient-to-r from-purple-800 to-purple-500 text-white p-4 flex flex-col justify-between shadow-lg">
-            <div class="bank-logo">
-            <img src="{% static cartao.banco.logo_path %}" alt="Bank Logo" class="w-16 h-auto">
-            </div>
-            <div class="card-number text-lg font-bold tracking-widest">
-            •••• •••• •••• <span>{{ cartao.final }}</span>
-            </div>
-            <div class="card-footer flex justify-between items-center">
-            <div class="bank-name text-sm font-semibold uppercase">{{ cartao.nome }}</div>
-            </div>
-        </div>
-        <div>
-
-        {% comment %} <div class="pt-3.5 pb-2 p-4 py-6 bg-gray-50 text-black rounded-[9px] border relative">
-            <div>
-                <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-lg">{{ cartao.nome }}</h3>
-                    <i id="dots-{{ forloop.counter }}" class="fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]" onclick="toggleDotsMenu(event, {{ forloop.counter }})"></i>
-                </div>
-                <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-1"></i>{{ cartao.final }}</p>
-            </div> {% endcomment %}
-            {% comment %} <div class="pt-2 pb-2 text-right">
-                <!-- botão de ir -->
-                <a href="{% url 'detalhe_obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-[#287F71] text-black p-3 rounded-full cursor-pointer hover:bg-[#4DBCAA]" style="color:rgb(255, 255, 255);"></i></a>
-            </div> 
-            <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
-                <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>
-                <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})">Editar</button>
-            </div>{% endcomment %}
-        </div>
-    {% endfor %}
-</div>  
 {% include 'financeiro/modais/criar_cartao.html' %}
+{% include 'financeiro/modais/editar_cartao.html' %}
+{% include 'financeiro/modais/deletar_cartao.html' %}
+{% include 'financeiro/modais/info_cartao.html' %}
 {% include 'financeiro/modais/criar_banco.html' %}
 
 <div>
@@ -124,6 +140,27 @@
             changeMonth: true,     
             changeYear: true     
         });
+    });
+
+    const container = document.getElementById('cartoes-container');
+    const nextBtn = document.getElementById('next-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const cardWidth = container.querySelector('.flex-none').offsetWidth + 16; // Largura do cartão + margem
+    let currentPosition = 0;
+
+    nextBtn.addEventListener('click', () => {
+        const maxScroll = container.scrollWidth - container.offsetWidth;
+        if (currentPosition < maxScroll) {
+            currentPosition += cardWidth;
+            container.style.transform = `translateX(-${currentPosition}px)`;
+        }
+    });
+
+    prevBtn.addEventListener('click', () => {
+        if (currentPosition > 0) {
+            currentPosition -= cardWidth;
+            container.style.transform = `translateX(-${currentPosition}px)`;
+        }
     });
 
 </script>

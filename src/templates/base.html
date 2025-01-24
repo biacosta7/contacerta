@@ -26,6 +26,7 @@
 
         <!-- charts -->
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
     </head>
     <body>
         {% block content %}{% endblock content %}
@@ -94,7 +95,7 @@
             }
         }
 
-        // modal de editar e excluir
+        // modal de editar e excluir obra
         function obraModal(action, id) {
             const infoModal = document.getElementById('modalInfoObra');
             const editarModal = document.getElementById('modalEditarObra');
@@ -178,6 +179,90 @@
                 deletarModal.classList.remove('hidden');
             } else if (action === 'fecharDeletar') {
                 deletarModal.classList.add('hidden');
+            }
+            
+        }
+
+        const cartoes = JSON.parse('{{ cartoes_json|safe }}');
+
+        // modal de editar e excluir cartao
+        function cartaoModal(action, id) {
+            const infoModalCartao = document.getElementById('modalInfoCartao');
+            const editarModalCartao = document.getElementById('modalEditarCartao');
+            const deletarModalCartaoCartao = document.getElementById('modalDeletarCartao');
+        
+            var cartaoId = id;
+        
+            if (action === 'infoCartao') {
+                infoModalCartao.classList.toggle('hidden');
+                let cartao = cartoes.find(c => c.id === cartaoId);
+                
+                document.getElementById('cartaoTituloInfo').innerHTML = "Cartão " + cartao.nome;
+                document.getElementById('nomeCartaoInfo').innerHTML = "<b>Nome:</b> " + cartao.nome;
+                document.getElementById('bancoCartaoInfo').innerHTML = "<b>Banco:</b> " + cartao.banco;
+                document.getElementById('vencimentoCartaoInfo').innerHTML = "<b>Vencimento (dia):</b> " + cartao.vencimento;
+                document.getElementById('finalCartaoInfo').innerHTML = "<b>Final:</b> " + cartao.final;
+                document.getElementById('quantdiasCartaoInfo').innerHTML = "<b>Quantidade de dias:</b> " + cartao.quant_dias;
+                document.getElementById('melhordiaCartaoInfo').innerHTML = "<b>Melhor dia de compra:</b> " + (cartao.melhor_dia || "-");
+        
+            } else if (action === 'fecharInfoCartao') {
+                infoModalCartao.classList.add('hidden');
+            }
+        
+            else if (action === 'editarObra') {    
+                let cartao = cartoes.find(c => c.id === cartaoId);
+            
+                if (!cartao) {
+                    console.error('Cartão não encontrado:', cartaoId);
+                    return;  // Retorna caso não encontre a obra
+                }
+            
+                console.log('Cartão encontrada:', cartao);
+                console.log('ID da cartão:', cartao.id);  // Verifique se a obra tem o id
+                
+                document.getElementById('formEditarCartao').action = `/editar/cartao/${id}`;
+        
+                document.getElementById('cartaoId').value = cartao.id;
+                document.getElementById('nomeCartao').value = cartao.nome;
+                document.getElementById('finalCartao').value = cartao.final;
+                document.getElementById('vencimentoCartao').value = cartao.vencimento;
+                document.getElementById('quantdiasCartao').value = cartao.quant_dias;
+                document.getElementById('melhordiaCartao').value = cartao.melhor_dia;
+                              
+                document.getElementById('deletarCartaoBtn').setAttribute('onclick', `cartaoModal('deletarCartao', ${cartaoId})`);
+    
+                editarModalCartao.classList.remove('hidden');
+            } else if (action === 'fecharEditar') {
+                editarModalCartao.classList.add('hidden');
+            }
+            else if (action === 'deletarCartao') {
+                // Remover o modal de edição, pois estamos abrindo o de exclusão
+                editarModalCartao.classList.add('hidden');
+                
+                console.log('ID do cartão para exclusão:', cartaoId);
+                console.log('Cartões disponíveis:', cartoes);
+                
+                let cartao = cartoes.find(c => c.id === cartaoId);
+            
+                if (!cartao) {
+                    console.error('Cartão não encontrado:', cartaoId);
+                    return;  // Retorna caso não encontre a obra
+                }
+            
+                console.log('Cartão encontrada:', cartao);
+                console.log('ID da cartão:', cartao.id); 
+    
+                document.getElementById('tituloDeletarCartao').innerHTML = `Deletar "${cartao.nome}"`; 
+    
+                document.getElementById('textDeletarCartao').innerHTML = `Tem certeza de que deseja excluir a Cartão "${cartao.nome}"? Esta ação não pode ser desfeita.`; 
+                
+                // Defina a URL do formulário de exclusão com o ID correto
+                document.getElementById('formDeletarCartao').action = `/deletar/cartao/${id}`;
+                
+                // Mostra o modal de exclusão
+                deletarModalCartao.classList.remove('hidden');
+            } else if (action === 'fecharDeletar') {
+                deletarModalCartao.classList.add('hidden');
             }
             
         }
