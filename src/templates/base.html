@@ -189,7 +189,7 @@
         function cartaoModal(action, id) {
             const infoModalCartao = document.getElementById('modalInfoCartao');
             const editarModalCartao = document.getElementById('modalEditarCartao');
-            const deletarModalCartaoCartao = document.getElementById('modalDeletarCartao');
+            const deletarModalCartao = document.getElementById('modalDeletarCartao');
         
             var cartaoId = id;
         
@@ -209,28 +209,26 @@
                 infoModalCartao.classList.add('hidden');
             }
         
-            else if (action === 'editarObra') {    
+            else if (action === 'editarCartao') {    
                 let cartao = cartoes.find(c => c.id === cartaoId);
             
                 if (!cartao) {
                     console.error('Cartão não encontrado:', cartaoId);
-                    return;  // Retorna caso não encontre a obra
+                    return;  
                 }
             
                 console.log('Cartão encontrada:', cartao);
-                console.log('ID da cartão:', cartao.id);  // Verifique se a obra tem o id
+                console.log('ID da cartão:', cartao.id);
                 
                 document.getElementById('formEditarCartao').action = `/editar/cartao/${id}`;
-        
+                
+                document.getElementById('cartaoTituloEditar').innerHTML = `Editar "${cartao.nome}"`;
                 document.getElementById('cartaoId').value = cartao.id;
                 document.getElementById('nomeCartao').value = cartao.nome;
                 document.getElementById('finalCartao').value = cartao.final;
                 document.getElementById('vencimentoCartao').value = cartao.vencimento;
                 document.getElementById('quantdiasCartao').value = cartao.quant_dias;
-                document.getElementById('melhordiaCartao').value = cartao.melhor_dia;
-                              
-                document.getElementById('deletarCartaoBtn').setAttribute('onclick', `cartaoModal('deletarCartao', ${cartaoId})`);
-    
+                                  
                 editarModalCartao.classList.remove('hidden');
             } else if (action === 'fecharEditar') {
                 editarModalCartao.classList.add('hidden');
@@ -254,7 +252,7 @@
     
                 document.getElementById('tituloDeletarCartao').innerHTML = `Deletar "${cartao.nome}"`; 
     
-                document.getElementById('textDeletarCartao').innerHTML = `Tem certeza de que deseja excluir a Cartão "${cartao.nome}"? Esta ação não pode ser desfeita.`; 
+                document.getElementById('textDeletarCartao').innerHTML = `Tem certeza de que deseja excluir o cartão "${cartao.nome}"? Esta ação não pode ser desfeita.`; 
                 
                 // Defina a URL do formulário de exclusão com o ID correto
                 document.getElementById('formDeletarCartao').action = `/deletar/cartao/${id}`;

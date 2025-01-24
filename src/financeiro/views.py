@@ -4,7 +4,7 @@ from pyexpat.errors import messages
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
-
+from django.contrib.auth.decorators import login_required
 from locais.models import Obra, Escritorio
 from .models import Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
 from django.contrib.contenttypes.models import ContentType
@@ -13,6 +13,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+@login_required
 def limpar_e_converter_valor(valor, request, redirect_url='locais:home'):
     # Substituir separadores para o formato decimal
     valor = valor.replace('.', '').replace(',', '.')
@@ -25,6 +26,7 @@ def limpar_e_converter_valor(valor, request, redirect_url='locais:home'):
         messages.error(request, 'Valor inválido.')
         return redirect(redirect_url)
 
+@login_required
 def limpar_e_converter_data(data_str, request, redirect_url='locais:home', formato='%d/%m/%Y'):
     try:
         # Converter para datetime.date usando o formato especificado
@@ -34,6 +36,7 @@ def limpar_e_converter_data(data_str, request, redirect_url='locais:home', forma
         messages.error(request, f'Formato de data inválido. Use o formato {formato}.')
         return redirect(redirect_url)
 
+@login_required
 def criar_despesa(request, tipo, id):
     next_url = request.GET.get('next')
     obra = get_object_or_404(Obra, id=id)
@@ -183,6 +186,7 @@ def criar_despesa(request, tipo, id):
             'despesas': despesas,
         })
 
+@login_required
 def editar_despesa(request, tipo, id):
     next_url = request.GET.get('next')
     obra = get_object_or_404(Obra, id=id)
@@ -326,7 +330,7 @@ def editar_despesa(request, tipo, id):
             'despesas': despesas,
         })
 
-
+@login_required
 def criar_cartao(request):
     next_url = request.GET.get('next')
 
@@ -353,12 +357,56 @@ def criar_cartao(request):
 
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
-    
+@login_required
 def ver_cartoes(request):
     cartoes = Cartao.objects.all()
-    return render(request, 'financeiro/cartoes.html', {'cartoes': cartoes})
+    num_cartoes = Cartao.objects.count()
+
+    return render(request, 'financeiro/cartoes.html', {'cartoes': cartoes, 'num_cartoes': num_cartoes})
 
 
+@login_required
+def editar_obra(request, cartao_id):
+    next_url = request.GET.get('next')
+
+    cartao = get_object_or_404(Cartao, id=cartao_id)
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        banco_id = request.POST.get('banco')
+        final = request.POST.get('final')
+        vencimento = request.POST.get('vencimento')
+        quant_dias = request.POST.get('quant_dias')
+        # melhor_dia = request.POST.get('melhor_dia')
+
+        # Obtenha a instância do banco ou retorne um erro 404 se não existir
+        banco = get_object_or_404(Banco, id=banco_id)
+
+        cartao.nome = nome
+        cartao.banco = banco
+        cartao.final = final
+        cartao.vencimento = vencimento
+        cartao.quant_dias = quant_dias
+        #cartao.melhor_dia = melhor_dia
+
+        cartao.save()
+        messages.success(request, 'Cartão atualizado com sucesso.')
+
+    return redirect(next_url if next_url else 'financeiro:cartoes')
+
+
+@login_required
+def deletar_cartao(request, cartao_id):
+    next_url = request.GET.get('next')
+    cartao = get_object_or_404(Cartao, id=cartao_id)
+
+    cartao.delete()
+    messages.success(request, 'Cartão deletado com sucesso.')
+    return redirect(next_url if next_url else 'financeiro:cartoes')
+
+
+
+@login_required
 def criar_banco(request):
     next_url = request.GET.get('next')
 
@@ -370,7 +418,7 @@ def criar_banco(request):
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
     
-
+@login_required
 def atualizar_status(request, despesa_id):
     next_url = request.GET.get('next')
     # Pega a despesa com o id fornecido, ou retorna 404 se não existir
@@ -388,6 +436,7 @@ def atualizar_status(request, despesa_id):
     return redirect(next_url if next_url else 'financeiro:cartoes')
     
 
+@login_required
 def criar_aditivo(request, tipo, id):
     if request.method == 'POST':
         nome = request.POST.get('nome')
@@ -437,7 +486,8 @@ def criar_aditivo(request, tipo, id):
         return render(request, 'locais/detalhe_obra.html', {
             'obra': obra,
         })
-    
+
+@login_required
 def criar_funcionario(request):
     next_url = request.GET.get('next')
 

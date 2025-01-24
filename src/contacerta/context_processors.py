@@ -59,7 +59,16 @@ def cartoes(request):
     # Serializa os dados para JSON
     cartoes_json = json.dumps(cartoes_lista, cls=DjangoJSONEncoder)
 
-    return {'cartoes_json': cartoes_json}
+    # Verifica se há busca no request
+    query = request.GET.get('search')
+    cartao_busca = None
+    if query:
+        cartao_busca = cartoes.filter(final=query).first()
+
+    return {
+        'cartoes_json': cartoes_json, 
+        'cartao_busca': cartao_busca,
+    }
 
 
 def despesas(request):
