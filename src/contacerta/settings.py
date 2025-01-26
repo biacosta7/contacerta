@@ -85,6 +85,8 @@ TEMPLATES = [
                 'contacerta.context_processors.info_obras',
                 'contacerta.context_processors.bancos',
                 'contacerta.context_processors.cartoes',
+                'contacerta.context_processors.despesas',
+                'contacerta.context_processors.funcionarios',
             ],
         },
     },

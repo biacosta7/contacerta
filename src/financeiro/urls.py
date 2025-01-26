@@ -7,6 +7,8 @@ urlpatterns = [
     # Despesas
     path('detalhes/<str:tipo>/<int:id>/criar-despesa/', views.criar_despesa, name='criar_despesa'),
     path('detalhes/atualizar-status/<int:despesa_id>/', views.atualizar_status, name='atualizar_status'),
+    path('editar/despesa/<int:despesa_id>/', views.editar_despesa, name='editar_despesa'),
+    path('deletar/despesa/<int:despesa_id>/', views.deletar_despesa, name='deletar_despesa'),
 
     # Cartões
     path('cartoes/', views.ver_cartoes, name='cartoes'),

@@ -1,0 +1,189 @@
+<!-- Modal de edição de despesa -->
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalEditarDespesa">
+    <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
+        <div class="flex space-x-8 justify-between items-center mb-4">
+            <h5 id="despesaTituloEditar" class="text-2xl font-semibold text-center flex-grow ml-8">Editar {{ despesa.nome }}</h5>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="obraModal('fecharEditarDespesa')"></i>
+        </div>
+        <form method="POST" id="formEditarDespesa" action="" class="p-6">
+            {% csrf_token %}
+            <!-- Campo oculto para ID da despesa -->
+            <input type="hidden" id="despesaId" name="despesa_id" value="">
+
+            <!-- Nome da despesa -->
+            <div class="mb-4">
+                <label for="nomeDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
+                <input id="nomeDespesaEditar" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3">
+                    
+                </input>
+            </div>
+
+            <div class="flex space-x-4 justify-between w-full">
+                 <!-- Forma de pagamento -->
+                <div class="flex-1">
+                    <label for="formaPagDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Forma de pagamento</label>
+                    <select id="formaPagDespesaEditar" name="forma_pag" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                        <option value="" selected disabled hidden>Selecione a forma</option>
+                        <option value="cartao">Cartão</option>
+                        <option value="boleto">Boleto</option>
+                        <option value="pix">Pix</option>
+                        <option value="especie">Espécie</option>
+                    </select>
+                </div>
+            
+                <!-- Status  -->
+                <div class="flex-1">
+                    <label for="statusDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Status</label>
+                    <select id="statusDespesaEditar" name="status" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                        <option value="a_pagar">À pagar</option>
+                        <option value="pago">Pago</option>
+                    </select>
+                </div>
+            </div>
+
+           
+
+            <!-- Valor  -->
+            <div class="mb-4">
+                <label for="valorDespesaEditar" class="block mb-2 mt-2 text-sm font-medium text-gray-900">Valor</label>
+                <input type="text" id="valorDespesaEditar" name="valor" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>              
+            </div>
+
+            
+
+            <!-- Data de emissão -->
+            <div class="mb-4">
+                <label for="dataDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de emissão</label>
+                <input
+                        type="text"
+                        id="dataDespesaEditar"
+                        name="data"
+                        value="{{ despesa.data|date:'d-m-Y' }}" 
+                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                        data-date-format="dd-mm-yyyy"
+                />
+            </div>
+
+            <div class="mb-4">
+                <label for="modalidadeDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Modalidade</label>
+                <select id="modalidadeDespesaEditar" name="modalidade" class=" border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
+                    <option value="" selected disabled hidden>Selecione a modalidade</option>
+                    <option value="mao_de_obra">Mão de Obra</option>
+                    <option value="insumos">Insumos</option>
+                    <option value="combustivel">Combustível</option>
+                </select>
+            </div>
+
+            <!-- Data de pagamento -->
+            <div class="mb-4">
+                <label for="dataPagDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de pagamento</label>
+                <input
+                        type="text"
+                        id="dataPagDespesaEditar"
+                        name="data_pagamento"
+                        value="{{ despesa.data_pagamento|date:'d-m-Y' }}" 
+                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                        data-date-format="dd-mm-yyyy"
+                />
+            </div>
+
+            <!-- Modalidade específica: Mão de Obra -->
+            {% if despesa.modalidade == 'mao_de_obra' %}
+            <div id="maoDeObraFields" class="mb-4">
+                <div class="mb-4">
+                    <label for="despesaFuncionarioMDOEditar" class="block mb-2 text-sm font-medium text-gray-900">Funcionário</label>
+                    <span id="despesaFuncionarioMDOEditar" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
+                        {{ mdo_despesa.funcionario|default:"-" }}
+                    </span>
+                </div>
+                <div class="mb-4">
+                    <label for="despesaCategoriaMDOEditar" class="block mb-2 text-sm font-medium text-gray-900">Categoria</label>
+                    <span id="despesaCategoriaMDOEditar" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
+                        {{ mdo_despesa.categoria }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Modalidade específica: Cartão -->
+            <div id="cartaoFields" class="hidden">
+                <div class="mb-4">
+                    <label for="despesaCartaoNomeEditar" class="block mb-2 text-sm font-medium text-gray-900">Cartão</label>
+                    <select id="despesaCartaoNomeEditar" name="cartao" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 mb-2">
+                        <option value="" selected disabled hidden>Selecione o cartão</option>
+                        {% for cartao in cartoes %}
+                        <option value="{{ cartao.id }}">{{cartao.final}} - {{ cartao.nome }}</option>
+                        {% endfor %}
+                        
+                    </select>
+                </div>
+
+                <div class="flex space-x-4 justify-between w-full">
+
+                    <div>
+                        <label for="despesaQntParcelasCartaoEditar" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de parcelas*</label>
+                        <input type="number" id="despesaQntParcelasCartaoEditar" name="quant_parcelas" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                    </div>
+                    <div>
+                        <label for="despesaValorParcelaCartaoEditar" class="block mb-2 text-sm font-medium text-gray-900">Valor da parcela*</label>
+                        <input type="text" id="despesaValorParcelaCartaoEditar" placeholder="1.200,50" name="valor_parcela" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                    </div>
+                </div>
+               
+            </div>
+
+            <!-- Modalidade específica: Boleto -->
+            {% if despesa.forma_pag == 'boleto' %}
+            <div id="boletoFields">
+                <div class="mb-4">
+                    <label for="despesaBoletoNome" class="block mb-2 text-sm font-medium text-gray-900">Boleto</label>
+                    <span id="despesaBoletoNome" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
+                        {{ boleto_despesa.nome|default:"-" }}
+                    </span>
+                </div>
+                <div class="mb-4">
+                    <label for="despesaRecipienteBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Recipiente</label>
+                    <span id="despesaRecipienteBoletoEditar" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
+                        {{ boleto_despesa.recipiente }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Modalidade específica: Pix -->
+            {% if despesa.forma_pag == 'pix' %}
+            <div id="pixFields">
+                <div class="mb-4">
+                    <label for="despesaBancoPixEditar" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
+                    <span id="despesaBancoPixEditar" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
+                        {{ pix_despesa.banco }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Modalidade específica: Espécie -->
+            {% if despesa.forma_pag == 'especie' %}
+            <div id="especieFields">
+                <div class="mb-4">
+                    <label for="despesaBancoPixEditar" class="block mb-2 text-sm font-medium text-gray-900">Pagador</label>
+                    <span id="despesaBancoPixEditar" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
+                        {{ especie_despesa.banco }}
+                    </span>
+                </div>
+            </div>
+            {% endif %}
+
+            <label for="obsDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Observação</label>
+            <textarea id="obsDespesaEditar" name="observacao" rows="4" class="block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>
+
+
+            <div class="flex justify-end">
+                <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="obraModal('fecharEditar')">Cancelar</button>
+                <button type="submit" class="px-4 py-2 bg-[#287F71] text-white rounded-lg hover:bg-[#4DBCAA] mx-4">Salvar</button>
+                <button id="deletarObraBtn" type="button" class="px-4 py-2 bg-red-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="">Deletar</button>
+            </div>
+        </form>
+        
+    </div>
+</div>

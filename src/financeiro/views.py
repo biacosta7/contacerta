@@ -13,7 +13,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-@login_required
 def limpar_e_converter_valor(valor, request, redirect_url='locais:home'):
     # Substituir separadores para o formato decimal
     valor = valor.replace('.', '').replace(',', '.')
@@ -26,7 +25,6 @@ def limpar_e_converter_valor(valor, request, redirect_url='locais:home'):
         messages.error(request, 'Valor inválido.')
         return redirect(redirect_url)
 
-@login_required
 def limpar_e_converter_data(data_str, request, redirect_url='locais:home', formato='%d/%m/%Y'):
     try:
         # Converter para datetime.date usando o formato especificado
@@ -156,7 +154,7 @@ def criar_despesa(request, tipo, id):
             if modalidade == 'mao_de_obra':
                 logger.debug("Processando modalidade Mão de obra...")
                 funcionario_id = request.POST.get('funcionario')
-                funcionario = get_object_or_404(Banco, id=funcionario_id)
+                funcionario = get_object_or_404(Funcionario, id=funcionario_id)
 
                 MaoDeObra.objects.create(
                     **campos_despesa,
@@ -329,6 +327,16 @@ def editar_despesa(request, tipo, id):
             'obra': obra,
             'despesas': despesas,
         })
+
+@login_required
+def deletar_despesa(request, despesa_id):
+    next_url = request.GET.get('next')
+    despesa = get_object_or_404(Despesa, id=despesa_id)
+
+    despesa.delete()
+    messages.success(request, 'Despesa deletada com sucesso.')
+    return redirect(next_url if next_url else 'locais:home')
+
 
 @login_required
 def criar_cartao(request):

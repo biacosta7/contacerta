@@ -24,9 +24,6 @@
     </div>
 </div>
 
-
-
-
 <div class="flex space-x-4 justify-between mb-4 ">
     <div class="relative shadow-md rounded-lg w-full">
         <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
@@ -101,7 +98,7 @@
                                 {{ despesa.observacao|default:'-' }}
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+                                <button onclick="despesaModal('editarDespesa', {{ despesa.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -127,10 +124,6 @@
         </div>
     </div>
 </div>
-
-{% include 'financeiro/modais/criar_despesa.html' %}
-
-
 
   
 <script>

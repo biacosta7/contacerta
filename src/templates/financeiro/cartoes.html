@@ -13,12 +13,11 @@
 
 <div class="flex flex-row p-4 pt-0">
     <div class="p-4 w-3/4">
-        
+
         <div class="flex justify-between bg-gray-800 text-black rounded-[9px] border px-12 py-12 mt-2">
             <div class="flex flex-col">
-                <h1 class="text-base text-white font-medium mb-2">Fatura do mês</h1>
-                <span class="text-4xl text-white font-bold mb-1">R$ 10.000,00 </span> <!--{{ obra.valor_total|default:"0" }}-->
-                <span class="text-xs text-white font-medium">(3 CARTÕES)</span> <!-- fazer função para contar quantidade de cartões à pagar-->
+                <h1 class="text-base text-white font-medium mb-2">Fatura do mês <i class="fa-solid fa-circle-question ml-1" style="color:rgb(163, 163, 163);"></i></h1> 
+                <span class="text-4xl text-white font-bold mb-1">{{ debito_mensal_total }} </span> <!--{{ obra.valor_total|default:"0" }}-->
             </div>
             <div class="flex items-center">
                 <button id="" class="text-base text-white bg-green-600 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="">
