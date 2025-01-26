@@ -3,7 +3,7 @@
     <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
         <div class="flex space-x-8 justify-between items-center mb-4">
             <h5 id="despesaTituloEditar" class="text-2xl font-semibold text-center flex-grow ml-8">Editar {{ despesa.nome }}</h5>
-            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="obraModal('fecharEditarDespesa')"></i>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="despesaModal('fecharEditarDespesa')"></i>
         </div>
         <form method="POST" id="formEditarDespesa" action="" class="p-6">
             {% csrf_token %}
@@ -133,22 +133,47 @@
             </div>
 
             <!-- Modalidade específica: Boleto -->
-            {% if despesa.forma_pag == 'boleto' %}
-            <div id="boletoFields">
-                <div class="mb-4">
-                    <label for="despesaBoletoNome" class="block mb-2 text-sm font-medium text-gray-900">Boleto</label>
-                    <span id="despesaBoletoNome" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
-                        {{ boleto_despesa.nome|default:"-" }}
-                    </span>
-                </div>
-                <div class="mb-4">
+            <div id="boletoFields" class="hidden">
+                <div>
                     <label for="despesaRecipienteBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Recipiente</label>
-                    <span id="despesaRecipienteBoletoEditar" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
-                        {{ boleto_despesa.recipiente }}
-                    </span>
+                    <input type="text" id="despesaRecipienteBoletoEditar" name="recipiente" class="mb-2 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                </div>
+                <div class="flex space-x-4 justify-between w-full">
+                    <div class="flex-1 mb-2">
+                        <label for="despesaQntBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de boletos</label>
+                        <input type="number" id="despesaQntBoletoEditar" placeholder="0" name="quant_boletos" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                    </div>
+                    <div class="flex-1 mb-2">
+                        <label for="despesaVencimentoBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de vencimento</label>
+                        <input
+                            type="text"
+                            id="despesaVencimentoBoletoEditar"
+                            name="vencimento"
+                            value="{{ despesa.vencimento|date:'d-m-Y' }}"
+                            class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3 "
+                            required 
+                            data-date-format="dd-mm-yyyy"
+                        />
+                    </div>
+                </div>
+
+                <div class="flex space-x-4 justify-between w-full">
+                    <div class="flex-1 mb-2">
+                        <label for="despesaBancoBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
+                        <select id="despesaBancoBoletoEditar" name="banco" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                            <option value="" selected disabled hidden>Selecione o banco</option>
+                            {% for banco in bancos %}
+                            <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="despesaNotaFiscalBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Número da Nota Fiscal</label>
+                        <input type="text" id="despesaNotaFiscalBoletoEditar" name="num_notafiscal" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+                    </div>
                 </div>
             </div>
-            {% endif %}
 
             <!-- Modalidade específica: Pix -->
             {% if despesa.forma_pag == 'pix' %}
@@ -179,9 +204,9 @@
 
 
             <div class="flex justify-end">
-                <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="obraModal('fecharEditar')">Cancelar</button>
+                <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="despesaModal('fecharEditarDespesa')">Cancelar</button>
                 <button type="submit" class="px-4 py-2 bg-[#287F71] text-white rounded-lg hover:bg-[#4DBCAA] mx-4">Salvar</button>
-                <button id="deletarObraBtn" type="button" class="px-4 py-2 bg-red-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="">Deletar</button>
+                <button id="deletarDespesaBtn" type="button" class="px-4 py-2 bg-red-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="">Deletar</button>
             </div>
         </form>
         

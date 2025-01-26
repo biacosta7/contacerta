@@ -39,7 +39,10 @@ def info_obras(request):
 def bancos(request):
     bancos = Banco.objects.all().values()
 
-    return {'bancos': bancos}
+    return {
+        'bancos': bancos,         
+        'bancos_json': json.dumps(list(bancos), cls=DjangoJSONEncoder),
+    }
 
 def cartoes(request):
     # Obtém todos os cartões com os dados necessários (evitando consultas adicionais)
