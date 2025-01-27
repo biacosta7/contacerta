@@ -1,5 +1,5 @@
 <!-- Modal de deleção de obra -->
-<div id="modalDeletarObra" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+<div id="modalDeletarDespesa" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
     <div class="bg-white px-14 py-12 rounded-[34px] w-full max-w-lg">
         <h3 id="tituloDeletarDespesa" class="text-xl font-bold mb-4 text-red-600">Deletar Despesa</h3>
         <p id="textDeletarDespesa" class="text-gray-700 mb-6">Tem certeza de que deseja excluir a Despesa "{{ despesa.nome }}"? Esta ação não pode ser desfeita.</p>
@@ -7,7 +7,7 @@
             {% csrf_token %}
             <div class="flex flex-row justify-between">
                 <button type="submit" class="mr-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 w-full font-bold">Deletar</button>
-                <button type="button" onclick="obraModal('fecharDeletar')" class="bg-white border-2 border-gray-800 hover:border-gray-600 text-gray-800 hover:text-gray-600 font-bold px-6 py-3 rounded-[9px] w-full">Cancelar</button>
+                <button type="button" onclick="despesaModal('fecharDeletarDespesa')" class="bg-white border-2 border-gray-800 hover:border-gray-600 text-gray-800 hover:text-gray-600 font-bold px-6 py-3 rounded-[9px] w-full">Cancelar</button>
             </div>
         </form>
     </div>

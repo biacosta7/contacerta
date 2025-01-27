@@ -278,6 +278,7 @@
             const deletarModalDespesa = document.getElementById('modalDeletarDespesa');
         
             var despesaId = id;
+            let despesa = despesas.find(d => d.id === despesaId);
         
             if (action === 'infoDespesa') {
                 infoModalDespesa.classList.toggle('hidden');
@@ -336,13 +337,6 @@
             }
         
             else if (action === 'editarDespesa') {    
-                let despesa = despesas.find(d => d.id === despesaId);
-            
-                if (!despesa) {
-                    console.error('Despesa não encontrada:', cartaoId);
-                    return;  
-                }
-            
                 console.log('Despesa encontrada:', despesa);
                 console.log('ID da Despesa:', despesa.id);
                 
@@ -360,7 +354,8 @@
                 document.getElementById('statusDespesaEditar').value = despesa.status;
                 document.getElementById('dataPagDespesaEditar').value = (despesa.data_pagamento || "-");
                 document.getElementById('modalidadeDespesaEditar').value = despesa.modalidade;
-                
+
+                document.getElementById('deletarDespesaBtn').setAttribute('onclick', `despesaModal('deletarDespesa', ${despesaId})`);       
 
                 if (despesa.modalidade == 'mao_de_obra'){
                     const maoDeObraFieldsDespesa = document.getElementById('maoDeObraFields');
@@ -373,7 +368,6 @@
                     
                     
                 }
-
 
                 if (despesa.forma_pag == 'cartao'){
 
@@ -443,34 +437,23 @@
                     document.getElementById('despesaPagadorEspecieEditar').required = true;
                 }
 
-
                 editarModalDespesa.classList.remove('hidden');
             } else if (action === 'fecharEditarDespesa') {
                 editarModalDespesa.classList.add('hidden');
             }
             else if (action === 'deletarDespesa') {
+
                 // Remover o modal de edição, pois estamos abrindo o de exclusão
                 editarModalDespesa.classList.add('hidden');
+
+                document.getElementById('formDeletarDespesa').action = `/financeiro/deletar/despesa/${id}/?next=${window.location.pathname}`;
                 
-                console.log('ID da despesa para exclusão:', despesId);
-                console.log('Despesas disponíveis:', despesas);
-                
-                let despesa = despesas.find(d => d.id === despesaId);
-            
-                if (!despesa) {
-                    console.error('Cartão não encontrado:', despesaId);
-                    return;  // Retorna caso não encontre a obra
-                }
-            
-                console.log('Despesa encontrada:', despesa);
-                console.log('ID da despesa:', despesa.id); 
+                console.log('ID da despesa para exclusão:', despesaId);
     
                 document.getElementById('tituloDeletarDespesa').innerHTML = `Deletar "${despesa.nome}"`; 
     
                 document.getElementById('textDeletarDespesa').innerHTML = `Tem certeza de que deseja excluir a despesa "${despesa.nome}"? Esta ação não pode ser desfeita.`; 
                 
-                // Defina a URL do formulário de exclusão com o ID correto
-                document.getElementById('formDeletarDespesa').action = `/deletar/despesa/${id}`;
                 
                 // Mostra o modal de exclusão
                 deletarModalDespesa.classList.remove('hidden');
