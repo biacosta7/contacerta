@@ -108,11 +108,9 @@ def despesas(request):
     nota_boleto = NotaBoleto.objects.select_related('banco').all().values()
     nota_pix = NotaPix.objects.select_related('banco').all().values()
     nota_especie = NotaEspecie.objects.all().values()
-    mao_de_obra = MaoDeObra.objects.select_related('funcionario').values(
-        'id', 'nome', 'forma_pag', 'data', 'valor', 'observacao', 'status', 
-        'data_pagamento', 'modalidade', 'categoria', 'funcionario_id'
+    mao_de_obra = MaoDeObra.objects.all().values(
+        'id', 'despesa', 'categoria', 'funcionario_id'
     )
-    funcionarios = Funcionario.objects.values('id', 'nome', 'cargo')
     debito_mensal_total = calcular_debito_mensal_total()
 
     return {
@@ -121,7 +119,6 @@ def despesas(request):
         'nota_pix_json': json.dumps(list(nota_pix), cls=DjangoJSONEncoder),
         'nota_especie_json': json.dumps(list(nota_especie), cls=DjangoJSONEncoder),
         'mao_de_obra_json': json.dumps(list(mao_de_obra), cls=DjangoJSONEncoder),
-        'funcionarios_json': json.dumps(list(funcionarios), cls=DjangoJSONEncoder),
         'debito_mensal_total': debito_mensal_total,
         'despesas': despesas,
         'despesas_json': json.dumps(list(despesas), cls=DjangoJSONEncoder),

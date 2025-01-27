@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as login_django, logout as logout_django
 from django.db import IntegrityError
+from django.contrib.auth.decorators import login_required
 
 def criar_user(request):
     if request.method == 'POST':

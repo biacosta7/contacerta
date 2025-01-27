@@ -269,7 +269,6 @@
         const notaPix = JSON.parse('{{ nota_pix_json|safe }}');
         const notaEspecie = JSON.parse('{{ nota_especie_json|safe }}');
         const maoDeObras = JSON.parse('{{ mao_de_obra_json|safe }}');
-        const funcionarios = JSON.parse('{{ funcionarios_json|safe }}');
         const bancos = JSON.parse('{{ bancos_json|safe }}');
 
         // modal de editar e excluir despesa
@@ -362,22 +361,18 @@
                 
 
                 if (despesa.modalidade == 'mao_de_obra'){
-                    let mdo_despesa = maoDeObras.find(md => md.id === despesaId); 
+                    const maoDeObraFieldsDespesa = document.getElementById('maoDeObraFields');
+                    maoDeObraFieldsDespesa.classList.remove('hidden');
+
+                    let mdo_despesa = maoDeObras.find(md => md.despesa === despesaId); 
                     
-                    if (!mdo_despesa) {
-                        console.warn(`Mão de obra não encontrada para ID: ${despesaId}`);
-                    } else {
-                        console.log('Mão de Obra:', mdo_despesa);
-                        let funcionario_despesa = funcionarios.find(fd => fd.id === mdo_despesa.funcionario_id);
-                        if (!funcionario_despesa) {
-                            console.warn(`Funcionário não encontrado para ID: ${mdo_despesa.funcionario_id}`);
-                        } else {
-                            console.log('Funcionário:', funcionario_despesa);
-                        }
-                
-                        document.getElementById('despesaFuncionarioMDOInfo').value = (funcionario_despesa?.nome || "-");
-                        document.getElementById('despesaCategoriaMDOInfo').value = mdo_despesa.categoria;
-                    }
+                    console.log('Mão de Obra:', mdo_despesa);
+                    console.log('Funcionário ID:', mdo_despesa.funcionario_id);
+
+            
+                    document.getElementById('despesaFuncionarioMDOEditar').value = mdo_despesa.funcionario_id;
+                    document.getElementById('despesaCategoriaMDOEditar').value = mdo_despesa.categoria;
+                    
                     
                 }
 
@@ -417,15 +412,21 @@
                 }
 
                 else if (despesa.forma_pag == 'pix'){
+                    const pixFieldsDespesa = document.getElementById('pixFields');
+                    pixFieldsDespesa.classList.remove('hidden');
+
                     let pix_despesa = notaPix.find(pd => pd.id === despesaId);
 
-                    document.getElementById('despesaBancoPixEditar').value = "<b>Banco:</b> " + pix_despesa.banco;
+                    document.getElementById('despesaBancoPixEditar').value = pix_despesa.banco_id;
                 }
 
                 else if (despesa.forma_pag == 'especie'){
+                    const especieFieldsDespesa = document.getElementById('especieFields');
+                    especieFieldsDespesa.classList.remove('hidden');
+
                     let especie_despesa = notaEspecie.find(ed => ed.id === despesaId);
 
-                    document.getElementById('despesaBancoPixEditar').value = "<b>Pagador:</b> " + especie_despesa.banco;
+                    document.getElementById('despesaPagadorEspecieEditar').value = especie_despesa.pagador;
                 }
 
 

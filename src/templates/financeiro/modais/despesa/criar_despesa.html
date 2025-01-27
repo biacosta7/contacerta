@@ -108,7 +108,6 @@
                         <label for="banco" class="block mb-2 text-sm font-medium text-gray-900">Banco*</label>
                         <select id="banco" name="banco" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
                             <option value="" selected disabled hidden></option>
-                            <option value="banco_teste">Banco Teste</option>
                             {% for banco in bancos %}
                             <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
                             {% endfor %}
@@ -164,9 +163,6 @@
                         <option value="combustivel">Combustível</option>
                     </select>
                 </div>
-
-
-                {% comment %} abrir mais campos se mao_de_obra for selecionada {% endcomment %}
                 
 
                 <div id="maoDeObraSection" class="hidden mt-4">

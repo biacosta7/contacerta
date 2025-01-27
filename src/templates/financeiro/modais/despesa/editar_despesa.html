@@ -88,22 +88,30 @@
             </div>
 
             <!-- Modalidade específica: Mão de Obra -->
-            {% if despesa.modalidade == 'mao_de_obra' %}
-            <div id="maoDeObraFields" class="mb-4">
-                <div class="mb-4">
-                    <label for="despesaFuncionarioMDOEditar" class="block mb-2 text-sm font-medium text-gray-900">Funcionário</label>
-                    <span id="despesaFuncionarioMDOEditar" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
-                        {{ mdo_despesa.funcionario|default:"-" }}
-                    </span>
-                </div>
-                <div class="mb-4">
-                    <label for="despesaCategoriaMDOEditar" class="block mb-2 text-sm font-medium text-gray-900">Categoria</label>
-                    <span id="despesaCategoriaMDOEditar" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
-                        {{ mdo_despesa.categoria }}
-                    </span>
+            <div id="maoDeObraFields" class="hidden mb-4">
+
+                <div class="flex space-x-4 justify-between w-full">
+                    <div class="flex-1 mb-2">
+                        <label for="despesaFuncionarioMDOEditar" class="block mb-2 text-sm font-medium text-gray-900">Funcionario</label>
+                        <select id="despesaFuncionarioMDOEditar" name="funcionario" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                            <option value="" selected disabled hidden>Selecione o funcionario</option>
+                            {% for funcionario in funcionarios %}
+                            <option class="" value="{{funcionario.id}}">{{funcionario.nome}}</option> 
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="flex-1 mb-2">
+                        <label for="despesaCategoriaMDOEditar" class="block mb-2 text-sm font-medium text-gray-900">Categoria</label>
+                        <select id="despesaCategoriaMDOEditar" name="categoria" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                            <option value="" selected disabled hidden>Selecione a categoria</option>
+                            <option value="adiantamento">Adiantamento</option>
+                            <option value="passagem">Passagem</option>
+                            <option value="alimentacao">Alimentacao</option>
+                            <option value="reembolso">Reembolso</option>
+                        </select>
+                    </div>
                 </div>
             </div>
-            {% endif %}
 
             <!-- Modalidade específica: Cartão -->
             <div id="cartaoFields" class="hidden">
@@ -176,28 +184,25 @@
             </div>
 
             <!-- Modalidade específica: Pix -->
-            {% if despesa.forma_pag == 'pix' %}
-            <div id="pixFields">
-                <div class="mb-4">
+            <div id="pixFields" class="hidden">
+                <div>
                     <label for="despesaBancoPixEditar" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
-                    <span id="despesaBancoPixEditar" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
-                        {{ pix_despesa.banco }}
-                    </span>
+                    <select id="despesaBancoPixEditar" name="banco" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                        <option value="" selected disabled hidden></option>
+                        {% for banco in bancos %}
+                        <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
-            {% endif %}
 
             <!-- Modalidade específica: Espécie -->
-            {% if despesa.forma_pag == 'especie' %}
-            <div id="especieFields">
-                <div class="mb-4">
-                    <label for="despesaBancoPixEditar" class="block mb-2 text-sm font-medium text-gray-900">Pagador</label>
-                    <span id="despesaBancoPixEditar" class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-100">
-                        {{ especie_despesa.banco }}
-                    </span>
+            <div id="especieFields" class="hidden">
+                <div>
+                    <label for="despesaPagadorEspecieEditar" class="block mb-2 text-sm font-medium text-gray-900">Pagador</label>
+                    <input type="text" id="despesaPagadorEspecieEditar" name="pagador" class="mb-2 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
                 </div>
             </div>
-            {% endif %}
 
             <label for="obsDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Observação</label>
             <textarea id="obsDespesaEditar" name="observacao" rows="4" class="block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>

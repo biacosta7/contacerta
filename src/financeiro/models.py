@@ -129,6 +129,7 @@ class NotaCartao(Despesa):
     quant_parcelas = models.IntegerField()
     valor_parcela = models.DecimalField(max_digits=10, decimal_places=2)
 
+
 class NotaBoleto(Despesa):
     recipiente = models.CharField(max_length=100)
     quant_boletos = models.IntegerField()
@@ -149,7 +150,8 @@ class Funcionario(models.Model):
     def __str__(self):
         return f"{self.nome} - {self.cargo}"
     
-class MaoDeObra(Despesa):
+class MaoDeObra(models.Model):
+    despesa = models.ForeignKey(Despesa, on_delete=models.CASCADE)
     funcionario = models.ForeignKey(Funcionario, on_delete=models.SET_NULL, null=True)
     categoria = models.CharField(
         max_length=20,
@@ -163,5 +165,6 @@ class MaoDeObra(Despesa):
 
     def __str__(self):
         return f"{self.funcionario} - {self.categoria}"
+
     
 

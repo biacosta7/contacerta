@@ -189,7 +189,7 @@ def criar_escritorio(request):
     return redirect('locais:home')
 
 
-
+@login_required
 def detalhar_escritorio(request, id=None):
     escritorio = Escritorio.objects.first()
     funcionarios = Funcionario.objects.all()
