@@ -2,19 +2,18 @@
 <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalEditarDespesa">
     <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
         <div class="flex space-x-8 justify-between items-center mb-4">
-            <h5 id="despesaTituloEditar" class="text-2xl font-semibold text-center flex-grow ml-8">Editar {{ despesa.nome }}</h5>
+            <h5 id="despesaTituloEditar" class="text-2xl font-bold text-center flex-grow ml-8">Editar {{ despesa.nome }}</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="despesaModal('fecharEditarDespesa')"></i>
         </div>
-        <form method="POST" id="formEditarDespesa" action="" class="p-6">
+        <form method="POST" id="formEditarDespesa" action="" class="px-6 space-y-8">
             {% csrf_token %}
             <!-- Campo oculto para ID da despesa -->
             <input type="hidden" id="despesaId" name="despesa_id" value="">
 
             <!-- Nome da despesa -->
-            <div class="mb-4">
+            <div class="">
                 <label for="nomeDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
-                <input id="nomeDespesaEditar" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3">
-                    
+                <input id="nomeDespesaEditar" name="nome" class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3">
                 </input>
             </div>
 
@@ -22,7 +21,7 @@
                  <!-- Forma de pagamento -->
                 <div class="flex-1">
                     <label for="formaPagDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Forma de pagamento</label>
-                    <select id="formaPagDespesaEditar" name="forma_pag" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                    <select id="formaPagDespesaEditar" name="forma_pag" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
                         <option value="" selected disabled hidden>Selecione a forma</option>
                         <option value="cartao">Cartão</option>
                         <option value="boleto">Boleto</option>
@@ -34,39 +33,24 @@
                 <!-- Status  -->
                 <div class="flex-1">
                     <label for="statusDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Status</label>
-                    <select id="statusDespesaEditar" name="status" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                    <select id="statusDespesaEditar" name="status" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
                         <option value="a_pagar">À pagar</option>
                         <option value="pago">Pago</option>
                     </select>
                 </div>
             </div>
 
-           
 
             <!-- Valor  -->
             <div class="mb-4">
                 <label for="valorDespesaEditar" class="block mb-2 mt-2 text-sm font-medium text-gray-900">Valor</label>
-                <input type="text" id="valorDespesaEditar" name="valor" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>              
+                <input type="text" id="valorDespesaEditar" name="valor" class="bg-gray-100 w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" >              
             </div>
 
-            
-
-            <!-- Data de emissão -->
-            <div class="mb-4">
-                <label for="dataDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de emissão</label>
-                <input
-                        type="text"
-                        id="dataDespesaEditar"
-                        name="data"
-                        value="{{ despesa.data|date:'d-m-Y' }}" 
-                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
-                        data-date-format="dd-mm-yyyy"
-                />
-            </div>
 
             <div class="mb-4">
                 <label for="modalidadeDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Modalidade</label>
-                <select id="modalidadeDespesaEditar" name="modalidade" class=" border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
+                <select id="modalidadeDespesaEditar" name="modalidade" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
                     <option value="" selected disabled hidden>Selecione a modalidade</option>
                     <option value="mao_de_obra">Mão de Obra</option>
                     <option value="insumos">Insumos</option>
@@ -74,26 +58,143 @@
                 </select>
             </div>
 
-            <!-- Data de pagamento -->
-            <div class="mb-4">
-                <label for="dataPagDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de pagamento</label>
-                <input
-                        type="text"
-                        id="dataPagDespesaEditar"
-                        name="data_pagamento"
-                        value="{{ despesa.data_pagamento|date:'d-m-Y' }}" 
-                        class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
-                        data-date-format="dd-mm-yyyy"
-                />
+
+            <div class="flex space-x-4 justify-between w-full">
+                <!-- Data de emissão -->
+                <div>
+                    <label for="dataDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de emissão</label>
+                    <input
+                            type="text"
+                            id="dataDespesaEditar"
+                            name="data_emissao"
+                            value="{{ despesa.data|date:'d-m-Y' }}" 
+                            class="bg-gray-100 w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                            data-date-format="dd-mm-yyyy"
+                    />
+                </div>
+                <!-- Data de pagamento -->
+                <div>
+                    <label for="dataPagDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de pagamento</label>
+                    <input
+                            type="text"
+                            id="dataPagDespesaEditar"
+                            name="data_pagamento"
+                            value="{{ despesa.data_pagamento|date:'d-m-Y' }}" 
+                            class="bg-gray-100 w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3 "
+                            data-date-format="dd-mm-yyyy"
+                    />
+                </div>
             </div>
 
-            <!-- Modalidade específica: Mão de Obra -->
-            <div id="maoDeObraFields" class="hidden mb-4">
+            <div>
+                <h1 id="dadosPagTitulo" class="mt-4 mb-4 font-semibold text-xl">
+                    Dados de pagamento              
+                </h1>
+
+                <!-- Modalidade específica: Cartão -->
+                <div id="cartaoFields" class="hidden mb-4">
+                    
+                    <div class="mb-4">
+                        <label for="despesaCartaoNomeEditar" class="block mb-2 text-sm font-medium text-gray-900">Cartão</label>
+                        <select id="despesaCartaoNomeEditar" name="cartao" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 mb-2">
+                            <option value="" selected disabled hidden>Selecione o cartão</option>
+                            {% for cartao in cartoes %}
+                            <option value="{{ cartao.id }}">{{cartao.final}} - {{ cartao.nome }}</option>
+                            {% endfor %}
+                            
+                        </select>
+                    </div>
+
+                    <div class="flex space-x-4 justify-between w-full">
+
+                        <div>
+                            <label for="despesaQntParcelasCartaoEditar" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de parcelas</label>
+                            <input type="number" id="despesaQntParcelasCartaoEditar" name="quant_parcelas" class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" >
+                        </div>
+                        <div>
+                            <label for="despesaValorParcelaCartaoEditar" class="block mb-2 text-sm font-medium text-gray-900">Valor da parcela</label>
+                            <input type="text" id="despesaValorParcelaCartaoEditar" placeholder="1.200,50" name="valor_parcela" class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" >
+                        </div>
+                    </div>
+                
+                </div>
+
+                <!-- Modalidade específica: Boleto -->
+                <div id="boletoFields" class="hidden mb-4">
+                    <div>
+                        <label for="despesaRecipienteBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Recipiente</label>
+                        <input type="text" id="despesaRecipienteBoletoEditar" name="recipiente" class="bg-gray-100 mb-2 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" >
+                    </div>
+                    <div class="flex space-x-4 justify-between w-full">
+                        <div class="flex-1 mb-2">
+                            <label for="despesaQntBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de boletos</label>
+                            <input type="number" id="despesaQntBoletoEditar" placeholder="0" name="quant_boletos" class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" >
+                        </div>
+                        <div class="flex-1 mb-2">
+                            <label for="despesaVencimentoBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de vencimento</label>
+                            <input
+                                type="text"
+                                id="despesaVencimentoBoletoEditar"
+                                name="vencimento"
+                                value="{{ despesa.vencimento|date:'d-m-Y' }}"
+                                class="bg-gray-100 w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3 "
+                                 
+                                data-date-format="dd-mm-yyyy"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-4 justify-between w-full">
+                        <div class="flex-1 mb-2">
+                            <label for="despesaBancoBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
+                            <select id="despesaBancoBoletoEditar" name="banco" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                                <option value="" selected disabled hidden>Selecione o banco</option>
+                                {% for banco in bancos %}
+                                <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="despesaNotaFiscalBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Número da Nota Fiscal</label>
+                            <input type="text" id="despesaNotaFiscalBoletoEditar" name="num_notafiscal" class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modalidade específica: Pix -->
+                <div id="pixFields" class="hidden mb-4">
+                    <div>
+                        <label for="despesaBancoPixEditar" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
+                        <select id="despesaBancoPixEditar" name="banco" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                            <option value="" selected disabled hidden></option>
+                            {% for banco in bancos %}
+                            <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Modalidade específica: Espécie -->
+                <div id="especieFields" class="hidden mb-4">
+                    <div>
+                        <label for="despesaPagadorEspecieEditar" class="block mb-2 text-sm font-medium text-gray-900">Pagador</label>
+                        <input type="text" id="despesaPagadorEspecieEditar" name="pagador" class="bg-gray-100 mb-2 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" >
+                    </div>
+                </div>
+            </div>
+
+             <!-- Modalidade específica: Mão de Obra -->
+             <div id="maoDeObraFields" class="hidden mb-4">
+
+                <h1 class="mt-4 mb-4 font-semibold text-xl">
+                    Dados da Mão de obra              
+                </h1>
 
                 <div class="flex space-x-4 justify-between w-full">
                     <div class="flex-1 mb-2">
-                        <label for="despesaFuncionarioMDOEditar" class="block mb-2 text-sm font-medium text-gray-900">Funcionario</label>
-                        <select id="despesaFuncionarioMDOEditar" name="funcionario" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                        <label for="despesaFuncionarioMDOEditar" class="block mb-2 text-sm font-medium text-gray-900">Funcionário</label>
+                        <select id="despesaFuncionarioMDOEditar" name="funcionario" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
                             <option value="" selected disabled hidden>Selecione o funcionario</option>
                             {% for funcionario in funcionarios %}
                             <option class="" value="{{funcionario.id}}">{{funcionario.nome}}</option> 
@@ -102,7 +203,7 @@
                     </div>
                     <div class="flex-1 mb-2">
                         <label for="despesaCategoriaMDOEditar" class="block mb-2 text-sm font-medium text-gray-900">Categoria</label>
-                        <select id="despesaCategoriaMDOEditar" name="categoria" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                        <select id="despesaCategoriaMDOEditar" name="categoria" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
                             <option value="" selected disabled hidden>Selecione a categoria</option>
                             <option value="adiantamento">Adiantamento</option>
                             <option value="passagem">Passagem</option>
@@ -113,105 +214,20 @@
                 </div>
             </div>
 
-            <!-- Modalidade específica: Cartão -->
-            <div id="cartaoFields" class="hidden">
-                <div class="mb-4">
-                    <label for="despesaCartaoNomeEditar" class="block mb-2 text-sm font-medium text-gray-900">Cartão</label>
-                    <select id="despesaCartaoNomeEditar" name="cartao" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 mb-2">
-                        <option value="" selected disabled hidden>Selecione o cartão</option>
-                        {% for cartao in cartoes %}
-                        <option value="{{ cartao.id }}">{{cartao.final}} - {{ cartao.nome }}</option>
-                        {% endfor %}
-                        
-                    </select>
-                </div>
-
-                <div class="flex space-x-4 justify-between w-full">
-
-                    <div>
-                        <label for="despesaQntParcelasCartaoEditar" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de parcelas*</label>
-                        <input type="number" id="despesaQntParcelasCartaoEditar" name="quant_parcelas" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
-                    </div>
-                    <div>
-                        <label for="despesaValorParcelaCartaoEditar" class="block mb-2 text-sm font-medium text-gray-900">Valor da parcela*</label>
-                        <input type="text" id="despesaValorParcelaCartaoEditar" placeholder="1.200,50" name="valor_parcela" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
-                    </div>
-                </div>
-               
+            <!-- Observação -->
+            <div>
+                <label for="obsDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Observação</label>
+                <textarea id="obsDespesaEditar" name="observacao" rows="4" class="bg-gray-100 block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"></textarea>
             </div>
 
-            <!-- Modalidade específica: Boleto -->
-            <div id="boletoFields" class="hidden">
-                <div>
-                    <label for="despesaRecipienteBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Recipiente</label>
-                    <input type="text" id="despesaRecipienteBoletoEditar" name="recipiente" class="mb-2 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+            <div class="flex justify-between mt-4">
+                <button id="deletarDespesaBtn" type="button" class="px-4 py-2 bg-red-400 text-white rounded-lg hover:bg-gray-400 mr-2" onclick="">Deletar</button>
+
+                <div class="flex">
+
+                    <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="despesaModal('fecharEditarDespesa')">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-[#4DBCAA]">Salvar</button>
                 </div>
-                <div class="flex space-x-4 justify-between w-full">
-                    <div class="flex-1 mb-2">
-                        <label for="despesaQntBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de boletos</label>
-                        <input type="number" id="despesaQntBoletoEditar" placeholder="0" name="quant_boletos" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
-                    </div>
-                    <div class="flex-1 mb-2">
-                        <label for="despesaVencimentoBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de vencimento</label>
-                        <input
-                            type="text"
-                            id="despesaVencimentoBoletoEditar"
-                            name="vencimento"
-                            value="{{ despesa.vencimento|date:'d-m-Y' }}"
-                            class="w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3 "
-                            required 
-                            data-date-format="dd-mm-yyyy"
-                        />
-                    </div>
-                </div>
-
-                <div class="flex space-x-4 justify-between w-full">
-                    <div class="flex-1 mb-2">
-                        <label for="despesaBancoBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
-                        <select id="despesaBancoBoletoEditar" name="banco" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
-                            <option value="" selected disabled hidden>Selecione o banco</option>
-                            {% for banco in bancos %}
-                            <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="despesaNotaFiscalBoletoEditar" class="block mb-2 text-sm font-medium text-gray-900">Número da Nota Fiscal</label>
-                        <input type="text" id="despesaNotaFiscalBoletoEditar" name="num_notafiscal" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modalidade específica: Pix -->
-            <div id="pixFields" class="hidden">
-                <div>
-                    <label for="despesaBancoPixEditar" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
-                    <select id="despesaBancoPixEditar" name="banco" class="w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
-                        <option value="" selected disabled hidden></option>
-                        {% for banco in bancos %}
-                        <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-
-            <!-- Modalidade específica: Espécie -->
-            <div id="especieFields" class="hidden">
-                <div>
-                    <label for="despesaPagadorEspecieEditar" class="block mb-2 text-sm font-medium text-gray-900">Pagador</label>
-                    <input type="text" id="despesaPagadorEspecieEditar" name="pagador" class="mb-2 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
-                </div>
-            </div>
-
-            <label for="obsDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Observação</label>
-            <textarea id="obsDespesaEditar" name="observacao" rows="4" class="block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>
-
-
-            <div class="flex justify-end">
-                <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="despesaModal('fecharEditarDespesa')">Cancelar</button>
-                <button type="submit" class="px-4 py-2 bg-[#287F71] text-white rounded-lg hover:bg-[#4DBCAA] mx-4">Salvar</button>
-                <button id="deletarDespesaBtn" type="button" class="px-4 py-2 bg-red-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="">Deletar</button>
             </div>
         </form>
         

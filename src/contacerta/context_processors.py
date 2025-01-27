@@ -103,6 +103,12 @@ def despesas(request):
     despesas = Despesa.objects.all().values() 
     debito_mensal_total = calcular_debito_mensal_total()
 
+    for despesa in despesas:
+        if despesa.get('data'):
+            despesa['data'] = format_date(despesa['data'])
+        if despesa.get('data_pagamento'):
+            despesa['data_pagamento'] = format_date(despesa['data_pagamento'])
+
     # Otimização usando select_related e prefetch_related
     nota_cartao = NotaCartao.objects.select_related('cartao__banco').all().values()
     nota_boleto = NotaBoleto.objects.select_related('banco').all().values()

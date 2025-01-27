@@ -191,14 +191,13 @@ def criar_despesa(request, tipo, id):
             })
 
 @login_required
-def editar_despesa(request, tipo, id):
+def editar_despesa(request, despesa_id):
     next_url = request.GET.get('next')
-    obra = get_object_or_404(Obra, id=id)
-    despesas = Despesa.objects.filter(tipo_local=ContentType.objects.get_for_model(obra), id_local=id)
+    despesa = get_object_or_404(Despesa, id=despesa_id)
 
     if request.method == 'POST':
         try:
-            descricao = request.POST.get('descricao')
+            nome = request.POST.get('nome')
             forma_pag = request.POST.get('forma_pag')
             status = request.POST.get('status')
             valor = request.POST.get('valor')
@@ -207,15 +206,6 @@ def editar_despesa(request, tipo, id):
             data = request.POST.get('data_emissao')
             data_pagamento = request.POST.get('data_pagamento')
 
-            # Obtendo o local baseado no tipo
-            if tipo == 'obra':
-                local = get_object_or_404(Obra, id=id)
-            elif tipo == 'escritorio':
-                local = get_object_or_404(Escritorio, id=id)
-            else:
-                logger.error(f"Tipo inválido fornecido: {tipo}")
-                return redirect('locais:home')  # Redirecione ou levante um erro se o tipo for inválido
-            
             try:
                 if data:
                     data = datetime.strptime(data, '%d/%m/%Y').date()
@@ -224,8 +214,11 @@ def editar_despesa(request, tipo, id):
                     print("Campo de data não preenchido")
 
                 if data_pagamento:
-                    data_pagamento = datetime.strptime(data_pagamento, '%d/%m/%Y').date()
-                    print(f"Data válida: {data_pagamento} ({type(data_pagamento)})")
+                    if data_pagamento == '-':
+                        data_pagamento = None
+                    else:
+                        data_pagamento = datetime.strptime(data_pagamento, '%d/%m/%Y').date()
+                        print(f"Data válida: {data_pagamento} ({type(data_pagamento)})")
                 else:
                     data_pagamento = None
                     print("Campo de data_pagamento não preenchido")
@@ -234,26 +227,20 @@ def editar_despesa(request, tipo, id):
                 return redirect('locais:home')
 
 
-            tipo_local = ContentType.objects.get_for_model(local)
-            logger.debug(f"tipo_local: {tipo_local}")
             print(" - DATA - ", data)
             valor = limpar_e_converter_valor(valor, request)
 
-            print(f"Data final antes da criação: {data} ({type(data)})")
+            print(f"Data final antes da edição: {data} ({type(data)})")
 
-            campos_despesa = {
-                "nome": descricao,
-                "forma_pag": forma_pag,
-                "data": data,
-                "valor": valor,
-                "observacao": observacao,
-                "status": status,
-                "modalidade": modalidade,
-                "tipo_local": tipo_local,
-                "id_local": id,
-                "local": local,
-                "data_pagamento": data_pagamento,
-            }
+            despesa.nome = nome
+            despesa.forma_pag = forma_pag
+            despesa.status = status
+            despesa.valor = valor
+            despesa.observacao = observacao
+            despesa.modalidade = modalidade
+            despesa.data = data
+            despesa.data_pagamento = data_pagamento
+            despesa.save()
 
             # Tratando formas de pagamento
             if forma_pag == 'cartao':
@@ -264,14 +251,15 @@ def editar_despesa(request, tipo, id):
 
                 cartao = get_object_or_404(Cartao, id=cartao_id)
                 valor_parcela = limpar_e_converter_valor(valor_parcela, request, redirect_url='locais:home')
-        
-                NotaCartao.objects.create(
-                    **campos_despesa,
-                    cartao=cartao,
-                    quant_parcelas=quant_parcelas,
-                    valor_parcela=valor_parcela
-                )
-                logger.info(f"NotaCartao criada para despesa com cartão {cartao.id}")
+
+                notaCartao = get_object_or_404(NotaCartao, id=despesa_id)
+
+                notaCartao.cartao = cartao
+                notaCartao.quant_parcelas = quant_parcelas
+                notaCartao.valor_parcela = valor_parcela
+                notaCartao.save()
+                
+                logger.info(f"NotaCartao editada para despesa com cartão {cartao.id}")
             
             elif forma_pag == 'boleto':
                 logger.debug("Processando pagamento com boleto...")
@@ -282,57 +270,48 @@ def editar_despesa(request, tipo, id):
                 vencimento = limpar_e_converter_data(vencimento, request)
                 banco = get_object_or_404(Banco, id=banco_id)
 
-                NotaBoleto.objects.create(
-                    **campos_despesa,
-                    recipiente=request.POST.get('recipiente'),
-                    quant_boletos=request.POST.get('quant_boletos'),
-                    vencimento=vencimento,
-                    num_notafiscal=request.POST.get('num_notafiscal'),
-                    banco=banco
-                )
+                notaBoleto = get_object_or_404(NotaBoleto, id=despesa_id)
+
+                notaBoleto.recipiente = request.POST.get('recipiente') 
+                notaBoleto.quant_boletos = request.POST.get('quant_boletos') 
+                notaBoleto.vencimento = vencimento
+                notaBoleto.num_notafiscal = request.POST.get('num_notafiscal') 
+                notaBoleto.banco = banco
+                notaBoleto.save()
 
             elif forma_pag == 'pix':
                 logger.debug("Processando pagamento com PIX...")
                 banco_id = request.POST.get('banco')
                 banco = get_object_or_404(Banco, id=banco_id)
 
-                NotaPix.objects.create(
-                    **campos_despesa,
-                    banco=banco
-                )
+                notaPix = get_object_or_404(NotaPix, id=despesa_id)
+                notaPix.banco = banco
+                notaPix.save()
+
             elif forma_pag == 'especie':
                 logger.debug("Processando pagamento em espécie...")
-                NotaEspecie.objects.create(
-                    **campos_despesa,
-                    pagador=request.POST.get('recipiente')
-                )
+
+                notaEspecie = get_object_or_404(NotaEspecie, id=despesa_id)
+                notaEspecie.pagador = request.POST.get('pagador')
+
 
             if modalidade == 'mao_de_obra':
                 logger.debug("Processando modalidade Mão de obra...")
                 funcionario_id = request.POST.get('funcionario')
-                funcionario = get_object_or_404(Banco, id=funcionario_id)
+                funcionario = get_object_or_404(Funcionario, id=funcionario_id)
 
-                MaoDeObra.objects.create(
-                    **campos_despesa,
-                    funcionario=funcionario,
-                    categoria=request.POST.get('categoria')
-                )
+                maoDeObra = get_object_or_404(MaoDeObra, despesa=despesa_id)
+                maoDeObra.funcionario = funcionario
+                maoDeObra.categoria = request.POST.get('categoria')
+                maoDeObra.save()
 
             return redirect(next_url if next_url else 'financeiro:cartoes')
 
-
         except IntegrityError as e:
             logger.exception(f"Erro ao criar despesa: {e}")
-            return render(request, 'locais/detalhe_obra.html', {
-                'obra': obra,
-                'despesas': despesas,
-                'error': str(e),
-            })
+            return redirect(next_url if next_url else 'locais:home')
     else:
-        return render(request, 'locais/detalhe_obra.html', {
-            'obra': obra,
-            'despesas': despesas,
-        })
+        return redirect(next_url if next_url else 'locais:home')
 
 @login_required
 def deletar_despesa(request, despesa_id):
