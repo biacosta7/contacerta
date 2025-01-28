@@ -287,18 +287,47 @@
                 console.log('Despesa encontrada:', despesa);
                 console.log('ID da Despesa:', despesa.id);
                 console.log("nome despesa: " +  despesa.nome);
+
+                let statusFormatado = '';
+                let modalidadeFormatado = '';
+                let formaPagFormatado = '';
+
+                // status
+                if (despesa.status === 'a_pagar') {
+                    statusFormatado = 'À pagar';
+                } else if (despesa.status === 'pago') {
+                    statusFormatado = 'Pago';
+                }
+                // modalidade
+                if (despesa.modalidade === 'mao_de_obra') {
+                    modalidadeFormatado = 'Mão de obra';
+                } else if (despesa.modalidade === 'insumos') {
+                    modalidadeFormatado = 'Insumos';
+                } else if (despesa.modalidade === 'combustivel') {
+                    modalidadeFormatado = 'Combustível';
+                }
+                // forma de pagamento
+                if (despesa.forma_pag === 'cartao') {
+                    formaPagFormatado = 'Cartão';
+                } else if (despesa.forma_pag === 'boleto') {
+                    formaPagFormatado = 'Boleto';
+                } else if (despesa.forma_pag === 'pix') {
+                    formaPagFormatado = 'Pix';
+                } else if (despesa.forma_pag === 'especie') {
+                    formaPagFormatado = 'Espécie';
+                }
                 
                 document.getElementById('despesaTituloInfo').innerHTML = "Informações " + despesa.nome;
                 document.getElementById('nomeDespesaInfo').innerHTML = "<b>Nome:</b> " + despesa.nome;
 
-                document.getElementById('formaPagDespesaInfo').innerHTML = "<b>Forma de pagamento:</b> " + despesa.forma_pag;
+                document.getElementById('formaPagDespesaInfo').innerHTML = "<b>Forma de pagamento:</b> " + formaPagFormatado;
                 document.getElementById('dataDespesaInfo').innerHTML = "<b>Data de emissão:</b> " + despesa.data;
-                document.getElementById('valorDespesaInfo').innerHTML = "<b>Valor:</b> " + despesa.valor;
-                document.getElementById('obsDespesaInfo').innerHTML = "<b>Observação:</b> " + despesa.observacao;
-                document.getElementById('statusDespesaInfo').innerHTML = "<b>Status:</b> " + despesa.status;
+                document.getElementById('valorDespesaInfo').innerHTML = "<b>Valor:</b> R$" + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(despesa.valor);
+                document.getElementById('obsDespesaInfo').innerHTML = "<b>Observação:</b> " + (despesa.observacao|| "-");
+                document.getElementById('statusDespesaInfo').innerHTML = "<b>Status:</b> " + statusFormatado;
                 document.getElementById('dataPagDespesaInfo').innerHTML = "<b>Data de pagamento:</b> " + (despesa.data_pagamento || "Não pago.");
-                document.getElementById('modalidadeDespesaInfo').innerHTML = "<b>Modalidade:</b> " + despesa.modalidade;
-                
+                document.getElementById('modalidadeDespesaInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeFormatado; 
+
                 if (despesa.modalidade == 'mao_de_obra'){
                     let mdo_despesa = maoDeObras.find(md => md.id === despesaId); 
                     let funcionario_despesa = funcionarios.find(fd => fd.id === mdo_despesa.funcionario_id); 
@@ -307,8 +336,21 @@
                     
                     maoDeObraFieldsDespesa.classList.remove('hidden');
 
+                    let categoriaFormatado = '';
+
+                    // categoria
+                    if (mdo_despesa.categoria === 'adiantamento') {
+                        categoriaFormatado = 'Adiantamento';
+                    } else if (mdo_despesa.categoria === 'passagem') {
+                        categoriaFormatado = 'Passagem';
+                    } else if (mdo_despesa.categoria === 'alimentacao') {
+                        categoriaFormatado = 'Alimentação';
+                    } else if (mdo_despesa.categoria === 'reembolso') {
+                        categoriaFormatado = 'Reembolso';
+                    }
+
                     document.getElementById('despesaFuncionarioMDOInfo').innerHTML = "<b>Funcionário:</b> " + (funcionario_despesa || "-");
-                    document.getElementById('despesaCategoriaMDOInfo').innerHTML = "<b>Categoria:</b> " + mdo_despesa.categoria;
+                    document.getElementById('despesaCategoriaMDOInfo').innerHTML = "<b>Categoria:</b> " + categoriaFormatado;
                 }
 
                 if (despesa.forma_pag == 'cartao'){
@@ -326,24 +368,26 @@
                 else if (despesa.forma_pag == 'boleto'){
                     let boleto_despesa = notaBoleto.find(bd => bd.id === despesaId);
 
+                    let banco_despesa  = bancos.find(bd => bd.id === boleto_despesa.banco_id);
+
                     const boletoFieldsDespesaInfo = document.getElementById('boletoFieldsInfo');
                     boletoFieldsDespesaInfo.classList.remove('hidden');
 
-                    document.getElementById('despesaBoletoNome').innerHTML = "<b>Boleto:</b> " + (boleto_despesa.nome || "-");
                     document.getElementById('despesaRecipienteBoletoInfo').innerHTML = "<b>Recipiente:</b> " + boleto_despesa.recipiente;
                     document.getElementById('despesaQntBoletoInfo').innerHTML = "<b>Quantidade de boletos:</b> " + boleto_despesa.quant_boletos;
                     document.getElementById('despesaVencimentoBoletoInfo').innerHTML = "<b>Vencimento:</b> " + boleto_despesa.vencimento;
                     document.getElementById('despesaNotaFiscalBoletoInfo').innerHTML = "<b>Número da Nota Fiscal:</b> " + boleto_despesa.num_notafiscal;
-                    document.getElementById('despesaBancoBoletoInfo').innerHTML = "<b>Banco:</b> " + boleto_despesa.banco;
+                    document.getElementById('despesaBancoBoletoInfo').innerHTML = "<b>Banco:</b> " + banco_despesa.nome;
                 }
 
                 else if (despesa.forma_pag == 'pix'){
                     let pix_despesa = notaPix.find(pd => pd.id === despesaId);
+                    let banco_despesa  = bancos.find(bd => bd.id === pix_despesa.banco_id);
 
                     const pixFieldsDespesaInfo = document.getElementById('pixFieldsInfo');
                     pixFieldsDespesaInfo.classList.remove('hidden');
 
-                    document.getElementById('despesaBancoPixInfo').innerHTML = "<b>Banco:</b> " + pix_despesa.banco;
+                    document.getElementById('despesaBancoPixInfo').innerHTML = "<b>Banco:</b> " + banco_despesa.nome;
                 }
 
                 else if (despesa.forma_pag == 'especie'){
@@ -352,7 +396,7 @@
                     const especieFieldsDespesaInfo = document.getElementById('especieFieldsInfo');
                     especieFieldsDespesaInfo.classList.remove('hidden');
 
-                    document.getElementById('despesaBancoPixInfo').innerHTML = "<b>Pagador:</b> " + especie_despesa.banco;
+                    document.getElementById('despesaBancoPixInfo').innerHTML = "<b>Pagador:</b> " + especie_despesa.pagador;
                 }
 
                 infoModalDespesa.classList.remove('hidden');
