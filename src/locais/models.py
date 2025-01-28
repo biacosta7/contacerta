@@ -46,11 +46,26 @@ class Obra(models.Model):
             id_local=self.id,
             status='a_pagar'
         )
-        total_despesas_gerais = sum(despesa.valor for despesa in despesas_gerais)
 
-        self.debito_geral = total_despesas_gerais
+        total_geral = 0
+
+        for despesa in despesas_gerais:
+            mao_de_obra = MaoDeObra.objects.filter(despesa=despesa).first()
+
+            if mao_de_obra:
+                if mao_de_obra.categoria == 'reembolso' and despesa.status == 'a_pagar':
+                    continue 
+                elif mao_de_obra.categoria == 'reembolso' and despesa.status == 'pago':
+                    total_geral -= despesa.valor 
+                
+                elif mao_de_obra.categoria != 'reembolso':
+                    total_geral += despesa.valor
+            else:
+                if despesa.status == 'a_pagar':
+                    total_geral += despesa.valor
+
+        self.debito_geral = total_geral
         self.save()
-        return self.debito_geral
 
     def calcular_debito_mensal(self, mes=None, ano=None):
         hoje = date.today()
@@ -128,10 +143,28 @@ class Escritorio(models.Model):
             id_local=self.id,
             status='a_pagar'
         )
-        total_despesas_gerais = sum(despesa.valor for despesa in despesas_gerais)
 
-        self.debito_geral = total_despesas_gerais
+        total_geral = 0
+
+        for despesa in despesas_gerais:
+            mao_de_obra = MaoDeObra.objects.filter(despesa=despesa).first()
+
+            if mao_de_obra:
+                if mao_de_obra.categoria == 'reembolso' and despesa.status == 'a_pagar':
+                    continue 
+                elif mao_de_obra.categoria == 'reembolso' and despesa.status == 'pago':
+                    total_geral -= despesa.valor 
+                
+                elif mao_de_obra.categoria != 'reembolso':
+                    total_geral += despesa.valor
+            else:
+                if despesa.status == 'a_pagar':
+                    total_geral += despesa.valor
+
+        self.debito_geral = total_geral
         self.save()
+
+        return self.debito_mensal
 
     def calcular_debito_mensal(self, mes=None, ano=None):
         hoje = date.today()
@@ -146,7 +179,7 @@ class Escritorio(models.Model):
             data__month=mes,
             data__year=ano
         )
-        
+
         total_mensal = 0
 
         for despesa in despesas_mensais:
