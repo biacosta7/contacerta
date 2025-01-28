@@ -73,7 +73,11 @@
                                 {{ despesa.forma_pag }}
                             </td>
                             <td class="px-6 py-4">
+                              {% if despesa.modalidade == 'mao_de_obra' and mdo_despesa.categoria == 'reembolso' %}
+                                {{ mdo_despesa.valor_reembolso }}
+                              {% else %}
                                 {{ despesa.valor }}
+                              {% endif %}
                             </td>
                             <td class="px-6 py-4">
                                 <form action="{% url 'financeiro:atualizar_status' despesa_id=despesa.id %}?next={{ request.path }}" method=POST>

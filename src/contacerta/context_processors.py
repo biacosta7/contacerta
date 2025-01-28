@@ -21,19 +21,24 @@ def formatar_valor(valor):
     
 def info_obras(request):
     # Obtendo todas as obras
-    obras = Obra.objects.all().values()
+    obras = Obra.objects.all()
 
-    # Formatar as datas no objeto obras
+    # Atualizar valores calculados e formatar as obras
+    obras_formatadas = []
     for obra in obras:
-        if obra.get('data_inicio'):
-            obra['data_inicio'] = format_date(obra['data_inicio'])
-        if obra.get('data_final'):
-            obra['data_final'] = format_date(obra['data_final'])
-        if obra.get('prazo_inicial'):
-            obra['prazo_inicial'] = format_date(obra['prazo_inicial'])
+        obra.calcular_debito_mensal()  # Atualiza o débito mensal
+        obra_dict = {
+            'nome': obra.nome,
+            'local': obra.local,
+            'data_inicio': format_date(obra.data_inicio) if obra.data_inicio else None,
+            'data_final': format_date(obra.data_final) if obra.data_final else None,
+            'prazo_inicial': format_date(obra.prazo_inicial) if obra.prazo_inicial else None,
+            'debito_mensal': formatar_valor(obra.debito_mensal),  # Formata o valor aqui
+        }
+        obras_formatadas.append(obra_dict)
 
     return {
-        'obras_json': json.dumps(list(obras), cls=DjangoJSONEncoder),
+        'obras_json': json.dumps(obras_formatadas, cls=DjangoJSONEncoder),
     }
 
 def bancos(request):
@@ -82,26 +87,8 @@ def cartoes(request):
     }
 
 
-def calcular_debito_mensal_total(mes=None, ano=None):
-        hoje = date.today()
-
-        mes = mes if mes else hoje.month
-        ano = ano if ano else hoje.year
-
-        despesas_mensais = Despesa.objects.filter(
-            status='a_pagar',
-            data__month=mes,
-            data__year=ano
-        )
-        total_mensal = sum(despesa.valor for despesa in despesas_mensais)
-        debito_mensal = formatar_valor(total_mensal)
-
-        return debito_mensal
-
-
 def despesas(request):
     despesas = Despesa.objects.all().values() 
-    debito_mensal_total = calcular_debito_mensal_total()
 
     for despesa in despesas:
         if despesa.get('data'):
@@ -120,9 +107,8 @@ def despesas(request):
     nota_pix = NotaPix.objects.select_related('banco').all().values()
     nota_especie = NotaEspecie.objects.all().values()
     mao_de_obra = MaoDeObra.objects.all().values(
-        'id', 'despesa', 'categoria', 'funcionario_id'
+        'id', 'despesa', 'categoria', 'funcionario_id', 'valor_reembolso'
     )
-    debito_mensal_total = calcular_debito_mensal_total()
 
     return {
         'nota_cartao_json': json.dumps(list(nota_cartao), cls=DjangoJSONEncoder),
@@ -130,7 +116,6 @@ def despesas(request):
         'nota_pix_json': json.dumps(list(nota_pix), cls=DjangoJSONEncoder),
         'nota_especie_json': json.dumps(list(nota_especie), cls=DjangoJSONEncoder),
         'mao_de_obra_json': json.dumps(list(mao_de_obra), cls=DjangoJSONEncoder),
-        'debito_mensal_total': debito_mensal_total,
         'despesas': despesas,
         'despesas_json': json.dumps(list(despesas), cls=DjangoJSONEncoder),
     }

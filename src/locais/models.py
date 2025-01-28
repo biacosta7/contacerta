@@ -1,5 +1,5 @@
 from django.db import models
-from financeiro.models import Aditivo, Adiantamento, BM, Despesa
+from financeiro.models import Aditivo, Adiantamento, BM, Despesa, MaoDeObra
 from django.contrib.contenttypes.models import ContentType
 from datetime import date, timedelta
 
@@ -61,14 +61,32 @@ class Obra(models.Model):
         despesas_mensais = Despesa.objects.filter(
             tipo_local=ContentType.objects.get_for_model(Obra),
             id_local=self.id,
-            status='a_pagar',
             data__month=mes,
             data__year=ano
         )
-        total_mensal = sum(despesa.valor for despesa in despesas_mensais)
+
+        total_mensal = 0
+
+        for despesa in despesas_mensais:
+            mao_de_obra = MaoDeObra.objects.filter(despesa=despesa).first()
+
+            if mao_de_obra:
+                if mao_de_obra.categoria == 'reembolso' and despesa.status == 'a_pagar':
+                    continue 
+                elif mao_de_obra.categoria == 'reembolso' and despesa.status == 'pago':
+                    total_mensal -= despesa.valor 
+                
+                elif mao_de_obra.categoria != 'reembolso':
+                    total_mensal += despesa.valor
+            else:
+                if despesa.status == 'a_pagar':
+                    total_mensal += despesa.valor
+
         self.debito_mensal = total_mensal
         self.save()
+
         return self.debito_mensal
+
 
     def calcular_custo_total(self):
         despesas = Despesa.objects.filter(
@@ -125,13 +143,31 @@ class Escritorio(models.Model):
         despesas_mensais = Despesa.objects.filter(
             tipo_local=ContentType.objects.get_for_model(Escritorio),
             id_local=self.id,
-            status='a_pagar',
             data__month=mes,
             data__year=ano
         )
-        total_mensal = sum(despesa.valor for despesa in despesas_mensais)
+        
+        total_mensal = 0
+
+        for despesa in despesas_mensais:
+            mao_de_obra = MaoDeObra.objects.filter(despesa=despesa).first()
+
+            if mao_de_obra:
+                if mao_de_obra.categoria == 'reembolso' and despesa.status == 'a_pagar':
+                    continue 
+                elif mao_de_obra.categoria == 'reembolso' and despesa.status == 'pago':
+                    total_mensal -= despesa.valor 
+                
+                elif mao_de_obra.categoria != 'reembolso':
+                    total_mensal += despesa.valor
+            else:
+                if despesa.status == 'a_pagar':
+                    total_mensal += despesa.valor
+
         self.debito_mensal = total_mensal
         self.save()
+
+        return self.debito_mensal
 
     def __str__(self):
         return f"{self.nome} (CNPJ: {self.cnpj})"

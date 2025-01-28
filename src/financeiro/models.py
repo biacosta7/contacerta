@@ -129,7 +129,6 @@ class NotaCartao(Despesa):
     quant_parcelas = models.IntegerField()
     valor_parcela = models.DecimalField(max_digits=10, decimal_places=2)
 
-
 class NotaBoleto(Despesa):
     recipiente = models.CharField(max_length=100)
     quant_boletos = models.IntegerField()
@@ -162,9 +161,10 @@ class MaoDeObra(models.Model):
             ('reembolso', 'Reembolso'),
         ]
     )
+    valor_reembolso = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.funcionario} - {self.categoria}"
+        return f"{self.funcionario} - {self.categoria} | {self.despesa.status}"
 
     
 
