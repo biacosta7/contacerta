@@ -112,6 +112,11 @@ def despesas(request):
     # Otimização usando select_related e prefetch_related
     nota_cartao = NotaCartao.objects.select_related('cartao__banco').all().values()
     nota_boleto = NotaBoleto.objects.select_related('banco').all().values()
+    for nota in nota_boleto:
+        if nota.get('vencimento'):
+            nota['vencimento'] = format_date(nota['vencimento'])
+
+
     nota_pix = NotaPix.objects.select_related('banco').all().values()
     nota_especie = NotaEspecie.objects.all().values()
     mao_de_obra = MaoDeObra.objects.all().values(

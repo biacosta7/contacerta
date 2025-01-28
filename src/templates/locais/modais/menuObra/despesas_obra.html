@@ -64,9 +64,13 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     {% for despesa in despesas %}
                         <tr class="bg-white border-b">
+                            
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                {{ despesa.nome }}
+                                <a id="infoDespesaBtn" href="#" onclick="despesaModal('infoDespesa', {{ despesa.id }})">
+                                    {{ despesa.nome }}
+                                </a>                                                             
                             </th>
+                            
                             <td class="px-6 py-4">
                                 {{ despesa.forma_pag }}
                             </td>

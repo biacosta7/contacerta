@@ -1,0 +1,134 @@
+<!-- Modal de informações de cartão -->
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalInfoDespesa">
+    <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
+        <div class="flex space-x-8 justify-between items-center mb-4">
+            <h5 id="despesaTituloInfo" class="text-2xl font-semibold text-center flex-grow ml-8">Despesa {{ despesa.nome }}</h5>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="despesaModal('fecharInfoDespesa')"></i>
+        </div>
+        <div class="flex flex-col space-y-4">
+
+            <!-- Nome da despesa -->
+            <div class="">
+                <p id="nomeDespesaInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+            </div>
+
+            <div class="flex space-x-4 justify-between w-full">
+                 <!-- Forma de pagamento -->
+                <div class="flex-1">
+                    <p id="formaPagDespesaInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                </div>
+            
+                <!-- Status  -->
+                <div class="flex-1">
+                    <p id="statusDespesaInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                </div>
+            </div>
+
+
+            <!-- Valor  -->
+            <div class="mb-4">
+                <p id="valorDespesaInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>           
+            </div>
+
+            <!-- Modalidade -->
+            <div class="mb-4">
+                <p id="modalidadeDespesaInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+            </div>
+
+            <div class="flex space-x-4 justify-between w-full">
+                <!-- Data de emissão -->
+                <div>
+                    <p id="dataDespesaInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                </div>
+                <!-- Data de pagamento -->
+                <div>
+                    <p id="dataPagDespesaInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                </div>
+            </div>
+
+            <div>
+                <h1 id="dadosPagTitulo" class="mt-4 mb-4 font-semibold text-xl">
+                    Dados de pagamento              
+                </h1>
+
+                <!-- Modalidade específica: Cartão -->
+                <div id="cartaoFieldsInfo" class="hidden mb-4">
+                    
+                    <div class="mb-4">
+                        <p id="despesaCartaoNome" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                    </div>
+
+                    <div class="flex space-x-4 justify-between w-full">
+
+                        <div>
+                            <p id="despesaQntParcelasCartaoInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                        </div>
+                        <div>
+                            <p id="despesaValorParcelaCartaoInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                        </div>
+                    </div>
+                
+                </div>
+
+                <!-- Modalidade específica: Boleto -->
+                <div id="boletoFieldsInfo" class="hidden mb-4">
+                    <div>
+                        <p id="despesaRecipienteBoletoInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                    </div>
+                    <div class="flex space-x-4 justify-between w-full">
+                        <div class="flex-1 mb-2">
+                            <p id="despesaQntBoletoInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                        </div>
+                        <div class="flex-1 mb-2">
+                            <p id="despesaVencimentoBoletoInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                        </div>
+                    </div>
+
+                    <div class="flex space-x-4 justify-between w-full">
+                        <div class="flex-1 mb-2">
+                            <p id="despesaBancoBoletoInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                        </div>
+
+                        <div>
+                            <p id="despesaNotaFiscalBoletoInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modalidade específica: Pix -->
+                <div id="pixFieldsInfo" class="hidden mb-4">
+                    <p id="despesaBancoPixInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                </div>
+
+                <!-- Modalidade específica: Espécie -->
+                <div id="especieFieldsInfo" class="hidden mb-4">
+                    <p id="despesaPagadorEspecieInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                </div>
+            </div>
+
+             <!-- Modalidade específica: Mão de Obra -->
+             <div id="maoDeObraFieldsInfo" class="hidden mb-4">
+
+                <h1 class="mt-4 mb-4 font-semibold text-xl">
+                    Dados da Mão de obra              
+                </h1>
+
+                <div class="flex space-x-4 justify-between w-full">
+                    <div class="flex-1 mb-2">
+                        <p id="despesaFuncionarioMDOInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                    </div>
+                    <div class="flex-1 mb-2">
+                        <p id="despesaCategoriaMDOInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Observação -->
+            <div>
+                <p id="obsDespesaInfo" class="block mb-2 text-sm font-medium text-gray-900"></p>
+            </div>
+
+
+        </div>        
+    </div>
+</div>

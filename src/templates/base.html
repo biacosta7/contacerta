@@ -271,18 +271,22 @@
         const maoDeObras = JSON.parse('{{ mao_de_obra_json|safe }}');
         const bancos = JSON.parse('{{ bancos_json|safe }}');
 
+
         // modal de editar e excluir despesa
         function despesaModal(action, id) {
             const infoModalDespesa = document.getElementById('modalInfoDespesa');
             const editarModalDespesa = document.getElementById('modalEditarDespesa');
             const deletarModalDespesa = document.getElementById('modalDeletarDespesa');
         
-            var despesaId = id;
-            let despesa = despesas.find(d => d.id === despesaId);
-        
+              // Converta o ID para o tipo correto
+            const despesaId = typeof id === 'string' ? parseInt(id, 10) : id;
+            const despesa = despesas.find(d => d.id === despesaId);
+
             if (action === 'infoDespesa') {
-                infoModalDespesa.classList.toggle('hidden');
-                let despesa = despesas.find(d => d.id === despesaId);
+
+                console.log('Despesa encontrada:', despesa);
+                console.log('ID da Despesa:', despesa.id);
+                console.log("nome despesa: " +  despesa.nome);
                 
                 document.getElementById('despesaTituloInfo').innerHTML = "Informações " + despesa.nome;
                 document.getElementById('nomeDespesaInfo').innerHTML = "<b>Nome:</b> " + despesa.nome;
@@ -299,12 +303,21 @@
                     let mdo_despesa = maoDeObras.find(md => md.id === despesaId); 
                     let funcionario_despesa = funcionarios.find(fd => fd.id === mdo_despesa.funcionario_id); 
 
+                    const maoDeObraFieldsDespesa = document.getElementById('maoDeObraFields');
+                    
+                    maoDeObraFieldsDespesa.classList.remove('hidden');
+
                     document.getElementById('despesaFuncionarioMDOInfo').innerHTML = "<b>Funcionário:</b> " + (funcionario_despesa || "-");
                     document.getElementById('despesaCategoriaMDOInfo').innerHTML = "<b>Categoria:</b> " + mdo_despesa.categoria;
                 }
 
                 if (despesa.forma_pag == 'cartao'){
                     let cartao_despesa = notaCartao.find(cd => cd.id === despesaId);
+
+                    const cartaoFieldsDespesaInfo = document.getElementById('cartaoFieldsInfo');
+                    
+                    cartaoFieldsDespesaInfo.classList.remove('hidden');
+
                     document.getElementById('despesaCartaoNome').innerHTML = "<b>Cartão:</b> " + (cartao_despesa.nome || "-");
                     document.getElementById('despesaQntParcelasCartaoInfo').innerHTML = "<b>Quantidade de parcelas:</b> " + cartao_despesa.quant_parcelas;
                     document.getElementById('despesaValorParcelaCartaoInfo').innerHTML = "<b>Valor da parcela:</b> " + cartao_despesa.valor_parcela;
@@ -312,6 +325,10 @@
                     
                 else if (despesa.forma_pag == 'boleto'){
                     let boleto_despesa = notaBoleto.find(bd => bd.id === despesaId);
+
+                    const boletoFieldsDespesaInfo = document.getElementById('boletoFieldsInfo');
+                    boletoFieldsDespesaInfo.classList.remove('hidden');
+
                     document.getElementById('despesaBoletoNome').innerHTML = "<b>Boleto:</b> " + (boleto_despesa.nome || "-");
                     document.getElementById('despesaRecipienteBoletoInfo').innerHTML = "<b>Recipiente:</b> " + boleto_despesa.recipiente;
                     document.getElementById('despesaQntBoletoInfo').innerHTML = "<b>Quantidade de boletos:</b> " + boleto_despesa.quant_boletos;
@@ -322,15 +339,23 @@
 
                 else if (despesa.forma_pag == 'pix'){
                     let pix_despesa = notaPix.find(pd => pd.id === despesaId);
+
+                    const pixFieldsDespesaInfo = document.getElementById('pixFieldsInfo');
+                    pixFieldsDespesaInfo.classList.remove('hidden');
+
                     document.getElementById('despesaBancoPixInfo').innerHTML = "<b>Banco:</b> " + pix_despesa.banco;
                 }
 
                 else if (despesa.forma_pag == 'especie'){
                     let especie_despesa = notaEspecie.find(ed => ed.id === despesaId);
+
+                    const especieFieldsDespesaInfo = document.getElementById('especieFieldsInfo');
+                    especieFieldsDespesaInfo.classList.remove('hidden');
+
                     document.getElementById('despesaBancoPixInfo').innerHTML = "<b>Pagador:</b> " + especie_despesa.banco;
                 }
 
-
+                infoModalDespesa.classList.remove('hidden');
         
             } else if (action === 'fecharInfoDespesa') {
                 infoModalDespesa.classList.add('hidden');
@@ -462,6 +487,7 @@
             }
             
         }
+        
         
 
     </script>

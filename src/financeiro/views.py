@@ -29,13 +29,16 @@ def limpar_e_converter_valor(valor, request, redirect_url='locais:home'):
         return redirect(redirect_url)
 
 def limpar_e_converter_data(data_str, request, redirect_url='locais:home', formato='%d/%m/%Y'):
+    if not isinstance(data_str, str):
+        messages.error(request, 'Data fornecida não é válida ou está vazia.')
+        return redirect(redirect_url)
+    
     try:
-        # Converter para datetime.date usando o formato especificado
         return datetime.strptime(data_str, formato).date()
     except ValueError:
-        # Adicionar mensagem de erro e redirecionar
         messages.error(request, f'Formato de data inválido. Use o formato {formato}.')
         return redirect(redirect_url)
+
 
 @login_required
 def criar_despesa(request, tipo, id):
@@ -128,8 +131,12 @@ def criar_despesa(request, tipo, id):
                     vencimento = request.POST.get('vencimento')
                     banco_id = request.POST.get('banco')
 
-                    vencimento = limpar_e_converter_data(vencimento, request)
                     banco = get_object_or_404(Banco, id=banco_id)
+
+                    if vencimento:
+                        vencimento = limpar_e_converter_data(vencimento, request)
+                    else:
+                        vencimento = None
 
                     despesa = NotaBoleto.objects.create(
                         **campos_despesa,
