@@ -148,14 +148,6 @@ def detalhar_obra(request, id):
         obra.custo_total = obra.calcular_custo_total()
         obra.prazo_atual = obra.calcular_prazo_atual()
 
-        # Formata os valores para exibição
-        obra.debito_mensal_formatado = formatar_valor(obra.debito_mensal)
-        obra.valor_total_formatado = formatar_valor(obra.valor_total)
-        obra.valor_receber_formatado = formatar_valor(obra.valor_receber)
-        obra.debito_geral_formatado = formatar_valor(obra.debito_geral)
-        obra.custo_total_formatado = formatar_valor(obra.custo_total)
-        obra.prazo_atual_formatado = obra.prazo_atual  # Caso precise formatar, adicione a função de formatação
-
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
         'despesas': despesas_formatadas,
