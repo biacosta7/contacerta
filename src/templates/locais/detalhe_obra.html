@@ -20,7 +20,7 @@
                             <i class="fa-solid fa-location-dot fa-xl px-1"></i> {{ obra.local }}
                         </p>
                         <p id="valorInicialObraInfo" class="text-sm break-words text-lg">
-                            <i class="fa-solid fa-dollar-sign mr-1"></i> R${{ obra.valor_inicial }}
+                            <i class="fa-solid fa-dollar-sign mr-1"></i>{{ obra.valor_inicial }}
                         </p>
                     </div>
                 </div>
@@ -74,18 +74,16 @@
     // Procura pela obra com o ID correspondente
     const obra = obras.find(o => o.id === obraId);
 
-    // Atualiza o valor inicial da obra se a obra for encontrada
-    if (obra) {
-        document.getElementById('valorInicialObraInfo').innerHTML = 
-        `<i class="fa-solid fa-dollar-sign mr-1 bg-gray-800 py-1 px-2 rounded-full" style="color:rgb(255, 255, 255);"></i> <b>Valor inicial:</b> R$ ${new Intl.NumberFormat('pt-BR', { 
-            style: 'decimal', 
-            minimumFractionDigits: 2, 
-            maximumFractionDigits: 2 
-        }).format(obra.valor_inicial)}`;
-    } else {
-        console.error("Obra não encontrada. Verifique o ID ou os dados fornecidos.");
-    }
+    document.getElementById("valorInicialObraInfo").innerHTML = `<i class="fa-solid fa-dollar-sign mr-1"></i> ${obra.valor_inicial}`;
+    
+    document.getElementById("custoTotalObra").innerText = obra.custo_total;
 
+    document.getElementById("valorReceberObra").innerText = obra.valor_receber; 
+
+    document.getElementById("valorTotalObra").innerText = obra.valor_total;
+
+    // Atualiza o valor inicial da obra se a obra for encontrada
+    
     function sectionModal(action) {
         const sections = ["geralSection", "aditivosSection", "despesasSection", "adiabmSection"];
         const buttons = ["geralBtn", "aditivosBtn", "despesasBtn", "adiabmBtn"];

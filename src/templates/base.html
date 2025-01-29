@@ -34,6 +34,7 @@
     </body>
     <script>
         const obras = JSON.parse('{{ obras_json|safe }}');
+        console.log(obras);
 
         function ToBRCurrency(ElementID, valor){
             const input = document.getElementById(ElementID);

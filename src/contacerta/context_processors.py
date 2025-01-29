@@ -27,15 +27,30 @@ def info_obras(request):
     obras_formatadas = []
     for obra in obras:
         obra.calcular_debito_mensal()  # Atualiza o débito mensal
+        obra.calcular_valor_total()
+        obra.calcular_valor_receber()
+        obra.calcular_debito_geral()
+        obra.calcular_custo_total()
+        obra.calcular_prazo_atual()
+
         obra_dict = {
+            'id': obra.id, 
             'nome': obra.nome,
+            'valor_inicial': formatar_valor(obra.valor_inicial),
+            'valor_total': formatar_valor(obra.valor_total),
+            'valor_receber': formatar_valor(obra.valor_receber),
             'local': obra.local,
             'data_inicio': format_date(obra.data_inicio) if obra.data_inicio else None,
             'data_final': format_date(obra.data_final) if obra.data_final else None,
             'prazo_inicial': format_date(obra.prazo_inicial) if obra.prazo_inicial else None,
             'debito_mensal': formatar_valor(obra.debito_mensal),  # Formata o valor aqui
+            'debito_geral': formatar_valor(obra.debito_geral),
+            'custo_total': formatar_valor(obra.custo_total),
+            'prazo_inicial': format_date(obra.prazo_inicial) if obra.prazo_inicial else None,
+            'prazo_atual': format_date(obra.prazo_atual) if obra.prazo_atual else None,
         }
         obras_formatadas.append(obra_dict)
+    print(obras_formatadas)
 
     return {
         'obras_json': json.dumps(obras_formatadas, cls=DjangoJSONEncoder),

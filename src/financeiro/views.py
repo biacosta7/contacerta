@@ -40,6 +40,7 @@ def limpar_e_converter_data(data_str, request, redirect_url='locais:home', forma
         return redirect(redirect_url)
 
 
+# Despesas
 @login_required
 def criar_despesa(request, tipo, id):
     next_url = request.GET.get('next')
@@ -329,8 +330,26 @@ def deletar_despesa(request, despesa_id):
     despesa.delete()
     messages.success(request, 'Despesa deletada com sucesso.')
     return redirect(next_url if next_url else 'locais:home')
+    
+@login_required
+def atualizar_status(request, despesa_id):
+    next_url = request.GET.get('next')
+    # Pega a despesa com o id fornecido, ou retorna 404 se não existir
+    despesa = get_object_or_404(Despesa, id=despesa_id)
+    
+    # Alterna o status da despesa entre 'a_pagar' e 'pago'
+    if despesa.status == 'a_pagar':
+        despesa.status = 'pago'
+    else:
+        despesa.status = 'a_pagar'
+    
+    # Salva a despesa com o novo status
+    despesa.save()
+    
+    return redirect(next_url if next_url else 'financeiro:cartoes')
 
 
+# Cartões
 @login_required
 def criar_cartao(request):
     next_url = request.GET.get('next')
@@ -365,9 +384,8 @@ def ver_cartoes(request):
 
     return render(request, 'financeiro/cartoes.html', {'cartoes': cartoes, 'num_cartoes': num_cartoes})
 
-
 @login_required
-def editar_obra(request, cartao_id):
+def editar_cartao(request, cartao_id):
     next_url = request.GET.get('next')
 
     cartao = get_object_or_404(Cartao, id=cartao_id)
@@ -395,7 +413,6 @@ def editar_obra(request, cartao_id):
 
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
-
 @login_required
 def deletar_cartao(request, cartao_id):
     next_url = request.GET.get('next')
@@ -406,7 +423,7 @@ def deletar_cartao(request, cartao_id):
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
 
-
+# Bancos
 @login_required
 def criar_banco(request):
     next_url = request.GET.get('next')
@@ -418,25 +435,26 @@ def criar_banco(request):
     # Redireciona para o 'next' ou para uma página padrão 
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
-    
-@login_required
-def atualizar_status(request, despesa_id):
-    next_url = request.GET.get('next')
-    # Pega a despesa com o id fornecido, ou retorna 404 se não existir
-    despesa = get_object_or_404(Despesa, id=despesa_id)
-    
-    # Alterna o status da despesa entre 'a_pagar' e 'pago'
-    if despesa.status == 'a_pagar':
-        despesa.status = 'pago'
-    else:
-        despesa.status = 'a_pagar'
-    
-    # Salva a despesa com o novo status
-    despesa.save()
-    
-    return redirect(next_url if next_url else 'financeiro:cartoes')
-    
 
+# Funcionários
+@login_required
+def criar_funcionario(request):
+    next_url = request.GET.get('next')
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        cargo = request.POST.get('cargo')
+
+        funcionario = Funcionario.objects.create(
+            nome=nome,
+            cargo=cargo
+        )
+        funcionario.save()
+
+    return redirect(next_url if next_url else 'financeiro:cartoes')
+
+    
+# Aditivos    
 @login_required
 def criar_aditivo(request, tipo, id):
     if request.method == 'POST':
@@ -488,20 +506,3 @@ def criar_aditivo(request, tipo, id):
             'obra': obra,
         })
 
-@login_required
-def criar_funcionario(request):
-    next_url = request.GET.get('next')
-
-    if request.method == 'POST':
-        nome = request.POST.get('nome')
-        cargo = request.POST.get('cargo')
-
-        funcionario = Funcionario.objects.create(
-            nome=nome,
-            cargo=cargo
-        )
-        funcionario.save()
-
-    return redirect(next_url if next_url else 'financeiro:cartoes')
-
-    

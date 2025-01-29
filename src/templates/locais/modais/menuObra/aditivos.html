@@ -1,4 +1,99 @@
 <!-- Modal de Aditivos section -->
-{% include 'financeiro/modais/criar_aditivo.html' %}
 
 <p>Aditivos</p>
+
+<div class="flex space-x-8 justify-between mb-4">
+    <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+        <h3 class="text-base font-medium">Valor Total</h3>
+        <span class="text-2xl font-bold">{{ obra.aditivo.valor_total|default:"0" }}</span>
+    </div>
+    <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+        <div>
+            <h3 class="text-base font-medium block">Prazo atual</h3>
+            <span class="text-2xl font-semibold block">{{ obra.debito_mensal_formatado|default:"0" }}</span>
+        </div>
+    </div>
+    <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+        <div>
+            <h3 class="text-base font-medium block">Total <span class="text-base font-light">(filtro)</span></h3>
+            <span class="text-2xl font-semibold block">R$ {{ obra.debito_mensal|default:"0" }}</span>
+        </div>
+    </div>
+    
+</div>
+
+<div class="flex space-x-4 justify-between mb-4 ">
+    <div class="relative shadow-md rounded-lg w-full">
+        <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
+            <div class="flex space-x-2 items-center">
+                <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
+                <h1 class="text-xl">Aditivos</h1>
+            </div>
+            <div class="flex space-x-2 items-center">
+                <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="mr-1 fa-solid fa-filter"></i>
+                    Filtrar
+                </button>
+                <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+                            modalName: 'modalCriarAditivo',
+                            formId: 'formCriarAditivo',
+                            currencyFields: ['valor']
+                        });">
+                    Adicionar
+                </button>                    
+            </div>
+        </div>
+        <div class="overflow-y-auto max-h-96">
+            
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 border">
+                
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Nome</th>
+                        <th scope="col" class="px-6 py-3">Dias</th>
+                        <th scope="col" class="px-6 py-3">Valor</th>
+                        <th scope="col" class="px-6 py-3">Data</th>
+                        <th scope="col" class="px-6 py-3">Banco</th>
+                        <th scope="col" class="px-6 py-3">Modalidade</th>
+                        <th scope="col" class="px-6 py-3">Observação</th>
+                        <th scope="col" class="px-6 py-3">
+                            <span class="sr-only">Editar</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for aditivo in aditivos %}
+                        <tr class="bg-white border-b">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{ aditivo.nome }}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ aditivo.dias }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ aditivo.valor }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ aditivo.data }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ aditivo.banco }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ aditivo.modalidade }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ aditivo.observacao|default:'-' }}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    
+</script>

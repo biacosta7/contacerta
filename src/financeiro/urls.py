@@ -13,8 +13,8 @@ urlpatterns = [
     # Cartões
     path('cartoes/', views.ver_cartoes, name='cartoes'),
     path('cartoes/criar/', views.criar_cartao, name='criar_cartao'),
-    path('cartoes/editar/', views.criar_cartao, name='editar_cartao'),
-    path('cartoes/deletar/', views.criar_cartao, name='deletar_cartao'),
+    path('cartoes/editar/', views.editar_cartao, name='editar_cartao'),
+    path('cartoes/deletar/', views.deletar_cartao, name='deletar_cartao'),
 
     # Aditivos
     #path('aditivos/', views.ver_aditivos, name='aditivos'),
