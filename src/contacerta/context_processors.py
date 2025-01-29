@@ -147,7 +147,8 @@ def aditivos(request):
         aditivo_dict = {
             'id': aditivo.id,
             'nome': aditivo.nome,
-            'valor': aditivo.valor,
+            'valor': formatar_valor(aditivo.valor) if aditivo.valor else None,
+            'dias': aditivo.dias,
             'data': aditivo.data.strftime('%d/%m/%Y') if aditivo.data else None,
             'banco': aditivo.banco.nome,
             'modalidade': aditivo.modalidade,
@@ -160,6 +161,6 @@ def aditivos(request):
     aditivos_json = json.dumps(aditivos_lista, cls=DjangoJSONEncoder)
 
     return {
-        'aditivos': aditivos,
+        'aditivos': aditivos_lista,
         'aditivos_json': aditivos_json, 
     }

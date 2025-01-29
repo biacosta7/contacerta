@@ -34,6 +34,7 @@
     </body>
     <script>
         const obras = JSON.parse('{{ obras_json|safe }}');
+        const cartoes = JSON.parse('{{ cartoes_json|safe }}');
         console.log(obras);
 
         function ToBRCurrency(ElementID, valor){
@@ -181,8 +182,6 @@
             
         }
 
-        const cartoes = JSON.parse('{{ cartoes_json|safe }}');
-
         // modal de editar e excluir cartao
         function cartaoModal(action, id) {
             const infoModalCartao = document.getElementById('modalInfoCartao');
@@ -262,7 +261,6 @@
             }
             
         }
-
 
         const despesas = JSON.parse('{{ despesas_json|safe }}');
         const notaCartao = JSON.parse('{{ nota_cartao_json|safe }}');
@@ -530,6 +528,192 @@
             } else if (action === 'fecharDeletarDespesa') {
                 deletarModalDespesa.classList.add('hidden');
             }
+            
+        }
+        
+
+         // modal de editar e excluir despesa
+         function aditivoModal(action, id) {
+            const infoModalAditivo = document.getElementById('modalInfoAditivo');
+            const editarModalAditivo = document.getElementById('modalEditarAditivo');
+            const deletarModalAditivo = document.getElementById('modalDeletarAditivo');
+        
+            // Converta o ID para o tipo correto
+            const aditivoId = typeof id === 'string' ? parseInt(id, 10) : id;
+            const aditivo = aditivos.find(a => a.id === aditivoId);
+
+            if (action === 'infoAditivo') {
+
+                console.log('Aditivo encontrado:', aditivo);
+                console.log('ID do Aditivo:', aditivo.id);
+                console.log("nome Aditivo: " +  aditivo.nome);
+
+                let modalidadeAditivoFormatado = '';
+
+                // modalidade
+                if (aditivo.modalidade === 'prazo') {
+                    modalidadeAditivoFormatado = 'Prazo';
+                } else if (aditivo.modalidade === 'valor') {
+                    modalidadeAditivoFormatado = 'Valor';
+                }
+                
+                document.getElementById('aditivoTituloInfo').innerHTML = "Informações " + aditivo.nome;
+                document.getElementById('nomeAditivoInfo').innerHTML = "<b>Nome:</b> " + aditivo.nome;
+
+                document.getElementById('dataAditivoInfo').innerHTML = "<b>Data de assinatura:</b> " + aditivo.data;
+                
+                document.getElementById('bancoAditivoInfo').innerHTML = "<b>Banco:</b> " + aditivo.banco;
+
+                document.getElementById('modalidadeAditivoInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeAditivoFormatado;
+
+                document.getElementById('obsDespesaInfo').innerHTML = "<b>Observação:</b> " + (aditivo.observacao|| "-");
+               
+                if (aditivo.modalidade == 'valor'){
+
+                    const campoValorAditivoInfo = document.getElementById('campoValorAditivoInfo');
+                    
+                    campoValorAditivoInfo.classList.remove('hidden');
+
+                    document.getElementById('valorAditivoInfo').innerHTML = "<b>Valor:</b> " + (aditivo.valor || "-");
+                } 
+                else if (aditivo.modalidade == 'prazo') {
+                    const campoDiasAditivoInfo = document.getElementById('campoDiasAditivoInfo');
+                    
+                    campoDiasAditivoInfo.classList.remove('hidden');
+
+                    document.getElementById('diasAditivoInfo').innerHTML = "<b>Prazo:</b> " + (aditivo.dias || "-") + " dias";
+                }
+
+                infoModalAditivo.classList.remove('hidden');
+                    
+            } else if (action === 'fecharInfoAditivo') {
+                infoModalAditivo.classList.add('hidden');
+            }
+        
+            {% comment %} else if (action === 'editarDespesa') {    
+                console.log('Despesa encontrada:', despesa);
+                console.log('ID da Despesa:', despesa.id);
+                
+                document.getElementById('formEditarDespesa').action = `/financeiro/editar/despesa/${id}/?next=${window.location.pathname}`;
+                
+                document.getElementById('despesaTituloEditar').innerHTML = `Editar "${despesa.nome}"`;
+
+                document.getElementById('nomeDespesaEditar').value = despesa.nome;
+                document.getElementById('formaPagDespesaEditar').value = despesa.forma_pag;
+                document.getElementById('dataDespesaEditar').value = despesa.data;
+
+                ToBRCurrency('valorDespesaEditar', despesa.valor)
+
+                document.getElementById('obsDespesaEditar').value = despesa.observacao;
+                document.getElementById('statusDespesaEditar').value = despesa.status;
+                document.getElementById('dataPagDespesaEditar').value = (despesa.data_pagamento || "-");
+                document.getElementById('modalidadeDespesaEditar').value = despesa.modalidade;
+
+                document.getElementById('deletarDespesaBtn').setAttribute('onclick', `despesaModal('deletarDespesa', ${despesaId})`);       
+
+                if (despesa.modalidade == 'mao_de_obra'){
+                    const maoDeObraFieldsDespesa = document.getElementById('maoDeObraFields');
+                    maoDeObraFieldsDespesa.classList.remove('hidden');
+
+                    let mdo_despesa = maoDeObras.find(md => md.despesa === despesaId); 
+            
+                    document.getElementById('despesaFuncionarioMDOEditar').value = mdo_despesa.funcionario_id;
+                    document.getElementById('despesaCategoriaMDOEditar').value = mdo_despesa.categoria;
+                    
+                    
+                }
+
+                if (despesa.forma_pag == 'cartao'){
+
+                    const cartaoFieldsDespesa = document.getElementById('cartaoFields');
+                    
+                    cartaoFieldsDespesa.classList.remove('hidden');
+                    
+                    let notaCartaoCorrespondente = notaCartao.find(cd => cd.id === despesaId);
+                    let cartao_despesa = cartoes.find(cd => cd.id === notaCartaoCorrespondente.cartao_id);
+
+                    if (!cartao_despesa) {
+                        console.warn(`Cartão não encontrada para ID: ${despesaId}`);
+                    } else {
+                        document.getElementById('dadosPagTitulo').innerHTML = "Dados do Cartão";
+                        document.getElementById('despesaCartaoNomeEditar').value = cartao_despesa.id;
+                        document.getElementById('despesaQntParcelasCartaoEditar').value = notaCartaoCorrespondente.quant_parcelas;
+                        ToBRCurrency('despesaValorParcelaCartaoEditar', notaCartaoCorrespondente.valor_parcela);
+                        
+                        document.getElementById('dadosPagTitulo').required = true;
+                        document.getElementById('despesaCartaoNomeEditar').required = true;
+                        document.getElementById('despesaQntParcelasCartaoEditar').required = true;
+                        document.getElementById('despesaValorParcelaCartaoEditar').required = true;
+                    }
+
+                }
+                    
+                else if (despesa.forma_pag == 'boleto'){
+                    const boletoFieldsDespesa = document.getElementById('boletoFields');
+                    boletoFieldsDespesa.classList.remove('hidden');
+
+                    let boleto_despesa = notaBoleto.find(bd => bd.id === despesaId);
+
+                    let banco_despesa  = bancos.find(bd => bd.id === boleto_despesa.banco_id);
+
+                    document.getElementById('dadosPagTitulo').innerHTML = "Dados do Boleto";
+                    document.getElementById('despesaRecipienteBoletoEditar').value = boleto_despesa.recipiente;
+                    document.getElementById('despesaQntBoletoEditar').value = boleto_despesa.quant_boletos;
+                    document.getElementById('despesaVencimentoBoletoEditar').value = boleto_despesa.vencimento;
+                    document.getElementById('despesaNotaFiscalBoletoEditar').value = boleto_despesa.num_notafiscal;
+                    document.getElementById('despesaBancoBoletoEditar').value = banco_despesa.id;
+
+                    document.getElementById('despesaRecipienteBoletoEditar').required = true;
+                    document.getElementById('despesaQntBoletoEditar').required = true;
+                    document.getElementById('despesaVencimentoBoletoEditar').required = true;
+                    document.getElementById('despesaNotaFiscalBoletoEditar').required = true;
+                    document.getElementById('despesaBancoBoletoEditar').required = true;
+                }
+
+                else if (despesa.forma_pag == 'pix'){
+                    const pixFieldsDespesa = document.getElementById('pixFields');
+                    pixFieldsDespesa.classList.remove('hidden');
+
+                    let pix_despesa = notaPix.find(pd => pd.id === despesaId);
+                    document.getElementById('dadosPagTitulo').innerHTML = "Dados do Pix";
+                    document.getElementById('despesaBancoPixEditar').value = pix_despesa.banco_id;
+                    document.getElementById('despesaBancoPixEditar').required = true;
+                }
+
+                else if (despesa.forma_pag == 'especie'){
+                    const especieFieldsDespesa = document.getElementById('especieFields');
+                    especieFieldsDespesa.classList.remove('hidden');
+
+                    let especie_despesa = notaEspecie.find(ed => ed.id === despesaId);
+
+                    document.getElementById('dadosPagTitulo').innerHTML = "Dados do pagamento em Espécie";
+                    document.getElementById('despesaPagadorEspecieEditar').value = especie_despesa.pagador;
+                    document.getElementById('despesaPagadorEspecieEditar').required = true;
+                }
+
+                editarModalDespesa.classList.remove('hidden');
+            } else if (action === 'fecharEditarDespesa') {
+                editarModalDespesa.classList.add('hidden');
+            }
+            else if (action === 'deletarDespesa') {
+
+                // Remover o modal de edição, pois estamos abrindo o de exclusão
+                editarModalDespesa.classList.add('hidden');
+
+                document.getElementById('formDeletarDespesa').action = `/financeiro/deletar/despesa/${id}/?next=${window.location.pathname}`;
+                
+                console.log('ID da despesa para exclusão:', despesaId);
+    
+                document.getElementById('tituloDeletarDespesa').innerHTML = `Deletar "${despesa.nome}"`; 
+    
+                document.getElementById('textDeletarDespesa').innerHTML = `Tem certeza de que deseja excluir a despesa "${despesa.nome}"? Esta ação não pode ser desfeita.`; 
+                
+                
+                // Mostra o modal de exclusão
+                deletarModalDespesa.classList.remove('hidden');
+            } else if (action === 'fecharDeletarDespesa') {
+                deletarModalDespesa.classList.add('hidden');
+            } {% endcomment %}
             
         }
         

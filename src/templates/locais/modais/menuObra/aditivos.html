@@ -61,13 +61,16 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     {% for aditivo in aditivos %}
                         <tr class="bg-white border-b">
+                            
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                                {{ aditivo.nome }}
+                                <a id="infoAditivoBtn" href="#" onclick="aditivoModal('infoAditivo', '{{ aditivo.id }}')">
+                                    {{ aditivo.nome }}
+                                </a>  
                             </th>
                             <td class="px-6 py-4">
                                 {{ aditivo.dias|default:"-" }}
                             </td>
-                            <td class="px-6 py-4">
+                            <td id="valorAditivo" class="px-6 py-4">
                                 {{ aditivo.valor|default:"-" }}
                             </td>
                             <td class="px-6 py-4">

@@ -59,6 +59,7 @@
 {% include 'financeiro/modais/despesa/deletar_despesa.html' %}
 {% include 'financeiro/modais/despesa/info_despesa.html' %}
 {% include 'financeiro/modais/aditivo/criar_aditivo.html' %}
+{% include 'financeiro/modais/aditivo/info_aditivo.html' %}
 
 {% endblock content %}
 {% block script %}
@@ -95,7 +96,6 @@
 
     document.getElementById("prazoAtualObra").innerText = obra.prazo_atual;
 
-    
 
     // Atualiza o valor inicial da obra se a obra for encontrada
     

@@ -9,7 +9,7 @@ class Obra(models.Model):
     data_inicio = models.DateField()
     data_final = models.DateField(blank=True, null=True)
     valor_inicial = models.DecimalField(max_digits=10, decimal_places=2)
-    valor_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # valor_inicial - aditivos
+    valor_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # valor_inicial + aditivos
     valor_receber = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # valor_total - (sum(adiantamentos) + sum(BMs))
     debito_mensal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # mensal, despesas com status de 'à pagar' somadas
     debito_geral = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # todas as despesas com status de 'à pagar' somadas
@@ -24,7 +24,7 @@ class Obra(models.Model):
         total_aditivos = sum(aditivo.valor for aditivo in aditivos if aditivo.valor is not None)
         
         # Verifica se valor_inicial e total_aditivos não são None
-        self.valor_total = self.valor_inicial - total_aditivos if self.valor_inicial is not None else 0
+        self.valor_total = self.valor_inicial + total_aditivos if self.valor_inicial is not None else 0
         self.save()
         return self.valor_total
     
