@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from locais.models import Obra, Escritorio
-from .models import Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
+from .models import Adiantamento, Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 
@@ -467,7 +467,6 @@ def criar_aditivo(request, id):
         banco_id = request.POST.get('banco')
         modalidade = request.POST.get('modalidade')
         observacao = request.POST.get('observacao')
-        obra_id = request.POST.get('obra')
 
         if modalidade == 'valor':
             dias = None
@@ -561,6 +560,109 @@ def editar_aditivo(request, aditivo_id):
 def deletar_aditivo(request, aditivo_id):
     next_url = request.GET.get('next')
     aditivo = get_object_or_404(Aditivo, id=aditivo_id)
+
+    aditivo.delete()
+    messages.success(request, 'Aditivo deletado com sucesso.')
+    return redirect(next_url if next_url else 'locais:home')
+
+
+# Adiantamento    
+@login_required
+def criar_adiantamento(request, id):
+    next_url = request.GET.get('next')
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        valor = request.POST.get('valor')
+        data = request.POST.get('data')
+        banco_id = request.POST.get('banco')
+        observacao = request.POST.get('observacao')
+
+        try:
+            if data:  
+                data = datetime.strptime(data, '%d/%m/%Y').date()
+            if valor:   
+                valor = limpar_e_converter_valor(valor, request, redirect_url='locais:home')
+            
+        except ValueError:
+            messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
+            return redirect('locais:home')
+
+        # Obtenha a instância do banco ou retorne um erro 404 se não existir
+        banco = get_object_or_404(Banco, id=banco_id)
+
+        # Obtenha a instância da obra ou retorne um erro 404 se não existir
+        obra = get_object_or_404(Obra, id=id)
+
+        # Criando o aditivo
+        adiantamento = Adiantamento.objects.create(
+            nome=nome,
+            valor=valor,
+            data=data,
+            banco=banco,
+            observacao=observacao,
+            obra=obra
+        )
+        adiantamento.save()
+
+    if next_url:
+        return redirect(next_url)
+    
+    else:
+        return render(request, 'locais/detalhe_obra.html', {
+            'obra': obra,
+        })
+
+@login_required
+def editar_adiantamento(request, adiantamento_id):
+    next_url = request.GET.get('next')
+
+    aditivo = get_object_or_404(Aditivo, id=adiantamento_id)
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        valor = request.POST.get('valor')
+        dias = request.POST.get('dias')
+        data = request.POST.get('data')
+        banco_id = request.POST.get('banco')
+        modalidade = request.POST.get('modalidade')
+        observacao = request.POST.get('observacao')
+
+        if modalidade == 'valor':
+            dias = None
+        elif modalidade == 'prazo':
+            valor = None
+
+        try:
+            if data:
+                data = datetime.strptime(data, '%d/%m/%Y').date()
+            if valor:
+                valor = limpar_e_converter_valor(valor, request, redirect_url='locais:home')
+
+        except ValueError:
+            messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
+            return redirect('locais:home')
+
+        # Obtenha a instância do banco ou retorne um erro 404 se não existir
+        banco = get_object_or_404(Banco, id=banco_id)
+
+        aditivo.nome = nome
+        aditivo.valor = valor
+        aditivo.dias = dias
+        aditivo.data = data
+        aditivo.banco = banco
+        aditivo.observacao = observacao
+        aditivo.modalidade = modalidade
+
+        aditivo.save()
+        messages.success(request, 'Aditivo atualizado com sucesso.')
+
+    return redirect(next_url if next_url else 'locais:home')
+
+@login_required
+def deletar_adiantamento(request, adiantamento_id):
+    next_url = request.GET.get('next')
+    aditivo = get_object_or_404(Aditivo, id=adiantamento_id)
 
     aditivo.delete()
     messages.success(request, 'Aditivo deletado com sucesso.')

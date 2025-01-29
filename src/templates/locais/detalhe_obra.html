@@ -62,6 +62,7 @@
 {% include 'financeiro/modais/aditivo/info_aditivo.html' %}
 {% include 'financeiro/modais/aditivo/editar_aditivo.html' %}
 {% include 'financeiro/modais/aditivo/deletar_aditivo.html' %}
+{% include 'financeiro/modais/adiantamento/criar_adiantamento.html' %}
 
 {% endblock content %}
 {% block script %}
@@ -98,7 +99,7 @@
 
     document.getElementById("prazoAtualObra").innerText = obra.prazo_atual;
 
-    
+
     document.addEventListener("DOMContentLoaded", function () {
         // Recupera a última seção acessada do LocalStorage
         const savedSection = localStorage.getItem("activeSection") || "geralSection";

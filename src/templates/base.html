@@ -541,8 +541,126 @@
         }
         
 
-         // modal de editar e excluir despesa
+         // modal de editar e excluir aditivo
          function aditivoModal(action, id) {
+            const infoModalAditivo = document.getElementById('modalInfoAditivo');
+            const editarModalAditivo = document.getElementById('modalEditarAditivo');
+            const deletarModalAditivo = document.getElementById('modalDeletarAditivo');
+        
+            // Converta o ID para o tipo correto
+            const aditivoId = typeof id === 'string' ? parseInt(id, 10) : id;
+            const aditivo = aditivos.find(a => a.id === aditivoId);
+
+            if (action === 'infoAditivo') {
+
+                console.log('Aditivo encontrado:', aditivo);
+                console.log('ID do Aditivo:', aditivo.id);
+                console.log("nome Aditivo: " +  aditivo.nome);
+
+                let modalidadeAditivoFormatado = '';
+
+                // modalidade
+                if (aditivo.modalidade === 'prazo') {
+                    modalidadeAditivoFormatado = 'Prazo';
+                } else if (aditivo.modalidade === 'valor') {
+                    modalidadeAditivoFormatado = 'Valor';
+                }
+                
+                document.getElementById('aditivoTituloInfo').innerHTML = "Informações " + aditivo.nome;
+                document.getElementById('nomeAditivoInfo').innerHTML = "<b>Nome:</b> " + aditivo.nome;
+
+                document.getElementById('dataAditivoInfo').innerHTML = "<b>Data de assinatura:</b> " + aditivo.data;
+                
+                document.getElementById('bancoAditivoInfo').innerHTML = "<b>Banco:</b> " + aditivo.banco;
+
+                document.getElementById('modalidadeAditivoInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeAditivoFormatado;
+
+                document.getElementById('obsAditivoInfo').innerHTML = "<b>Observação:</b> " + (aditivo.observacao|| "-");
+               
+                if (aditivo.modalidade == 'valor'){
+
+                    const campoValorAditivoInfo = document.getElementById('campoValorAditivoInfo');
+                    
+                    campoValorAditivoInfo.classList.remove('hidden');
+
+                    document.getElementById('valorAditivoInfo').innerHTML = "<b>Valor:</b> " + (aditivo.valor || "-");
+                } 
+                else if (aditivo.modalidade == 'prazo') {
+                    const campoDiasAditivoInfo = document.getElementById('campoDiasAditivoInfo');
+                    
+                    campoDiasAditivoInfo.classList.remove('hidden');
+
+                    document.getElementById('diasAditivoInfo').innerHTML = "<b>Prazo:</b> " + (aditivo.dias || "-") + " dias";
+                }
+
+                infoModalAditivo.classList.remove('hidden');
+                    
+            } else if (action === 'fecharInfoAditivo') {
+                infoModalAditivo.classList.add('hidden');
+            }
+        
+            else if (action === 'editarAditivo') {    
+                console.log('aditivo encontrado:', aditivo);
+                console.log('ID do aditivo:', aditivo.id);
+                
+                document.getElementById('formEditarAditivo').action = `/financeiro/aditivos/editar/${id}/?next=${window.location.pathname}`;
+                
+                document.getElementById('aditivoTituloEditar').innerHTML = `Editar "${aditivo.nome}"`;
+
+                document.getElementById('nomeAditivoEditar').value = aditivo.nome;
+                document.getElementById('dataAditivoEditar').value = aditivo.data;
+               
+
+                document.getElementById('modalidadeAditivoEditar').value = aditivo.modalidade;
+                document.getElementById('obsAditivoEditar').value = aditivo.observacao;
+
+                document.getElementById('deletarAditivoBtn').setAttribute('onclick', `aditivoModal('deletarAditivo', ${aditivo.id})`);
+
+                document.getElementById('bancoAditivoEditar').value = aditivo.banco_id;
+
+                if (aditivo.modalidade == 'valor'){
+
+                    const campoValorAditivoEditar = document.getElementById('campoValorAditivoEditar');
+                    
+                    campoValorAditivoEditar.classList.remove('hidden');
+
+                    document.getElementById('valorAditivoEditar').value = (aditivo.valor || "-");
+                } 
+                else if (aditivo.modalidade == 'prazo') {
+                    const campoDiasAditivoEditar = document.getElementById('campoDiasAditivoEditar');
+                    
+                    campoDiasAditivoEditar.classList.remove('hidden');
+
+                    document.getElementById('diasAditivoEditar').value = (aditivo.dias || "-");
+                }
+
+                editarModalAditivo.classList.remove('hidden');
+            } else if (action === 'fecharEditarAditivo') {
+                editarModalAditivo.classList.add('hidden');
+            }
+            else if (action === 'deletarAditivo') {
+
+                // Remover o modal de edição, pois estamos abrindo o de exclusão
+                editarModalAditivo.classList.add('hidden');
+
+                document.getElementById('formDeletarAditivo').action = `/financeiro/aditivos/deletar/${id}/?next=${window.location.pathname}`;
+                
+                console.log('ID do aditivo para exclusão:', aditivo.id);
+    
+                document.getElementById('tituloDeletarAditivo').innerHTML = `Deletar "${aditivo.nome}"`; 
+    
+                document.getElementById('textDeletarAditivo').innerHTML = `Tem certeza de que deseja excluir o aditivo "${aditivo.nome}"? Esta ação não pode ser desfeita.`; 
+                
+                // Mostra o modal de exclusão
+                deletarModalAditivo.classList.remove('hidden');
+            } else if (action === 'fecharDeletarDespesa') {
+                deletarModalAditivo.classList.add('hidden');
+            }
+            
+        }
+
+        // modal de editar e excluir adiantamento
+        function adiantamentoModal(action, id) {
             const infoModalAditivo = document.getElementById('modalInfoAditivo');
             const editarModalAditivo = document.getElementById('modalEditarAditivo');
             const deletarModalAditivo = document.getElementById('modalDeletarAditivo');

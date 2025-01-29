@@ -181,3 +181,28 @@ def aditivos(request):
         'aditivos': aditivos_lista,
         'aditivos_json': aditivos_json, 
     }
+
+def adiantamentos(request):
+    adiantamentos = Adiantamento.objects.select_related('obra', 'banco').all()
+
+    adiantamentos_lista = []
+    for adiantamento in adiantamentos:
+        adiantamentos_dict = {
+            'id': adiantamento.id,
+            'nome': adiantamento.nome,
+            'valor': formatar_valor(adiantamento.valor) if adiantamento.valor else None,
+            'data': adiantamento.data.strftime('%d/%m/%Y') if adiantamento.data else None,
+            'banco': adiantamento.banco.nome,
+            'banco_id': adiantamento.banco.id,
+            'observacao': adiantamento.observacao,
+        }
+
+        adiantamentos_lista.append(adiantamentos_dict)
+
+    # Serializa os dados para JSON
+    adiantamentos_json = json.dumps(adiantamentos_lista, cls=DjangoJSONEncoder)
+
+    return {
+        'adiantamentos_lista': adiantamentos_lista,
+        'adiantamentos_json': adiantamentos_json, 
+    }
