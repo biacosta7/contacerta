@@ -80,13 +80,17 @@
                                 {{ aditivo.banco }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ aditivo.modalidade }}
+                                {% if aditivo.modalidade == 'prazo' %}
+                                    Prazo
+                                {% elif aditivo.modalidade == 'valor' %}
+                                    Valor
+                                {% endif %}
                             </td>
                             <td class="px-6 py-4">
                                 {{ aditivo.observacao|default:'-' }}
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+                                <button onclick="aditivoModal('editarAditivo', {{ aditivo.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
                             </td>
                         </tr>
                     {% endfor %}

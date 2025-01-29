@@ -17,8 +17,9 @@ urlpatterns = [
     path('cartoes/deletar/', views.deletar_cartao, name='deletar_cartao'),
 
     # Aditivos
-    #path('aditivos/', views.ver_aditivos, name='aditivos'),
     path('aditivos/criar/<int:id>', views.criar_aditivo, name='criar_aditivo'),
+    path('aditivos/editar/<int:aditivo_id>/', views.editar_aditivo, name='editar_aditivo'),
+    path('aditivos/deletar/<int:aditivo_id>/', views.deletar_aditivo, name='deletar_aditivo'),
 
     # Bancos
     #path('banco/', views.ver_banco, name='banco'),

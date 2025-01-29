@@ -151,6 +151,7 @@ def aditivos(request):
             'dias': aditivo.dias,
             'data': aditivo.data.strftime('%d/%m/%Y') if aditivo.data else None,
             'banco': aditivo.banco.nome,
+            'banco_id': aditivo.banco.id,
             'modalidade': aditivo.modalidade,
             'observacao': aditivo.observacao,
         }
