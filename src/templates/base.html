@@ -566,7 +566,7 @@
 
                 document.getElementById('modalidadeAditivoInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeAditivoFormatado;
 
-                document.getElementById('obsDespesaInfo').innerHTML = "<b>Observação:</b> " + (aditivo.observacao|| "-");
+                document.getElementById('obsAditivoInfo').innerHTML = "<b>Observação:</b> " + (aditivo.observacao|| "-");
                
                 if (aditivo.modalidade == 'valor'){
 
@@ -605,7 +605,7 @@
                 document.getElementById('modalidadeAditivoEditar').value = aditivo.modalidade;
                 document.getElementById('obsAditivoEditar').value = aditivo.observacao;
 
-                //document.getElementById('deletarDespesaBtn').setAttribute('onclick', `despesaModal('deletarDespesa', ${despesaId})`);       
+                document.getElementById('deletarAditivoBtn').setAttribute('onclick', `aditivoModal('deletarAditivo', ${aditivo.id})`);
 
                 document.getElementById('bancoAditivoEditar').value = aditivo.banco_id;
 
@@ -629,25 +629,24 @@
             } else if (action === 'fecharEditarAditivo') {
                 editarModalAditivo.classList.add('hidden');
             }
-            {% comment %} else if (action === 'deletarDespesa') {
+            else if (action === 'deletarAditivo') {
 
                 // Remover o modal de edição, pois estamos abrindo o de exclusão
                 editarModalAditivo.classList.add('hidden');
 
-                document.getElementById('formDeletarDespesa').action = `/financeiro/deletar/despesa/${id}/?next=${window.location.pathname}`;
+                document.getElementById('formDeletarAditivo').action = `/financeiro/aditivos/deletar/${id}/?next=${window.location.pathname}`;
                 
-                console.log('ID da despesa para exclusão:', despesaId);
+                console.log('ID do aditivo para exclusão:', aditivo.id);
     
-                document.getElementById('tituloDeletarDespesa').innerHTML = `Deletar "${despesa.nome}"`; 
+                document.getElementById('tituloDeletarAditivo').innerHTML = `Deletar "${aditivo.nome}"`; 
     
-                document.getElementById('textDeletarDespesa').innerHTML = `Tem certeza de que deseja excluir a despesa "${despesa.nome}"? Esta ação não pode ser desfeita.`; 
-                
+                document.getElementById('textDeletarAditivo').innerHTML = `Tem certeza de que deseja excluir o aditivo "${aditivo.nome}"? Esta ação não pode ser desfeita.`; 
                 
                 // Mostra o modal de exclusão
-                deletarModalDespesa.classList.remove('hidden');
+                deletarModalAditivo.classList.remove('hidden');
             } else if (action === 'fecharDeletarDespesa') {
-                deletarModalDespesa.classList.add('hidden');
-            } {% endcomment %}
+                deletarModalAditivo.classList.add('hidden');
+            }
             
         }
         
