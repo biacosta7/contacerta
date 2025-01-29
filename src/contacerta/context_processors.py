@@ -138,3 +138,28 @@ def funcionarios(request):
     funcionarios = Funcionario.objects.all().values()
 
     return {'funcionarios': funcionarios}
+
+def aditivos(request):
+    aditivos = Aditivo.objects.select_related('obra', 'banco').all()
+
+    aditivos_lista = []
+    for aditivo in aditivos:
+        aditivo_dict = {
+            'id': aditivo.id,
+            'nome': aditivo.nome,
+            'valor': aditivo.valor,
+            'data': aditivo.data.strftime('%d/%m/%Y') if aditivo.data else None,
+            'banco': aditivo.banco.nome,
+            'modalidade': aditivo.modalidade,
+            'observacao': aditivo.observacao,
+        }
+
+        aditivos_lista.append(aditivo_dict)
+
+    # Serializa os dados para JSON
+    aditivos_json = json.dumps(aditivos_lista, cls=DjangoJSONEncoder)
+
+    return {
+        'aditivos': aditivos,
+        'aditivos_json': aditivos_json, 
+    }

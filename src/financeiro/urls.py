@@ -18,7 +18,7 @@ urlpatterns = [
 
     # Aditivos
     #path('aditivos/', views.ver_aditivos, name='aditivos'),
-    path('aditivos/criar/', views.criar_aditivo, name='criar_aditivo'),
+    path('aditivos/criar/<int:id>', views.criar_aditivo, name='criar_aditivo'),
 
     # Bancos
     #path('banco/', views.ver_banco, name='banco'),

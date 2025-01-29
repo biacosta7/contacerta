@@ -58,6 +58,7 @@
 {% include 'financeiro/modais/despesa/editar_despesa.html' %}
 {% include 'financeiro/modais/despesa/deletar_despesa.html' %}
 {% include 'financeiro/modais/despesa/info_despesa.html' %}
+{% include 'financeiro/modais/aditivo/criar_aditivo.html' %}
 
 {% endblock content %}
 {% block script %}
@@ -80,13 +81,21 @@
         el.innerText = obra.custo_total;
     });
 
-    document.getElementById("valorReceberObra").innerText = obra.valor_receber; 
+    document.querySelectorAll(".valor-receber-obra").forEach(el => {
+        el.innerText = obra.valor_receber;
+    });
 
-    document.getElementById("valorTotalObra").innerText = obra.valor_total;
+    document.querySelectorAll(".valor-total-obra").forEach(el => {
+        el.innerText = obra.valor_total;
+    });
 
     document.querySelectorAll(".debito-mensal-obra").forEach(el => {
         el.innerText = obra.debito_mensal;
     });
+
+    document.getElementById("prazoAtualObra").innerText = obra.prazo_atual;
+
+    
 
     // Atualiza o valor inicial da obra se a obra for encontrada
     

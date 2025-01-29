@@ -20,7 +20,8 @@ class Obra(models.Model):
     # Função para calcular o valor total
     def calcular_valor_total(self):
         aditivos = Aditivo.objects.filter(obra=self)
-        total_aditivos = sum(aditivo.valor for aditivo in aditivos)
+
+        total_aditivos = sum(aditivo.valor for aditivo in aditivos if aditivo.valor is not None)
         
         # Verifica se valor_inicial e total_aditivos não são None
         self.valor_total = self.valor_inicial - total_aditivos if self.valor_inicial is not None else 0

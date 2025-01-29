@@ -456,7 +456,9 @@ def criar_funcionario(request):
     
 # Aditivos    
 @login_required
-def criar_aditivo(request, tipo, id):
+def criar_aditivo(request, id):
+    next_url = request.GET.get('next')
+
     if request.method == 'POST':
         nome = request.POST.get('nome')
         valor = request.POST.get('valor')
@@ -467,21 +469,26 @@ def criar_aditivo(request, tipo, id):
         observacao = request.POST.get('observacao')
         obra_id = request.POST.get('obra')
 
-        # Converter as datas do formato dd/mm/yyyy para yyyy-mm-dd
+        if modalidade == 'valor':
+            dias = None
+        elif modalidade == 'prazo':
+            valor = None
+
         try:
-            data = datetime.strptime(data, '%d/%m/%Y').date()
+            if data:  
+                data = datetime.strptime(data, '%d/%m/%Y').date()
+            if valor:   
+                valor = limpar_e_converter_valor(valor, request, redirect_url='locais:home')
             
         except ValueError:
             messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
             return redirect('locais:home')
 
-        valor = limpar_e_converter_valor(valor, request, redirect_url='locais:home')
-
         # Obtenha a instância do banco ou retorne um erro 404 se não existir
         banco = get_object_or_404(Banco, id=banco_id)
 
         # Obtenha a instância da obra ou retorne um erro 404 se não existir
-        obra = get_object_or_404(Obra, id=obra_id)
+        obra = get_object_or_404(Obra, id=id)
 
         # Criando o aditivo
         aditivo = Aditivo.objects.create(
@@ -496,11 +503,9 @@ def criar_aditivo(request, tipo, id):
         )
         aditivo.save()
 
-        if tipo == 'obra':
-            return redirect('locais:detalhe_obra', tipo='obra', id=id)
-        else:
-            return redirect('locais:detalhe_escritorio', tipo='escritorio', id=id)
-
+    if next_url:
+        return redirect(next_url)
+    
     else:
         return render(request, 'locais/detalhe_obra.html', {
             'obra': obra,
