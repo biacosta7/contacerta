@@ -27,6 +27,9 @@
         <!-- charts -->
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+
+        <link rel="icon" type="image/png" href="{% static 'assets/favicon.png' %}">
+
     </head>
     <body>
         {% block content %}{% endblock content %}
@@ -269,6 +272,7 @@
         const notaEspecie = JSON.parse('{{ nota_especie_json|safe }}');
         const maoDeObras = JSON.parse('{{ mao_de_obra_json|safe }}');
         const bancos = JSON.parse('{{ bancos_json|safe }}');
+        const funcionarios = JSON.parse('{{ funcionarios_json|safe }}');
         const aditivos = JSON.parse('{{ aditivos_json|safe }}');
 
         // modal de editar e excluir despesa
@@ -328,7 +332,12 @@
                 document.getElementById('modalidadeDespesaInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeFormatado; 
 
                 if (despesa.modalidade == 'mao_de_obra'){
-                    let mdo_despesa = maoDeObras.find(md => md.id === despesaId); 
+                    let mdo_despesa = maoDeObras.find(md => md.despesa.id === despesa.id); 
+
+                    console.log(" md.despesa.id: " +  mdo_despesa);
+
+                    console.log("mdo_despesa: " + mdo_despesa);
+
                     let funcionario_despesa = funcionarios.find(fd => fd.id === mdo_despesa.funcionario_id); 
 
                     const maoDeObraFieldsDespesa = document.getElementById('maoDeObraFields');

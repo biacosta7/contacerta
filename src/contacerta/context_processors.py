@@ -135,9 +135,26 @@ def despesas(request):
     }
 
 def funcionarios(request):
-    funcionarios = Funcionario.objects.all().values()
+    funcionarios = Funcionario.objects.all()
 
-    return {'funcionarios': funcionarios}
+    funcionarios_formatados = []
+
+    for funcionario in funcionarios:
+        custo_total = formatar_valor(funcionario.custo_total_funcionario())
+
+        funcionarios_dict = {
+            'nome': funcionario.nome,
+            'cargo': funcionario.cargo,
+            'custo_total': custo_total
+        }
+
+        funcionarios_formatados.append(funcionarios_dict)
+    print(funcionarios_formatados)
+
+    return {
+        'funcionarios_lista': funcionarios_formatados,
+        'funcionarios_json': json.dumps(list(funcionarios_formatados), cls=DjangoJSONEncoder),
+    }
 
 def aditivos(request):
     aditivos = Aditivo.objects.select_related('obra', 'banco').all()

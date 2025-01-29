@@ -511,7 +511,6 @@ def criar_aditivo(request, id):
             'obra': obra,
         })
 
-
 @login_required
 def editar_aditivo(request, aditivo_id):
     next_url = request.GET.get('next')

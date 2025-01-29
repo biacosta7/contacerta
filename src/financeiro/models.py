@@ -145,6 +145,14 @@ class NotaEspecie(Despesa):
 class Funcionario(models.Model):
     nome = models.CharField(max_length=100)
     cargo = models.CharField(max_length=50)
+    custo_total = models.DecimalField(max_digits=10, decimal_places=2, default=0, blank=True)
+
+    def custo_total_funcionario(self):
+        custo_total = 0
+        maos_de_obra = MaoDeObra.objects.filter(funcionario=self)
+        for mao in maos_de_obra:
+            custo_total += mao.despesa.valor
+        return custo_total
 
     def __str__(self):
         return f"{self.nome} - {self.cargo}"
