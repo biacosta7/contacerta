@@ -50,7 +50,6 @@ def info_obras(request):
             'prazo_atual': format_date(obra.prazo_atual) if obra.prazo_atual else None,
         }
         obras_formatadas.append(obra_dict)
-    print(obras_formatadas)
 
     return {
         'obras_json': json.dumps(obras_formatadas, cls=DjangoJSONEncoder),
