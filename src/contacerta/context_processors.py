@@ -149,7 +149,6 @@ def funcionarios(request):
         }
 
         funcionarios_formatados.append(funcionarios_dict)
-    print(funcionarios_formatados)
 
     return {
         'funcionarios_lista': funcionarios_formatados,
