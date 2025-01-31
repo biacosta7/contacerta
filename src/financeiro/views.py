@@ -740,3 +740,13 @@ def editar_bm(request, bm_id):
         messages.success(request, 'BM atualizada com sucesso.')
 
     return redirect(next_url if next_url else 'locais:home')
+
+@login_required
+def deletar_bm(request, bm_id):
+    next_url = request.GET.get('next')
+    bm = get_object_or_404(BM, id=bm_id)
+
+    bm.delete()
+    messages.success(request, 'BM deletada com sucesso.')
+    return redirect(next_url if next_url else 'locais:home')
+

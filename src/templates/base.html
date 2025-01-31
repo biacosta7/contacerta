@@ -798,18 +798,18 @@
             else if (action === 'deletarBM') {
                 editarModalBM.classList.add('hidden');
 
-                document.getElementById('formDeletarAdiantamento').action = `/financeiro/adiantamentos/deletar/${id}/?next=${window.location.pathname}`;
+                document.getElementById('formDeletarBM').action = `/financeiro/bms/deletar/${id}/?next=${window.location.pathname}`;
                 
-                console.log('ID do Adiantamento para exclusão:', adiantamento.id);
+                console.log('ID da BM para exclusão:', bm.id);
     
-                document.getElementById('tituloDeletarAdiantamento').innerHTML = `Deletar "${adiantamento.nome}"`; 
+                document.getElementById('tituloDeletarBM').innerHTML = `Deletar "${bm.nome}"`; 
     
-                document.getElementById('textDeletarAdiantamento').innerHTML = `Tem certeza de que deseja excluir o adiantamento "${adiantamento.nome}"? Esta ação não pode ser desfeita.`; 
+                document.getElementById('textDeletarBM').innerHTML = `Tem certeza de que deseja excluir a BM "${bm.nome}"? Esta ação não pode ser desfeita.`; 
                 
                 // Mostra o modal de exclusão
-                deletarModalAdiantamento.classList.remove('hidden');
-            } else if (action === 'fecharDeletarAdiantamento') {
-                deletarModalAdiantamento.classList.add('hidden');
+                deletarModalBM.classList.remove('hidden');
+            } else if (action === 'fecharDeletarBM') {
+                deletarModalBM.classList.add('hidden');
             }
             
         }

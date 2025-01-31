@@ -1,13 +1,13 @@
-<!-- Modal de deleção de aditivo -->
-<div id="modalDeletarAdiantamento" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+<!-- Modal de deleção de bm -->
+<div id="modalDeletarBM" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
     <div class="bg-white px-14 py-12 rounded-[34px] w-full max-w-lg">
-        <h3 id="tituloDeletarAdiantamento" class="text-xl font-bold mb-4 text-red-600">Deletar Adiantamento</h3>
-        <p id="textDeletarAdiantamento" class="text-gray-700 mb-6"></p>
-        <form id="formDeletarAdiantamento" method="POST" action="">
+        <h3 id="tituloDeletarBM" class="text-xl font-bold mb-4 text-red-600">Deletar BM</h3>
+        <p id="textDeletarBM" class="text-gray-700 mb-6"></p>
+        <form id="formDeletarBM" method="POST" action="">
             {% csrf_token %}
             <div class="flex flex-row justify-between">
                 <button type="submit" class="mr-2 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 w-full font-bold">Deletar</button>
-                <button type="button" onclick="adiantamentoModal('fecharDeletarAdiantamento')" class="bg-white border-2 border-gray-800 hover:border-gray-600 text-gray-800 hover:text-gray-600 font-bold px-6 py-3 rounded-[9px] w-full">Cancelar</button>
+                <button type="button" onclick="bmModal('fecharDeletarBM')" class="bg-white border-2 border-gray-800 hover:border-gray-600 text-gray-800 hover:text-gray-600 font-bold px-6 py-3 rounded-[9px] w-full">Cancelar</button>
             </div>
         </form>
     </div>
