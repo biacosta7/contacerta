@@ -16,17 +16,12 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def limpar_e_converter_valor(valor, request, redirect_url='locais:home'):
-    # Substituir separadores para o formato decimal
-    valor = valor.replace('.', '').replace(',', '.')
-    
+def limpar_e_converter_valor(valor):
     try:
-        # Converter para Decimal
+        valor = valor.replace('R$', '').replace('.', '').replace(',', '.').strip()
         return Decimal(valor)
-    except InvalidOperation:
-        # Adicionar mensagem de erro e redirecionar
-        messages.error(request, 'Valor inválido.')
-        return redirect(redirect_url)
+    except (ValueError, InvalidOperation):
+        raise ValueError("Valor inválido.") 
 
 def limpar_e_converter_data(data_str, request, redirect_url='locais:home', formato='%d/%m/%Y'):
     if not isinstance(data_str, str):
@@ -89,7 +84,7 @@ def criar_despesa(request, tipo, id):
                 tipo_local = ContentType.objects.get_for_model(local)
                 logger.debug(f"tipo_local: {tipo_local}")
                 print(" - DATA - ", data)
-                valor = limpar_e_converter_valor(valor, request)
+                valor = limpar_e_converter_valor(valor)
 
                 print(f"Data final antes da criação: {data} ({type(data)})")
 
@@ -115,7 +110,7 @@ def criar_despesa(request, tipo, id):
                     valor_parcela = request.POST.get('valor_parcela')
 
                     cartao = get_object_or_404(Cartao, id=cartao_id)
-                    valor_parcela = limpar_e_converter_valor(valor_parcela, request, redirect_url='locais:home')
+                    valor_parcela = limpar_e_converter_valor(valor_parcela)
 
                     despesa = NotaCartao.objects.create(
                         **campos_despesa,
@@ -237,7 +232,7 @@ def editar_despesa(request, despesa_id):
 
 
             print(" - DATA - ", data)
-            valor = limpar_e_converter_valor(valor, request)
+            valor = limpar_e_converter_valor(valor)
 
             print(f"Data final antes da edição: {data} ({type(data)})")
 
@@ -259,7 +254,7 @@ def editar_despesa(request, despesa_id):
                 valor_parcela = request.POST.get('valor_parcela')
 
                 cartao = get_object_or_404(Cartao, id=cartao_id)
-                valor_parcela = limpar_e_converter_valor(valor_parcela, request, redirect_url='locais:home')
+                valor_parcela = limpar_e_converter_valor(valor_parcela)
 
                 notaCartao = get_object_or_404(NotaCartao, id=despesa_id)
 
@@ -477,7 +472,7 @@ def criar_aditivo(request, id):
             if data:  
                 data = datetime.strptime(data, '%d/%m/%Y').date()
             if valor:   
-                valor = limpar_e_converter_valor(valor, request, redirect_url='locais:home')
+                valor = limpar_e_converter_valor(valor)
             
         except ValueError:
             messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
@@ -534,7 +529,7 @@ def editar_aditivo(request, aditivo_id):
             if data:
                 data = datetime.strptime(data, '%d/%m/%Y').date()
             if valor:
-                valor = limpar_e_converter_valor(valor, request, redirect_url='locais:home')
+                valor = limpar_e_converter_valor(valor)
 
         except ValueError:
             messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
@@ -582,7 +577,7 @@ def criar_adiantamento(request, id):
             if data:  
                 data = datetime.strptime(data, '%d/%m/%Y').date()
             if valor:   
-                valor = limpar_e_converter_valor(valor, request, redirect_url='locais:home')
+                valor = limpar_e_converter_valor(valor)
             
         except ValueError:
             messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
@@ -617,53 +612,43 @@ def criar_adiantamento(request, id):
 def editar_adiantamento(request, adiantamento_id):
     next_url = request.GET.get('next')
 
-    aditivo = get_object_or_404(Aditivo, id=adiantamento_id)
+    adiantamento = get_object_or_404(Adiantamento, id=adiantamento_id)
 
     if request.method == 'POST':
         nome = request.POST.get('nome')
         valor = request.POST.get('valor')
-        dias = request.POST.get('dias')
         data = request.POST.get('data')
         banco_id = request.POST.get('banco')
-        modalidade = request.POST.get('modalidade')
         observacao = request.POST.get('observacao')
-
-        if modalidade == 'valor':
-            dias = None
-        elif modalidade == 'prazo':
-            valor = None
 
         try:
             if data:
                 data = datetime.strptime(data, '%d/%m/%Y').date()
             if valor:
-                valor = limpar_e_converter_valor(valor, request, redirect_url='locais:home')
-
+                valor = limpar_e_converter_valor(valor)
         except ValueError:
-            messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
-            return redirect('locais:home')
+            messages.error(request, 'Formato de valor inválido. Use o formato correto.')
+            return redirect(next_url if next_url else 'locais:home')
 
         # Obtenha a instância do banco ou retorne um erro 404 se não existir
         banco = get_object_or_404(Banco, id=banco_id)
 
-        aditivo.nome = nome
-        aditivo.valor = valor
-        aditivo.dias = dias
-        aditivo.data = data
-        aditivo.banco = banco
-        aditivo.observacao = observacao
-        aditivo.modalidade = modalidade
+        adiantamento.nome = nome
+        adiantamento.valor = valor
+        adiantamento.data = data
+        adiantamento.banco = banco
+        adiantamento.observacao = observacao
 
-        aditivo.save()
-        messages.success(request, 'Aditivo atualizado com sucesso.')
+        adiantamento.save()
+        messages.success(request, 'Adiantamento atualizado com sucesso.')
 
     return redirect(next_url if next_url else 'locais:home')
 
 @login_required
 def deletar_adiantamento(request, adiantamento_id):
     next_url = request.GET.get('next')
-    aditivo = get_object_or_404(Aditivo, id=adiantamento_id)
+    adiantamento = get_object_or_404(Adiantamento, id=adiantamento_id)
 
-    aditivo.delete()
-    messages.success(request, 'Aditivo deletado com sucesso.')
+    adiantamento.delete()
+    messages.success(request, 'Adiantamento deletado com sucesso.')
     return redirect(next_url if next_url else 'locais:home')

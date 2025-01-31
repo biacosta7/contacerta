@@ -172,7 +172,7 @@
                             <label for="funcionario" class="block mb-2 text-sm font-medium text-gray-900">Funcionário*</label>
                             <select id="funcionario" name="funcionario" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
                                 <option value="" selected disabled hidden>Selecione o funcionário</option>
-                                {% for funcionario in funcionarios %}
+                                {% for funcionario in funcionarios_lista %}
                                 <option class="" value="{{funcionario.id}}">{{funcionario.nome}}</option> 
                                 {% endfor %}
                             </select>

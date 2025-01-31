@@ -1,25 +1,25 @@
-<!-- Modal de edição de aditivo -->
-<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalEditarAditivo">
+<!-- Modal de edição de Adiantamento -->
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalEditarAdiantamento">
     <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
         <div class="flex space-x-8 justify-between items-center mb-4">
-            <h5 id="aditivoTituloEditar" class="text-2xl font-bold text-center flex-grow ml-8">Editar {{ aditivo.nome }}</h5>
-            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="aditivoModal('fecharEditarAditivo')"></i>
+            <h5 id="adiantamentoTituloEditar" class="text-2xl font-bold text-center flex-grow ml-8">Editar {{ adiantamento.nome }}</h5>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="adiantamentoModal('fecharEditarAdiantamento')"></i>
         </div>
-        <form method="POST" id="formEditarAditivo" action="" class="px-6 space-y-8">
+        <form method="POST" id="formEditarAdiantamento" action="" class="px-6 space-y-8">
             {% csrf_token %}
-            <!-- Campo oculto para ID da aditivo -->
-            <input type="hidden" id="aditivoId" name="aditivo_id" value="">
+            <!-- Campo oculto para ID da Adiantamento -->
+            <input type="hidden" id="adiantamentoId" name="adiantamento_id" value="">
 
-            <!-- Nome do aditivo -->
+            <!-- Nome do Adiantamento -->
             <div class="">
-                <label for="nomeAditivoEditar" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
-                <input id="nomeAditivoEditar" name="nome" class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3">
+                <label for="nomeAdiantamentoEditar" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
+                <input id="nomeAdiantamentoEditar" name="nome" class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3">
                 </input>
             </div>
 
             <div class="mb-2">
-                <label for="bancoAditivoEditar" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
-                <select id="bancoAditivoEditar" name="banco" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                <label for="bancoAdiantamentoEditar" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
+                <select id="bancoAdiantamentoEditar" name="banco" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
                     <option value="" selected disabled hidden>Selecione o banco</option>
                     {% for banco in bancos %}
                     <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
@@ -27,35 +27,20 @@
                 </select>
             </div>
 
-            <div>
-                <label for="modalidadeAditivoEditar" class="block mb-2 text-sm font-medium text-gray-900">Modalidade*</label>
-                <select id="modalidadeAditivoEditar" name="modalidade" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
-                    <option value="" selected disabled hidden>Selecione a modalidade</option>
-                    <option value="prazo">Prazo</option>
-                    <option value="valor">Valor</option>
-                </select>
-            </div>
-
-            <!-- Campo para Prazo (dias) -->
-            <div id="campoDiasAditivoEditar" class="flex-1 mb-2 hidden">
-                <label for="diasAditivoEditar" class="block mb-2 text-sm font-medium text-gray-900">Quantidade de dias*</label>
-                <input type="number" id="diasAditivoEditar" placeholder="60" name="dias"
-                    class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3">
-            </div>
-
             <!-- Campo para Valor -->
-            <div id="campoValorAditivoEditar" class="hidden">
-                <label for="valorAditivoEditar" class="block mb-2 text-sm font-medium text-gray-900">Valor*</label>
-                <input type="text" id="valorAditivoEditar" placeholder="5.200,00" name="valor"
-                    class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3">
+            <div class="mb-2">
+                <label for="valorAdiantamentoEditar" class="block mb-2 text-sm font-medium text-gray-900">Valor*</label>
+                <input type="text" id="valorAdiantamentoEditar" placeholder="5.200,00" name="valor"
+                    class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
             </div>
-            <div class="flex-1 mb-2">
-                <label for="dataAditivoEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de assinatura*</label>
+
+            <div class="mb-2">
+                <label for="dataAdiantamentoEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de assinatura*</label>
                 <input
                     type="text"
-                    id="dataAditivoEditar"
+                    id="dataAdiantamentoEditar"
                     name="data"
-                    value="{{ aditivo.data|date:'d-m-Y' }}"
+                    value="{{ adiantamento.data|date:'d-m-Y' }}"
                     class="bg-gray-100 w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3"
                     required 
                     data-date-format="dd-mm-yyyy"
@@ -63,15 +48,15 @@
             </div>
 
             <div>
-                <label for="obsAditivoEditar" class="block mb-2 text-sm font-medium text-gray-900">Observação<span class="text-xs text-gray-400">  (opcional)</span></label>
-                <textarea id="obsAditivoEditar" name="observacao" rows="4" class="bg-gray-100 block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>
+                <label for="obsAdiantamentoEditar" class="block mb-2 text-sm font-medium text-gray-900">Observação<span class="text-xs text-gray-400">  (opcional)</span></label>
+                <textarea id="obsAdiantamentoEditar" name="observacao" rows="4" class="bg-gray-100 block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>
             </div>
 
             <div class="flex justify-between mt-4">
-                <button id="deletarAditivoBtn" type="button" class="px-4 py-2 bg-red-400 text-white rounded-lg hover:bg-gray-400 mr-2" onclick="">Deletar</button>
+                <button id="deletarAdiantamentoBtn" type="button" class="px-4 py-2 bg-red-400 text-white rounded-lg hover:bg-gray-400 mr-2" onclick="">Deletar</button>
 
                 <div class="flex">
-                    <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="aditivoModal('fecharEditarAditivo')">Cancelar</button>
+                    <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="adiantamentoModal('fecharEditarAdiantamento')">Cancelar</button>
                     <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-[#4DBCAA]">Salvar</button>
                 </div>
             </div>
@@ -82,7 +67,7 @@
 </div>
 <script>
     $(document).ready(function () {
-        $('#dataAditivoEditar').datepicker({
+        $('#dataAdiantamentoEditar').datepicker({
             dateFormat: 'dd/mm/yy',
             changeMonth: true,     
             changeYear: true     

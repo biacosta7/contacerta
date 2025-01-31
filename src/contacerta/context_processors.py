@@ -6,6 +6,8 @@ from financeiro.models import *
 from datetime import datetime
 import json
 from django.core.serializers.json import DjangoJSONEncoder
+from django.utils.html import escape
+
 
 # Função para formatar a data para 'dd/mm/yyyy'
 def format_date(date_value):
@@ -143,6 +145,7 @@ def funcionarios(request):
         custo_total = formatar_valor(funcionario.custo_total_funcionario())
 
         funcionarios_dict = {
+            'id': funcionario.id,
             'nome': funcionario.nome,
             'cargo': funcionario.cargo,
             'custo_total': custo_total

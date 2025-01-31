@@ -23,6 +23,8 @@ urlpatterns = [
 
     # Adiantamentos
     path('adiantamentos/criar/<int:id>', views.criar_adiantamento, name='criar_adiantamento'),
+    path('adiantamentos/editar/<int:adiantamento_id>/', views.editar_adiantamento, name='editar_adiantamento'),
+    path('adiantamentos/deletar/<int:adiantamento_id>/', views.deletar_adiantamento, name='deletar_adiantamento'),
 
     # Bancos
     #path('banco/', views.ver_banco, name='banco'),

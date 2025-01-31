@@ -274,6 +274,7 @@
         const bancos = JSON.parse('{{ bancos_json|safe }}');
         const funcionarios = JSON.parse('{{ funcionarios_json|safe }}');
         const aditivos = JSON.parse('{{ aditivos_json|safe }}');
+        const adiantamentos = JSON.parse('{{ adiantamentos_json|safe }}');
 
         // modal de editar e excluir despesa
         function despesaModal(action, id) {
@@ -661,118 +662,75 @@
 
         // modal de editar e excluir adiantamento
         function adiantamentoModal(action, id) {
-            const infoModalAditivo = document.getElementById('modalInfoAditivo');
-            const editarModalAditivo = document.getElementById('modalEditarAditivo');
-            const deletarModalAditivo = document.getElementById('modalDeletarAditivo');
+            const infoModalAdiantamento = document.getElementById('modalInfoAdiantamento');
+            const editarModalAdiantamento = document.getElementById('modalEditarAdiantamento');
+            const deletarModalAdiantamento = document.getElementById('modalDeletarAdiantamento');
         
             // Converta o ID para o tipo correto
-            const aditivoId = typeof id === 'string' ? parseInt(id, 10) : id;
-            const aditivo = aditivos.find(a => a.id === aditivoId);
+            const adiantamentoId = typeof id === 'string' ? parseInt(id, 10) : id;
+            const adiantamento = adiantamentos.find(a => a.id === adiantamentoId);
 
-            if (action === 'infoAditivo') {
+            if (action === 'infoAdiantamento') {
 
-                console.log('Aditivo encontrado:', aditivo);
-                console.log('ID do Aditivo:', aditivo.id);
-                console.log("nome Aditivo: " +  aditivo.nome);
-
-                let modalidadeAditivoFormatado = '';
-
-                // modalidade
-                if (aditivo.modalidade === 'prazo') {
-                    modalidadeAditivoFormatado = 'Prazo';
-                } else if (aditivo.modalidade === 'valor') {
-                    modalidadeAditivoFormatado = 'Valor';
-                }
+                console.log('Adiantamento encontrado:', adiantamento);
+                console.log('ID do Adiantamento:', adiantamento.id);
+                console.log("nome Adiantamento: " +  adiantamento.nome);
                 
-                document.getElementById('aditivoTituloInfo').innerHTML = "Informações " + aditivo.nome;
-                document.getElementById('nomeAditivoInfo').innerHTML = "<b>Nome:</b> " + aditivo.nome;
+                document.getElementById('aditivoTituloInfo').innerHTML = "Informações " + adiantamento.nome;
+                document.getElementById('nomeAdiantamentoInfo').innerHTML = "<b>Nome:</b> " + adiantamento.nome;
 
-                document.getElementById('dataAditivoInfo').innerHTML = "<b>Data de assinatura:</b> " + aditivo.data;
+                document.getElementById('dataAdiantamentoInfo').innerHTML = "<b>Data de assinatura:</b> " + adiantamento.data;
                 
-                document.getElementById('bancoAditivoInfo').innerHTML = "<b>Banco:</b> " + aditivo.banco;
+                document.getElementById('bancoAdiantamentoInfo').innerHTML = "<b>Banco:</b> " + adiantamento.banco;
 
-                document.getElementById('modalidadeAditivoInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeAditivoFormatado;
-
-                document.getElementById('obsAditivoInfo').innerHTML = "<b>Observação:</b> " + (aditivo.observacao|| "-");
+                document.getElementById('obsAdiantamentoInfo').innerHTML = "<b>Observação:</b> " + (adiantamento.observacao|| "-");
                
-                if (aditivo.modalidade == 'valor'){
+                document.getElementById('valorAdiantamentoInfo').innerHTML = "<b>Valor:</b> " + (adiantamento.valor || "-");
 
-                    const campoValorAditivoInfo = document.getElementById('campoValorAditivoInfo');
+                infoModalAdiantamento.classList.remove('hidden');
                     
-                    campoValorAditivoInfo.classList.remove('hidden');
-
-                    document.getElementById('valorAditivoInfo').innerHTML = "<b>Valor:</b> " + (aditivo.valor || "-");
-                } 
-                else if (aditivo.modalidade == 'prazo') {
-                    const campoDiasAditivoInfo = document.getElementById('campoDiasAditivoInfo');
-                    
-                    campoDiasAditivoInfo.classList.remove('hidden');
-
-                    document.getElementById('diasAditivoInfo').innerHTML = "<b>Prazo:</b> " + (aditivo.dias || "-") + " dias";
-                }
-
-                infoModalAditivo.classList.remove('hidden');
-                    
-            } else if (action === 'fecharInfoAditivo') {
-                infoModalAditivo.classList.add('hidden');
+            } else if (action === 'fecharInfoAdiantamento') {
+                infoModalAdiantamento.classList.add('hidden');
             }
         
-            else if (action === 'editarAditivo') {    
-                console.log('aditivo encontrado:', aditivo);
-                console.log('ID do aditivo:', aditivo.id);
+            else if (action === 'editarAdiantamento') {    
+                console.log('Adiantamento encontrado:', adiantamento);
+                console.log('ID do Adiantamento:', adiantamento.id);
                 
-                document.getElementById('formEditarAditivo').action = `/financeiro/aditivos/editar/${id}/?next=${window.location.pathname}`;
+                document.getElementById('formEditarAdiantamento').action = `/financeiro/adiantamentos/editar/${id}/?next=${window.location.pathname}`;
                 
-                document.getElementById('aditivoTituloEditar').innerHTML = `Editar "${aditivo.nome}"`;
+                document.getElementById('adiantamentoTituloEditar').innerHTML = `Editar "${adiantamento.nome}"`;
 
-                document.getElementById('nomeAditivoEditar').value = aditivo.nome;
-                document.getElementById('dataAditivoEditar').value = aditivo.data;
+                document.getElementById('nomeAdiantamentoEditar').value = adiantamento.nome;
+                document.getElementById('dataAdiantamentoEditar').value = adiantamento.data;
                
+                document.getElementById('obsAdiantamentoEditar').value = adiantamento.observacao;
 
-                document.getElementById('modalidadeAditivoEditar').value = aditivo.modalidade;
-                document.getElementById('obsAditivoEditar').value = aditivo.observacao;
+                document.getElementById('deletarAdiantamentoBtn').setAttribute('onclick', `adiantamentoModal('deletarAdiantamento', ${adiantamento.id})`);
 
-                document.getElementById('deletarAditivoBtn').setAttribute('onclick', `aditivoModal('deletarAditivo', ${aditivo.id})`);
+                document.getElementById('bancoAdiantamentoEditar').value = adiantamento.banco_id;
 
-                document.getElementById('bancoAditivoEditar').value = aditivo.banco_id;
+                document.getElementById('valorAdiantamentoEditar').value = (adiantamento.valor || "-");
 
-                if (aditivo.modalidade == 'valor'){
-
-                    const campoValorAditivoEditar = document.getElementById('campoValorAditivoEditar');
-                    
-                    campoValorAditivoEditar.classList.remove('hidden');
-
-                    document.getElementById('valorAditivoEditar').value = (aditivo.valor || "-");
-                } 
-                else if (aditivo.modalidade == 'prazo') {
-                    const campoDiasAditivoEditar = document.getElementById('campoDiasAditivoEditar');
-                    
-                    campoDiasAditivoEditar.classList.remove('hidden');
-
-                    document.getElementById('diasAditivoEditar').value = (aditivo.dias || "-");
-                }
-
-                editarModalAditivo.classList.remove('hidden');
-            } else if (action === 'fecharEditarAditivo') {
-                editarModalAditivo.classList.add('hidden');
+                editarModalAdiantamento.classList.remove('hidden');
+            } else if (action === 'fecharEditarAdiantamento') {
+                editarModalAdiantamento.classList.add('hidden');
             }
-            else if (action === 'deletarAditivo') {
+            else if (action === 'deletarAdiantamento') {
+                editarModalAdiantamento.classList.add('hidden');
 
-                // Remover o modal de edição, pois estamos abrindo o de exclusão
-                editarModalAditivo.classList.add('hidden');
-
-                document.getElementById('formDeletarAditivo').action = `/financeiro/aditivos/deletar/${id}/?next=${window.location.pathname}`;
+                document.getElementById('formDeletarAdiantamento').action = `/financeiro/adiantamentos/deletar/${id}/?next=${window.location.pathname}`;
                 
-                console.log('ID do aditivo para exclusão:', aditivo.id);
+                console.log('ID do Adiantamento para exclusão:', adiantamento.id);
     
-                document.getElementById('tituloDeletarAditivo').innerHTML = `Deletar "${aditivo.nome}"`; 
+                document.getElementById('tituloDeletarAdiantamento').innerHTML = `Deletar "${adiantamento.nome}"`; 
     
-                document.getElementById('textDeletarAditivo').innerHTML = `Tem certeza de que deseja excluir o aditivo "${aditivo.nome}"? Esta ação não pode ser desfeita.`; 
+                document.getElementById('textDeletarAdiantamento').innerHTML = `Tem certeza de que deseja excluir o adiantamento "${adiantamento.nome}"? Esta ação não pode ser desfeita.`; 
                 
                 // Mostra o modal de exclusão
-                deletarModalAditivo.classList.remove('hidden');
-            } else if (action === 'fecharDeletarDespesa') {
-                deletarModalAditivo.classList.add('hidden');
+                deletarModalAdiantamento.classList.remove('hidden');
+            } else if (action === 'fecharDeletarAdiantamento') {
+                deletarModalAdiantamento.classList.add('hidden');
             }
             
         }
