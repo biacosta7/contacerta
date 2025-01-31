@@ -34,6 +34,9 @@ def info_obras(request):
         obra.calcular_debito_geral()
         obra.calcular_custo_total()
         obra.calcular_prazo_atual()
+        total_adiantamentos = obra.calcular_total_adiantamentos()
+        total_bms = obra.calcular_total_bms()
+        soma_adiantamento_bm = obra.calcular_soma_adiantamento_bm()
 
         obra_dict = {
             'id': obra.id, 
@@ -50,6 +53,9 @@ def info_obras(request):
             'custo_total': formatar_valor(obra.custo_total),
             'prazo_inicial': format_date(obra.prazo_inicial) if obra.prazo_inicial else None,
             'prazo_atual': format_date(obra.prazo_atual) if obra.prazo_atual else None,
+            'total_adiantamentos': formatar_valor(total_adiantamentos) if total_adiantamentos is not None else formatar_valor(0),
+            'total_bms': formatar_valor(total_bms) if total_bms is not None else formatar_valor(0),
+            'soma_adiantamento_bm': formatar_valor(soma_adiantamento_bm) if soma_adiantamento_bm is not None else formatar_valor(0),
         }
         obras_formatadas.append(obra_dict)
 

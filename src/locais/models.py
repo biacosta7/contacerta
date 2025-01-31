@@ -92,6 +92,21 @@ class Obra(models.Model):
             self.prazo_atual = self.prazo_inicial + timedelta(days=total_dias_aditivos)
             self.save()
         return self.prazo_atual
+    
+    def calcular_total_adiantamentos(self):
+        adiamentos = Adiantamento.objects.filter(obra=self)
+        total_adiamentos = sum(adiamento.valor for adiamento in adiamentos) if adiamentos.exists() else 0
+        return total_adiamentos
+
+    def calcular_total_bms(self):
+        bms = BM.objects.filter(obra=self)
+        total_bms = sum(bm.valor for bm in bms) if bms.exists() else 0
+        return total_bms
+
+    def calcular_soma_adiantamento_bm(self):
+        total_adiantamentos = self.calcular_total_adiantamentos()
+        total_bms = self.calcular_total_bms()
+        return total_adiantamentos + total_bms
 
     def __str__(self):
         return self.nome

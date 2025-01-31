@@ -6,18 +6,16 @@
 
 <div class="flex space-x-8 justify-between mb-4">
     <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
-        <h3 class="text-base font-medium">Total Adiantamentos</h3>
-        <span class="mt-1.5 valor-total-obra text-2xl font-bold"></span>
+        <h3 class="text-base font-medium block">Total Adiantamentos</h3>
+        <span id="totalAdiantamentos" class="mt-2 valor-total-obra text-2xl font-bold block"></span>
     </div>
     <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
-        <div>
-            <h3 class="text-base font-medium block">Total BMs</h3>
-            <span id=" " class="mt-1.5 text-2xl font-semibold block"></span>
-        </div>
+        <h3 class="text-base font-medium block">Total BMs</h3>
+        <span id="totalBMs" class="mt-1.5 text-2xl font-semibold block"></span>
     </div>
     <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <h3 class="text-base font-medium block">Soma</span></h3>
-            <span class="text-2xl font-semibold block">R$ {{ obra.debito_mensal|default:"0" }}</span>
+            <span  id="somaAdiantamentoBM" class="text-2xl font-semibold block"></span>
             <span class="text-gray-500 text-xs">Total Adiantamentos - Total BMs</span>
     </div>
     <div class="flex flex-col py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
