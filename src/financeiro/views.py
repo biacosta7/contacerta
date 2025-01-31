@@ -702,3 +702,41 @@ def criar_bm(request, id):
         return render(request, 'locais/detalhe_obra.html', {
             'obra': obra,
         })
+
+@login_required
+def editar_bm(request, bm_id):
+    next_url = request.GET.get('next')
+
+    bm = get_object_or_404(BM, id=bm_id)
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        valor = request.POST.get('valor')
+        data = request.POST.get('data')
+        codigo = request.POST.get('codigo')
+        banco_id = request.POST.get('banco')
+        observacao = request.POST.get('observacao')
+
+        try:
+            if data:
+                data = datetime.strptime(data, '%d/%m/%Y').date()
+            if valor:
+                valor = limpar_e_converter_valor(valor)
+        except ValueError:
+            messages.error(request, 'Formato de valor inválido. Use o formato correto.')
+            return redirect(next_url if next_url else 'locais:home')
+
+        # Obtenha a instância do banco ou retorne um erro 404 se não existir
+        banco = get_object_or_404(Banco, id=banco_id)
+
+        bm.nome = nome
+        bm.valor = valor
+        bm.data = data
+        bm.codigo = codigo
+        bm.banco = banco
+        bm.observacao = observacao
+
+        bm.save()
+        messages.success(request, 'BM atualizada com sucesso.')
+
+    return redirect(next_url if next_url else 'locais:home')

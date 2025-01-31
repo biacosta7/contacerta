@@ -1,0 +1,83 @@
+<!-- Modal de edição de BM -->
+<div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalEditarBM">
+    <div class="bg-white px-14 py-12 rounded-[34px] w-[90%] sm:w-[80%] md:w-[70%] lg:w-[60%] xl:w-[50%] max-w-[596px] max-h-[663px] overflow-y-auto">
+        <div class="flex space-x-8 justify-between items-center mb-4">
+            <h5 id="bmTituloEditar" class="text-2xl font-bold text-center flex-grow ml-8">Editar {{ bm.nome }}</h5>
+            <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="bmModal('fecharEditarBM')"></i>
+        </div>
+        <form method="POST" id="formEditarBM" action="" class="px-6 space-y-8">
+            {% csrf_token %}
+            <!-- Campo oculto para ID do BM -->
+            <input type="hidden" id="bmId" name="bm_id" value="">
+
+            <!-- Nome do BM -->
+            <div class="">
+                <label for="nomeBMEditar" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
+                <input id="nomeBMEditar" name="nome" class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3">
+                </input>
+            </div>
+
+            <div class="mb-2">
+                <label for="bancoBMEditar" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
+                <select id="bancoBMEditar" name="banco" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                    <option value="" selected disabled hidden>Selecione o banco</option>
+                    {% for banco in bancos %}
+                    <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Campo para Valor -->
+            <div class="mb-2">
+                <label for="valorBMEditar" class="block mb-2 text-sm font-medium text-gray-900">Valor*</label>
+                <input type="text" id="valorBMEditar" placeholder="5.200,00" name="valor"
+                    class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+            </div>
+
+            <!-- Campo para Valor -->
+            <div class="mb-2">
+                <label for="codigoBMEditar" class="block mb-2 text-sm font-medium text-gray-900">Código*</label>
+                <input type="text" id="codigoBMEditar" name="codigo"
+                    class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" required>
+            </div>
+
+            <div class="mb-2">
+                <label for="dataBMEditar" class="block mb-2 text-sm font-medium text-gray-900">Data*</label>
+                <input
+                    type="text"
+                    id="dataBMEditar"
+                    name="data"
+                    value="{{ adiantamento.data|date:'d-m-Y' }}"
+                    class="bg-gray-100 w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3"
+                    required 
+                    data-date-format="dd-mm-yyyy"
+                />
+            </div>
+
+            <div>
+                <label for="obsBMEditar" class="block mb-2 text-sm font-medium text-gray-900">Observação<span class="text-xs text-gray-400">  (opcional)</span></label>
+                <textarea id="obsBMEditar" name="observacao" rows="4" class="bg-gray-100 block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Escreva aqui..."></textarea>
+            </div>
+
+            <div class="flex justify-between mt-4">
+                <button id="deletarBMBtn" type="button" class="px-4 py-2 bg-red-400 text-white rounded-lg hover:bg-gray-400 mr-2" onclick="">Deletar</button>
+
+                <div class="flex">
+                    <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="bmModal('fecharEditarBM')">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-[#4DBCAA]">Salvar</button>
+                </div>
+            </div>
+
+        </form>
+        
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dataBMEditar').datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,     
+            changeYear: true     
+        });
+    });
+</script>

@@ -275,6 +275,7 @@
         const funcionarios = JSON.parse('{{ funcionarios_json|safe }}');
         const aditivos = JSON.parse('{{ aditivos_json|safe }}');
         const adiantamentos = JSON.parse('{{ adiantamentos_json|safe }}');
+        const bms = JSON.parse('{{ bms_json|safe }}');
 
         // modal de editar e excluir despesa
         function despesaModal(action, id) {
@@ -718,6 +719,84 @@
             }
             else if (action === 'deletarAdiantamento') {
                 editarModalAdiantamento.classList.add('hidden');
+
+                document.getElementById('formDeletarAdiantamento').action = `/financeiro/adiantamentos/deletar/${id}/?next=${window.location.pathname}`;
+                
+                console.log('ID do Adiantamento para exclusão:', adiantamento.id);
+    
+                document.getElementById('tituloDeletarAdiantamento').innerHTML = `Deletar "${adiantamento.nome}"`; 
+    
+                document.getElementById('textDeletarAdiantamento').innerHTML = `Tem certeza de que deseja excluir o adiantamento "${adiantamento.nome}"? Esta ação não pode ser desfeita.`; 
+                
+                // Mostra o modal de exclusão
+                deletarModalAdiantamento.classList.remove('hidden');
+            } else if (action === 'fecharDeletarAdiantamento') {
+                deletarModalAdiantamento.classList.add('hidden');
+            }
+            
+        }
+
+        // modal de editar e excluir bm
+        function bmModal(action, id) {
+            const infoModalBM = document.getElementById('modalInfoBM');
+            const editarModalBM = document.getElementById('modalEditarBM');
+            const deletarModalBM = document.getElementById('modalDeletarBM');
+        
+            // Converta o ID para o tipo correto
+            const bmId = typeof id === 'string' ? parseInt(id, 10) : id;
+            const bm = bms.find(a => a.id === bmId);
+
+            if (action === 'infoBM') {
+
+                console.log('BM encontrada:', bm);
+                console.log('ID da bm:', bm.id);
+                console.log("nome bm: " +  bm.nome);
+                
+                document.getElementById('bmTituloInfo').innerHTML = "Informações " + bm.nome;
+                document.getElementById('nomeBMInfo').innerHTML = "<b>Nome:</b> " + bm.nome;
+
+                document.getElementById('codigoBMInfo').innerHTML = "<b>Código:</b> " + bm.codigo;
+
+                document.getElementById('dataBMInfo').innerHTML = "<b>Data:</b> " + bm.data;
+                
+                document.getElementById('bancoBMInfo').innerHTML = "<b>Banco:</b> " + bm.banco;
+
+                document.getElementById('obsBMInfo').innerHTML = "<b>Observação:</b> " + (bm.observacao|| "-");
+               
+                document.getElementById('valorBMInfo').innerHTML = "<b>Valor:</b> " + (bm.valor || "-");
+
+                infoModalBM.classList.remove('hidden');
+                    
+            } else if (action === 'fecharInfoBM') {
+                infoModalBM.classList.add('hidden');
+            }
+        
+            else if (action === 'editarBM') {    
+                console.log('BM encontrado:', bm);
+                console.log('ID do BM:', bm.id);
+                
+                document.getElementById('formEditarBM').action = `/financeiro/bms/editar/${id}/?next=${window.location.pathname}`;
+                
+                document.getElementById('bmTituloEditar').innerHTML = `Editar "${bm.nome}"`;
+
+                document.getElementById('nomeBMEditar').value = bm.nome;
+                document.getElementById('dataBMEditar').value = bm.data;
+                document.getElementById('codigoBMEditar').value = bm.codigo;
+               
+                document.getElementById('obsBMEditar').value = bm.observacao;
+
+                document.getElementById('deletarBMBtn').setAttribute('onclick', `bmModal('deletarBM', ${bm.id})`);
+
+                document.getElementById('bancoBMEditar').value = bm.banco_id;
+
+                document.getElementById('valorBMEditar').value = (bm.valor || "-");
+
+                editarModalBM.classList.remove('hidden');
+            } else if (action === 'fecharEditarBM') {
+                editarModalBM.classList.add('hidden');
+            }
+            else if (action === 'deletarBM') {
+                editarModalBM.classList.add('hidden');
 
                 document.getElementById('formDeletarAdiantamento').action = `/financeiro/adiantamentos/deletar/${id}/?next=${window.location.pathname}`;
                 

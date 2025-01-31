@@ -28,7 +28,7 @@ urlpatterns = [
 
     # BMs
     path('bms/criar/<int:id>', views.criar_bm, name='criar_bm'),
-
+    path('bms/editar/<int:bm_id>/', views.editar_bm, name='editar_bm'),
 
     # Bancos
     #path('banco/', views.ver_banco, name='banco'),
