@@ -209,3 +209,29 @@ def adiantamentos(request):
         'adiantamentos_lista': adiantamentos_lista,
         'adiantamentos_json': adiantamentos_json, 
     }
+
+def bms(request):
+    bms = BM.objects.select_related('obra', 'banco').all()
+
+    bms_lista = []
+    for bm in bms:
+        bms_dict = {
+            'id': bm.id,
+            'nome': bm.nome,
+            'codigo': bm.codigo,
+            'valor': formatar_valor(bm.valor) if bm.valor else None,
+            'data': bm.data.strftime('%d/%m/%Y') if bm.data else None,
+            'banco': bm.banco.nome,
+            'banco_id': bm.banco.id,
+            'observacao': bm.observacao,
+        }
+
+        bms_lista.append(bms_dict)
+
+    # Serializa os dados para JSON
+    bms_json = json.dumps(bms_lista, cls=DjangoJSONEncoder)
+
+    return {
+        'bms_lista': bms_lista,
+        'bms_json': bms_json, 
+    }

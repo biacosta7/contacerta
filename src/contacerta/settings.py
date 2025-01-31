@@ -89,6 +89,7 @@ TEMPLATES = [
                 'contacerta.context_processors.funcionarios',
                 'contacerta.context_processors.aditivos',
                 'contacerta.context_processors.adiantamentos',
+                'contacerta.context_processors.bms',
             ],
         },
     },

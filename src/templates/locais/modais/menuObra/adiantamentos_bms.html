@@ -28,6 +28,7 @@
     
 </div>
 
+<!-- Adiantamentos -->
 <div class="flex space-x-4 justify-between mb-4 ">
     <div class="relative shadow-md rounded-lg w-full">
         <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
@@ -87,6 +88,86 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <button onclick="adiantamentoModal('editarAdiantamento', {{ adiantamento.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="space-y-4">
+        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+            <h3 class="text-base font-medium block">Total <span class="text-base font-light">(filtro)</span></h3>
+            <span class="text-2xl font-semibold block">R$ {{ obra.debito_mensal|default:"0" }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- BMs -->
+<div class="flex space-x-4 justify-between mb-4 ">
+    <div class="relative shadow-md rounded-lg w-full">
+        <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
+            <div class="flex space-x-2 items-center">
+                <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
+                <h1 class="text-xl">BM</h1>
+            </div>
+            <div class="flex space-x-2 items-center">
+                <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="mr-1 fa-solid fa-filter"></i>
+                    Filtrar
+                </button>
+                <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+                            modalName: 'modalCriarBM',
+                            formId: 'formCriarBM',
+                            currencyFields: ['valorBM']
+                        });">
+                    Adicionar
+                </button>                    
+            </div>
+        </div>
+        <div class="overflow-y-auto max-h-96">
+            
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 border">
+                
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Nome</th>
+                        <th scope="col" class="px-6 py-3">Código</th>
+                        <th scope="col" class="px-6 py-3">Valor</th>
+                        <th scope="col" class="px-6 py-3">Data</th>
+                        <th scope="col" class="px-6 py-3">Banco</th>
+                        <th scope="col" class="px-6 py-3">Observação</th>
+                        <th scope="col" class="px-6 py-3">
+                            <span class="sr-only">Editar</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for bm in bms_lista %}
+                        <tr class="bg-white border-b">
+                            
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                <a id="infoBMBtn" href="#" onclick="bmModal('infoBM', '{{ bm.id }}')">
+                                    {{ bm.nome }}
+                                </a>  
+                            </th>
+                            <td class="px-6 py-4">
+                                {{ bm.codigo }}
+                            </td>
+                            <td id="valorAdiantamento" class="px-6 py-4">
+                                {{ bm.valor|default:"-" }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ bm.data }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ bm.banco }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ bm.observacao|default:'-' }}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="bmModal('editarBM', {{ bm.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
                             </td>
                         </tr>
                     {% endfor %}

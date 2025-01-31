@@ -26,6 +26,10 @@ urlpatterns = [
     path('adiantamentos/editar/<int:adiantamento_id>/', views.editar_adiantamento, name='editar_adiantamento'),
     path('adiantamentos/deletar/<int:adiantamento_id>/', views.deletar_adiantamento, name='deletar_adiantamento'),
 
+    # BMs
+    path('bms/criar/<int:id>', views.criar_bm, name='criar_bm'),
+
+
     # Bancos
     #path('banco/', views.ver_banco, name='banco'),
     path('banco/criar/', views.criar_banco, name='criar_banco'),

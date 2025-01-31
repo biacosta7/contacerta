@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from locais.models import Obra, Escritorio
-from .models import Adiantamento, Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
+from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 
@@ -652,3 +652,53 @@ def deletar_adiantamento(request, adiantamento_id):
     adiantamento.delete()
     messages.success(request, 'Adiantamento deletado com sucesso.')
     return redirect(next_url if next_url else 'locais:home')
+
+
+# BM    
+@login_required
+def criar_bm(request, id):
+    next_url = request.GET.get('next')
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        valor = request.POST.get('valor')
+        data = request.POST.get('data')
+        banco_id = request.POST.get('banco')
+        codigo = request.POST.get('codigo')
+        observacao = request.POST.get('observacao')
+
+        try:
+            if data:  
+                data = datetime.strptime(data, '%d/%m/%Y').date()
+            if valor:   
+                valor = limpar_e_converter_valor(valor)
+            
+        except ValueError:
+            messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
+            return redirect('locais:home')
+
+        # Obtenha a instância do banco ou retorne um erro 404 se não existir
+        banco = get_object_or_404(Banco, id=banco_id)
+
+        # Obtenha a instância da obra ou retorne um erro 404 se não existir
+        obra = get_object_or_404(Obra, id=id)
+
+        # Criando o aditivo
+        bm = BM.objects.create(
+            nome=nome,
+            valor=valor,
+            data=data,
+            banco=banco,
+            codigo=codigo,
+            observacao=observacao,
+            obra=obra
+        )
+        bm.save()
+
+    if next_url:
+        return redirect(next_url)
+    
+    else:
+        return render(request, 'locais/detalhe_obra.html', {
+            'obra': obra,
+        })
