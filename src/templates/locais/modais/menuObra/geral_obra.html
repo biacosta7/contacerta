@@ -13,30 +13,34 @@
             <span class="valor-receber-obra text-2xl font-bold"></span>
         </div>
 
-          <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
-            <button id="dropdownMesesButton" class="absolute top-4 right-4 text-gray-700">
-              <i id="mesesDropdownIcon" class="fa-solid fa-chevron-down" onclick="toggleMesesMenu(event)"></i>
-            </button>
-                    
-            <h3 class="text-base font-medium block">Débito do mês</h3>
-            <span id="debitoMensalValor" class="debito-mensal-obra text-2xl font-semibold block"></span>
-            
-            <div id="mesesDropdownList" class="hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
+        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+          <button class="absolute top-4 right-4 text-gray-700" data-modal-id="modal_1">
+            <i class="mesesDropdownIcon fa-solid fa-chevron-down" 
+            data-modal-id="modal_1" 
+            onclick="toggleMesesMenu(event, 'modal_1')"></i>
+          </button>
+      
+          <h3 class="text-base font-medium block">Débito do mês</h3>
+          <span class="debito-mensal-obra text-2xl font-semibold block" data-modal-id="modal_1"></span>
+      
+          <div class="mesesDropdownList hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2" data-modal-id="modal_1">
               <form method="post" action="">
-                {% csrf_token %}
-                
-                <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto overflow-x-hidden">
-                  <ul class="list-none"> 
-                    {% for ano_mes_valor in meses %}
-                      <li><button type="submit" id='consultarDebitoMensalBtn' name="ano_mes" value="{{ ano_mes_valor }}" class="dropdown-item text-left text-base py-2 border-b w-full text-left" href="#">{{ ano_mes_valor }}</button></li>
-                    {% endfor %}
-                  </ul>
-                </div>
+                  {% csrf_token %}
+                  <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto overflow-x-hidden">
+                      <ul class="list-none">
+                          {% for ano_mes_valor in meses %}
+                          <li>
+                              <button type="submit" name="ano_mes" value="{{ ano_mes_valor }}" class="consultarDebitoMensalBtn dropdown-item text-left text-base py-2 border-b w-full" data-modal-id="modal_1">
+                                  {{ ano_mes_valor }}
+                              </button>
+                          </li>
+                          {% endfor %}
+                      </ul>
+                  </div>
               </form>
-
-            </div>
-
-        </div>
+          </div>
+      </div>
+      
 
         <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <h3 class="text-base font-medium">Custo total</h3>

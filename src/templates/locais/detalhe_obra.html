@@ -114,30 +114,53 @@
     document.getElementById("somaAdiantamentoBM").innerText = obra.soma_adiantamento_bm;
 
     // Débito mensal
-    function toggleMesesMenu(event) {
+    function toggleMesesMenu(event, modalId) {
+        console.log("Clicou no botão do modal:", modalId); // Debug para verificar se o evento está sendo acionado corretamente
+    
         // Impede a propagação do clique para o documento
         event.stopPropagation();
-        
-        const mesesMenu = document.getElementById(`mesesDropdownList`);
-        const mesesIcon = document.getElementById(`mesesDropdownIcon`);
-        
-        // Alterna o menu ao clicar no ícone
-        mesesMenu.classList.toggle('hidden');
-        mesesMenu.classList.toggle('drop-shadow'); 
-        mesesIcon.classList.toggle('bg-gray-200');
-
-        // Adiciona um listener para fechar o menu ao clicar fora
-        document.addEventListener('click', function handleClickOutside(e) {
-            // Verifica se o clique foi fora do ícone
-            if (e.target.id !== `mesesDropdownList`) {
-                mesesMenu.classList.add('hidden'); 
-                mesesMenu.classList.remove('drop-shadow'); 
-                mesesIcon.classList.remove('bg-gray-200');
-                mesesMenu.classList.remove('border');
-                document.removeEventListener('click', handleClickOutside); // Remove o listener
+    
+        // Obtém os elementos do modal específico
+        const mesesMenu = document.querySelector(`.mesesDropdownList[data-modal-id="${modalId}"]`);
+        const mesesIcon = document.querySelector(`.mesesDropdownIcon[data-modal-id="${modalId}"]`);
+    
+        console.log("Elementos encontrados:", mesesMenu, mesesIcon); // Debug para verificar se os elementos foram encontrados
+    
+        // Se não encontrar os elementos, sai da função
+        if (!mesesMenu || !mesesIcon) {
+            console.warn("Dropdown não encontrado para modal:", modalId);
+            return;
+        }
+    
+        // Fecha outros dropdowns abertos
+        document.querySelectorAll(".mesesDropdownList").forEach(menu => {
+            if (menu.dataset.modalId !== modalId) {
+                menu.classList.add('hidden');
             }
         });
+
+        
+    
+        // Alterna a visibilidade do dropdown do modal atual
+        mesesMenu.classList.toggle('hidden');
+        mesesMenu.classList.toggle('drop-shadow');
+        mesesIcon.classList.toggle('bg-gray-200');
+    
+        // Adiciona um listener para fechar o menu ao clicar fora
+        function handleClickOutside(e) {
+            if (!mesesMenu.contains(e.target) && !mesesIcon.contains(e.target)) {
+                mesesMenu.classList.add('hidden');
+                mesesMenu.classList.remove('drop-shadow');
+                mesesIcon.classList.remove('bg-gray-200');
+                document.removeEventListener('click', handleClickOutside);
+            }
+        }
+    
+        document.addEventListener('click', handleClickOutside);
     }
+    
+    
+    
 
 
 
@@ -174,12 +197,13 @@
 
 
     // Função para consultar o débito mensal
-    document.querySelectorAll("#consultarDebitoMensalBtn").forEach(button => {
+    document.querySelectorAll(".consultarDebitoMensalBtn").forEach(button => {
         button.addEventListener("click", function(event) {
-            event.preventDefault(); // Evita o reload da página
+            event.preventDefault();
     
             const anoMes = this.value;
-            const obraId = window.location.pathname.split('/').pop(); // Obtém o ID da obra pela URL
+            const modalId = this.getAttribute("data-modal-id"); // Identifica o modal correto
+            const obraId = window.location.pathname.split('/').pop();
     
             fetch(`/consultar-debito-mensal/${obraId}/?ano_mes=${anoMes}`, {
                 method: "GET",
@@ -190,14 +214,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.debito_mensal) {
-                    document.querySelectorAll(".debito-mensal-obra").forEach(el => {
+                    document.querySelectorAll(`.debito-mensal-obra[data-modal-id="${modalId}"]`).forEach(el => {
                         el.innerText = data.debito_mensal;
                     });
                 }
             })
             .catch(error => console.error("Erro ao buscar débito mensal:", error));
         });
-    });    
+    });
+    
 
     
 </script>
