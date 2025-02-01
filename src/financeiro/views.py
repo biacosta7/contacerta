@@ -752,9 +752,20 @@ def deletar_bm(request, bm_id):
 
 
 
-def get_debito_mensal(request, id, mes, ano):
+def get_debito_mensal(request, id, ano, mes):
+    meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
+
+    mes_formatado = 0
+
+    for i, n in enumerate(meses_abreviados):
+        if n == mes:
+            mes_formatado = i
+            break
+
     obra = Obra.objects.filter(id=id)
 
-    debito_mensal = obra.calcular_debito_mensal(mes, ano) if obra else 0
-    
+    debito_mensal = obra.calcular_debito_mensal(mes_formatado, ano) if obra else 0
+
+    print(debito_mensal)
+
     return JsonResponse({"debito_mensal": debito_mensal})

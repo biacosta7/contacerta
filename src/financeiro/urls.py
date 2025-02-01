@@ -31,7 +31,7 @@ urlpatterns = [
     path('bms/editar/<int:bm_id>/', views.editar_bm, name='editar_bm'),
     path('bms/deletar/<int:bm_id>/', views.deletar_bm, name='deletar_bm'),
 
-    path('obras/debito-mensal/<int:mes>/<int:ano>/', views.get_debito_mensal, name='get_debito_mensal'),
+    path('debito-mensal/<int:id>/<str:ano>/<str:mes>/', views.get_debito_mensal, name='get_debito_mensal'),
 
     # Bancos
     #path('banco/', views.ver_banco, name='banco'),

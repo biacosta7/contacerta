@@ -172,6 +172,33 @@
         localStorage.removeItem("activeSection");
     });
 
+
+    // Função para consultar o débito mensal
+    document.querySelectorAll("#consultarDebitoMensalBtn").forEach(button => {
+        button.addEventListener("click", function(event) {
+            event.preventDefault(); // Evita o reload da página
+    
+            const anoMes = this.value;
+            const obraId = window.location.pathname.split('/').pop(); // Obtém o ID da obra pela URL
+    
+            fetch(`/consultar-debito-mensal/${obraId}/?ano_mes=${anoMes}`, {
+                method: "GET",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.debito_mensal) {
+                    document.querySelectorAll(".debito-mensal-obra").forEach(el => {
+                        el.innerText = data.debito_mensal;
+                    });
+                }
+            })
+            .catch(error => console.error("Erro ao buscar débito mensal:", error));
+        });
+    });    
+
     
 </script>
 

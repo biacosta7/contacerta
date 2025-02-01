@@ -15,35 +15,29 @@ def formatar_valor(valor):
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
 def calcular_range_meses():
-    hoje = date.today()
-    meses = {}
     meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
 
-    # Adicionar o mês atual
-    if hoje.year not in meses:
-        meses[hoje.year] = []
-    meses[hoje.year].append(hoje.month)
+    hoje = date.today()
+    meses = []
 
-    # Últimos 5 meses
-    for n in range(1, 6):
+    # Adicionar os últimos 5 meses
+    for n in range(5, 0, -1):
         data = hoje - relativedelta(months=n)
-        if data.year not in meses:
-            meses[data.year] = []  # Criar lista para o ano, se não existir
-        meses[data.year].append(data.month)
+        meses.append((data.year, data.month))
+    
+    # Adicionar o mês atual
+    meses.append((hoje.year, hoje.month))
 
-    # Próximos 5 meses
+    # Adicionar os próximos 5 meses
     for n in range(1, 6):
         data = hoje + relativedelta(months=n)
-        if data.year not in meses:
-            meses[data.year] = []
-        meses[data.year].append(data.month)
+        meses.append((data.year, data.month))
 
-    resultado = []
-    for ano, meses_lista in meses.items():
-        for mes in meses_lista:
-            resultado.append(f'{ano}/{meses_abreviados[mes]}')
-    
+    # Criar a lista formatada
+    resultado = [f'{ano}/{meses_abreviados[mes]}' for ano, mes in meses]
+
     return resultado
+
 
 
 @login_required
@@ -188,6 +182,36 @@ def detalhar_obra(request, id):
         'despesas': despesas_formatadas,
         'meses': meses
     })
+
+
+@login_required
+def consultar_debito_mensal(request, id):
+    obra = get_object_or_404(Obra, id=id)
+    ano_mes = request.GET.get("ano_mes")
+
+    meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
+
+    if ano_mes:
+        print(ano_mes)
+        # Divida a string ano_mes
+        ano_mes_dividido = ano_mes.split('/')
+
+        # Extrair o ano
+        ano = ano_mes_dividido[0]
+
+        # Encontrar o mês na lista
+        mes = 0
+        for i, n in enumerate(meses_abreviados):
+            if n == ano_mes_dividido[1]:
+                mes = i
+                break
+
+        debito_mensal = obra.calcular_debito_mensal(mes, ano) if obra else 0
+        print(debito_mensal)
+    else:
+        debito_mensal = obra.calcular_debito_mensal() if obra else 0
+
+    return JsonResponse({"debito_mensal": formatar_valor(debito_mensal)})
 
     
 @login_required
