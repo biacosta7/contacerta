@@ -750,3 +750,11 @@ def deletar_bm(request, bm_id):
     messages.success(request, 'BM deletada com sucesso.')
     return redirect(next_url if next_url else 'locais:home')
 
+
+
+def get_debito_mensal(request, id, mes, ano):
+    obra = Obra.objects.filter(id=id)
+
+    debito_mensal = obra.calcular_debito_mensal(mes, ano) if obra else 0
+    
+    return JsonResponse({"debito_mensal": debito_mensal})

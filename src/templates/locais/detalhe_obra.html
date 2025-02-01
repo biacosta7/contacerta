@@ -113,6 +113,32 @@
 
     document.getElementById("somaAdiantamentoBM").innerText = obra.soma_adiantamento_bm;
 
+    // Débito mensal
+    function toggleMesesMenu(event) {
+        // Impede a propagação do clique para o documento
+        event.stopPropagation();
+        
+        const mesesMenu = document.getElementById(`mesesDropdownList`);
+        const mesesIcon = document.getElementById(`mesesDropdownIcon`);
+        
+        // Alterna o menu ao clicar no ícone
+        mesesMenu.classList.toggle('hidden');
+        mesesMenu.classList.toggle('drop-shadow'); 
+        mesesIcon.classList.toggle('bg-gray-200');
+
+        // Adiciona um listener para fechar o menu ao clicar fora
+        document.addEventListener('click', function handleClickOutside(e) {
+            // Verifica se o clique foi fora do ícone
+            if (e.target.id !== `mesesDropdownList`) {
+                mesesMenu.classList.add('hidden'); 
+                mesesMenu.classList.remove('drop-shadow'); 
+                mesesIcon.classList.remove('bg-gray-200');
+                mesesMenu.classList.remove('border');
+                document.removeEventListener('click', handleClickOutside); // Remove o listener
+            }
+        });
+    }
+
 
 
 

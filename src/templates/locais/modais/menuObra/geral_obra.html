@@ -2,21 +2,42 @@
 
 <div class="flex flex-wrap space-x-4 justify-center mb-4">
     <div class="flex space-x-4">
+
         <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <h3 class="text-base font-medium">Valor Total</h3>
             <span class="valor-total-obra text-2xl font-bold"></span>
         </div>
+
         <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <h3 class="text-base font-medium">Valor à receber</h3>
             <span class="valor-receber-obra text-2xl font-bold"></span>
         </div>
-        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
-            <a class="absolute top-4 right-4 text-right">
-                <i class="fa-solid fa-chevron-down"></i>
-            </a>
-            <h3 class="text-base font-medium">Débito do mês</h3>
-            <span class="debito-mensal-obra text-2xl font-bold"></span>
+
+          <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+            <button id="dropdownMesesButton" class="absolute top-4 right-4 text-gray-700">
+              <i id="mesesDropdownIcon" class="fa-solid fa-chevron-down" onclick="toggleMesesMenu(event)"></i>
+            </button>
+                    
+            <h3 class="text-base font-medium block">Débito do mês</h3>
+            <span class="debito-mensal-obra text-2xl font-semibold block"></span>
+
+            
+            <div id="mesesDropdownList" class="hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
+              <form method="post" action="/">
+                <input type="hidden" name="debito_mes" value="">
+                <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto overflow-x-hidden" style="">
+                  <ul class="list-none"> <!-- Aqui está a classe list-none -->
+                    {% for mes in meses %}
+                      <li><button type="submit" name="action" value="{{ mes }}" class="dropdown-item text-left text-base py-2 border-b w-full text-left" href="#">{{ mes }}</button></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </form>
+
+            </div>
+
         </div>
+
         <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <h3 class="text-base font-medium">Custo total</h3>
             <span class="custo-total-obra text-2xl font-bold">R$ {{ obra.custo_total|default:"0" }}</span>

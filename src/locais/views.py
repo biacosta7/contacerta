@@ -4,7 +4,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from financeiro.models import Banco, Cartao, Funcionario
 from locais.models import Obra, Escritorio, Despesa
-from datetime import datetime
+from datetime import date, datetime
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
 
@@ -12,6 +13,37 @@ def formatar_valor(valor):
     if valor is None:
         valor = 0  # Substitua por 0 ou outro valor desejado
     return f"R$ {valor:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+def calcular_range_meses():
+    hoje = date.today()
+    meses = {}
+    meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
+
+    # Adicionar o mês atual
+    if hoje.year not in meses:
+        meses[hoje.year] = []
+    meses[hoje.year].append(hoje.month)
+
+    # Últimos 5 meses
+    for n in range(1, 6):
+        data = hoje - relativedelta(months=n)
+        if data.year not in meses:
+            meses[data.year] = []  # Criar lista para o ano, se não existir
+        meses[data.year].append(data.month)
+
+    # Próximos 5 meses
+    for n in range(1, 6):
+        data = hoje + relativedelta(months=n)
+        if data.year not in meses:
+            meses[data.year] = []
+        meses[data.year].append(data.month)
+
+    resultado = []
+    for ano, meses_lista in meses.items():
+        for mes in meses_lista:
+            resultado.append(f'{ano}/{meses_abreviados[mes]}')
+    
+    return resultado
 
 
 @login_required
@@ -147,10 +179,14 @@ def detalhar_obra(request, id):
         obra.debito_geral = obra.calcular_debito_geral()
         obra.custo_total = obra.calcular_custo_total()
         obra.prazo_atual = obra.calcular_prazo_atual()
+    
+    
+    meses = calcular_range_meses()
 
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
         'despesas': despesas_formatadas,
+        'meses': meses
     })
 
     
