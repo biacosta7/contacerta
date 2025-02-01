@@ -173,14 +173,24 @@ def detalhar_obra(request, id):
         obra.debito_geral = obra.calcular_debito_geral()
         obra.custo_total = obra.calcular_custo_total()
         obra.prazo_atual = obra.calcular_prazo_atual()
+
     
+    orcamento_usado = obra.valor_total - obra.custo_total if obra.valor_total else 0
     
+    porcentagem_orcamento_usado = (orcamento_usado / obra.valor_total) * 100 if obra.valor_total else 0
+
+    porcentagem_orcamento_usado = f"{porcentagem_orcamento_usado:.2f}"
+
+    orcamento_usado = formatar_valor(orcamento_usado)
+
     meses = calcular_range_meses()
 
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
         'despesas': despesas_formatadas,
-        'meses': meses
+        'meses': meses,
+        'porcentagem_orcamento_usado': porcentagem_orcamento_usado,
+        'orcamento_usado': orcamento_usado
     })
 
 

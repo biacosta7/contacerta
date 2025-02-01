@@ -57,7 +57,9 @@ def info_obras(request):
             'total_bms': formatar_valor(total_bms) if total_bms is not None else formatar_valor(0),
             'soma_adiantamento_bm': formatar_valor(soma_adiantamento_bm) if soma_adiantamento_bm is not None else formatar_valor(0),
         }
+
         obras_formatadas.append(obra_dict)
+
 
     return {
         'obras_json': json.dumps(obras_formatadas, cls=DjangoJSONEncoder),
