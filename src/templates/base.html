@@ -818,6 +818,8 @@
         // modal do filtro
         function filtroModal(action) {
             const modalFiltro = document.getElementById('filtroMenu');
+            var despesaTable = document.querySelector(".despesa_table");
+
         
             // Converta o ID para o tipo correto
             {% comment %} const bmId = typeof id === 'string' ? parseInt(id, 10) : id;
@@ -826,9 +828,12 @@
             if (action === 'abrir') {
 
                 modalFiltro.classList.remove('hidden');
+                despesaTable.classList.add("darkened");
                     
             } else if (action === 'fechar') {
                 modalFiltro.classList.add('hidden');
+                despesaTable.classList.remove("darkened"); 
+
             }
         
             {% comment %} else if (action === 'editarBM') {    
