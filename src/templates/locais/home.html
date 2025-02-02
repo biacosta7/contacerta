@@ -24,7 +24,7 @@
             Cadastrar Obra
         </button>
     </div>
-    {% include "locais/modais/criar_obra.html" %}
+    {% include "locais/modais/obra/criar_obra.html" %}
     
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {% for obra in obras %}
@@ -46,9 +46,9 @@
                     <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})">Editar</button>
                 </div>
             </div>
-            {% include "locais/modais/editar_obra.html" %}
-            {% include "locais/modais/info_obra.html" %}
-            {% include "locais/modais/deletar_obra.html" %}
+            {% include "locais/modais/obra/editar_obra.html" %}
+            {% include "locais/modais/obra/info_obra.html" %}
+            {% include "locais/modais/obra/deletar_obra.html" %}
         {% endfor %}
     </div>  
     

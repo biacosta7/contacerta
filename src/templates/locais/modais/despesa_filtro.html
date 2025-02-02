@@ -1,0 +1,149 @@
+<div id="filtroMenu" class="drop-shadow min-w-64 text-gray-700 z-30 border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-9 right-9 flex flex-col space-y-4">
+    <div class="flex space-x-8 justify-between items-center">
+        <span class="text-xl text-left py-2 flex-grow" onclick="">Filtrar por:</span>
+        <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="filtroModal('fechar');"></i>
+    </div>
+    
+
+    <div class="space-y-4">
+        <!-- Meses -->
+        <div class="relative group">
+            <button id="dropdown-button" class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
+                <div>
+                    <i class="fa-solid fa-calendar"></i>
+                    <span class="text-base ext-left ml-2">Mês</span>
+                </div>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="dropdown-menu" class="hidden dropdownMenu w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+              <!-- Search input -->
+              <input id="search-input" class="block text-base font-normal w-full px-4 py-2 text-gray-800 border rounded-md  border-gray-300 focus:outline-none" type="text" placeholder="Buscar mês" autocomplete="off">
+              <!-- Dropdown content -->
+              {% for mes in meses %}
+                <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="mes"/>
+                    <span class="text-base font-normal ml-2">{{mes}}</span>
+                </label>
+              {% endfor %}
+            </div>
+        </div>
+
+        <!-- Data específica -->
+        <div class="relative group">
+            
+            <button id="dropdown-button" class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
+                <div>
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <span class="text-base ext-left ml-2">Data Específica</span>
+                </div>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="dropdown-menu" class="hidden dropdownMenu right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                <input
+                    type="text"
+                    id="data_filtro"
+                    name="data_filtro"
+                    value="" 
+                    class="bg-gray-100 w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] text-gray-700 py-2 px-3 "
+                    data-date-format="dd-mm-yyyy"
+                />
+            </div>
+        </div>
+
+
+
+        <!-- Modalidade -->
+        <div class="relative group">
+            <button id="dropdown-button" class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
+                <div>
+                    <i class="fa-solid fa-hammer"></i>
+                    <span class="text-base ext-left ml-2">Modalidade</span>
+                </div>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="dropdown-menu" class="hidden dropdownMenu right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                <!-- Dropdown content -->
+                <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="mao_de_obra"/>
+                    <span class="text-base font-normal ml-2">Mão de obra</span>
+                </label>
+                <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="insumos"/>
+                    <span class="text-base font-normal ml-2">Insumos</span>
+                </label>
+                <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="combustivel"/>
+                    <span class="text-base font-normal ml-2">Combustível</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Funcionário -->
+        <div class="relative group">
+            <button id="dropdown-button" class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
+                <div>
+                    <i class="fa-solid fa-user"></i>
+                    <span class="text-base ext-left ml-2">Funcionário</span>
+                </div>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="dropdown-menu" class="hidden dropdownMenu w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+              <!-- Search input -->
+              <input id="search-input" class="block text-base font-normal w-full px-4 py-2 text-gray-800 border rounded-md  border-gray-300 focus:outline-none" type="text" placeholder="Buscar funcionário" autocomplete="off">
+              <!-- Dropdown content -->
+              {% for funcionario in funcionarios_lista %}
+                <label class="funcionarioItem block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="{{funcionario.id}}"/>
+                    <span class="text-base font-normal ml-2">{{funcionario.nome}}</span>
+                </label>
+              {% endfor %}
+            </div>
+        </div>
+
+        <!-- Categoria -->
+        <div class="relative group">
+            <button id="dropdown-button" class="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
+                <div>
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span class="text-base ext-left ml-2">Categoria</span>
+                </div>
+                <i class="fa-solid fa-chevron-down"></i>
+            </button>
+            <div id="dropdown-menu" class="hidden dropdownMenu right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                <!-- Dropdown content -->
+                <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="adiantamento"/>
+                    <span class="text-base font-normal ml-2">Adiantamento</span>
+                </label>
+                <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="passagem"/>
+                    <span class="text-base font-normal ml-2">Passagem</span>
+                </label>
+                <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="alimentacao"/>
+                    <span class="text-base font-normal ml-2">Alimentação</span>
+                </label>
+                <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                    <input type="checkbox" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="reembolso"/>
+                    <span class="text-base font-normal ml-2">Reembolso</span>
+                </label>
+            </div>
+        </div>
+
+    </div>
+    <div>
+        <button type="submit" class="my-2 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Filtrar</button>
+    </div>      
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#data_filtro').datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,     
+            changeYear: true     
+        });
+    });
+    
+</script>

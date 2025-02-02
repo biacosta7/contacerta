@@ -813,6 +813,66 @@
             }
             
         }
+
+
+        // modal do filtro
+        function filtroModal(action) {
+            const modalFiltro = document.getElementById('filtroMenu');
+        
+            // Converta o ID para o tipo correto
+            {% comment %} const bmId = typeof id === 'string' ? parseInt(id, 10) : id;
+            const bm = bms.find(a => a.id === bmId); {% endcomment %}
+
+            if (action === 'abrir') {
+
+                modalFiltro.classList.remove('hidden');
+                    
+            } else if (action === 'fechar') {
+                modalFiltro.classList.add('hidden');
+            }
+        
+            {% comment %} else if (action === 'editarBM') {    
+                console.log('BM encontrado:', bm);
+                console.log('ID do BM:', bm.id);
+                
+                document.getElementById('formEditarBM').action = `/financeiro/bms/editar/${id}/?next=${window.location.pathname}`;
+                
+                document.getElementById('bmTituloEditar').innerHTML = `Editar "${bm.nome}"`;
+
+                document.getElementById('nomeBMEditar').value = bm.nome;
+                document.getElementById('dataBMEditar').value = bm.data;
+                document.getElementById('codigoBMEditar').value = bm.codigo;
+               
+                document.getElementById('obsBMEditar').value = bm.observacao;
+
+                document.getElementById('deletarBMBtn').setAttribute('onclick', `bmModal('deletarBM', ${bm.id})`);
+
+                document.getElementById('bancoBMEditar').value = bm.banco_id;
+
+                document.getElementById('valorBMEditar').value = (bm.valor || "-");
+
+                editarModalBM.classList.remove('hidden');
+            } else if (action === 'fecharEditarBM') {
+                editarModalBM.classList.add('hidden');
+            }
+            else if (action === 'deletarBM') {
+                editarModalBM.classList.add('hidden');
+
+                document.getElementById('formDeletarBM').action = `/financeiro/bms/deletar/${id}/?next=${window.location.pathname}`;
+                
+                console.log('ID da BM para exclusão:', bm.id);
+    
+                document.getElementById('tituloDeletarBM').innerHTML = `Deletar "${bm.nome}"`; 
+    
+                document.getElementById('textDeletarBM').innerHTML = `Tem certeza de que deseja excluir a BM "${bm.nome}"? Esta ação não pode ser desfeita.`; 
+                
+                // Mostra o modal de exclusão
+                deletarModalBM.classList.remove('hidden');
+            } else if (action === 'fecharDeletarBM') {
+                deletarModalBM.classList.add('hidden');
+            } {% endcomment %}
+            
+        }
         
         
 

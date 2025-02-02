@@ -52,20 +52,24 @@
         {% include "locais/modais/menuObra/despesas_obra.html" %}
     </div>
 </div>
-{% include "locais/modais/editar_obra.html" %}
-{% include "locais/modais/deletar_obra.html" %}
+{% include "locais/modais/obra/editar_obra.html" %}
+{% include "locais/modais/obra/deletar_obra.html" %}
+
 {% include 'financeiro/modais/despesa/criar_despesa.html' %}
 {% include 'financeiro/modais/despesa/editar_despesa.html' %}
 {% include 'financeiro/modais/despesa/deletar_despesa.html' %}
 {% include 'financeiro/modais/despesa/info_despesa.html' %}
+
 {% include 'financeiro/modais/aditivo/criar_aditivo.html' %}
 {% include 'financeiro/modais/aditivo/info_aditivo.html' %}
 {% include 'financeiro/modais/aditivo/editar_aditivo.html' %}
 {% include 'financeiro/modais/aditivo/deletar_aditivo.html' %}
+
 {% include 'financeiro/modais/adiantamento/criar_adiantamento.html' %}
 {% include 'financeiro/modais/adiantamento/info_adiantamento.html' %}
 {% include 'financeiro/modais/adiantamento/editar_adiantamento.html' %}
 {% include 'financeiro/modais/adiantamento/deletar_adiantamento.html' %}
+
 {% include 'financeiro/modais/bm/criar_bm.html' %}
 {% include 'financeiro/modais/bm/info_bm.html' %}
 {% include 'financeiro/modais/bm/editar_bm.html' %}
@@ -218,6 +222,50 @@
         });
     });
     
+
+    // Função para alternar o estado do dropdown
+    function toggleDropdown(button, menu) {
+        menu.classList.toggle('hidden');
+    }
+    
+    // Adicionar event listener para cada botão de dropdown
+    document.querySelectorAll('.relative.group').forEach((dropdownWrapper) => {
+        const dropdownButton = dropdownWrapper.querySelector('button'); // Botão de dropdown
+        const dropdownMenu = dropdownWrapper.querySelector('.dropdownMenu'); // Menu do dropdown
+        const searchInput = dropdownWrapper.querySelector('input[type="text"]'); // Input de busca
+        let isOpen = false;
+    
+        // Ao clicar no botão de dropdown
+        dropdownButton.addEventListener('click', (event) => {
+        toggleDropdown(dropdownButton, dropdownMenu);
+        event.stopPropagation(); // Previne o evento de propagação
+        });
+    
+        // Adiciona filtro de busca
+        if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
+            const items = dropdownMenu.querySelectorAll('label');
+    
+            items.forEach((item) => {
+            const itemSpan = item.querySelector('span');
+            if (itemSpan) {
+                const text = itemSpan.innerHTML.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            }
+            });
+        });
+        }
+    
+        // Fechar o menu ao clicar fora
+        document.addEventListener('click', (event) => {
+        if (!dropdownWrapper.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+            isOpen = false;
+        }
+        });
+    });
+  
 
     
 </script>
