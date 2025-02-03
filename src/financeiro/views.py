@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from pyexpat.errors import messages
 from django.contrib import messages
@@ -412,6 +412,73 @@ def deletar_cartao(request, cartao_id):
     messages.success(request, 'Cartão deletado com sucesso.')
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
+@login_required
+def ver_cartoes_obra(request, obra_id):
+    obra = get_object_or_404(Obra, id=obra_id)
+
+    cartoes = Cartao.objects.all()
+    num_cartoes = Cartao.objects.count()
+
+    #Calcular soma notas
+    #pega todas as despesas nao pagas da obra
+    despesas_gerais = Despesa.objects.filter(
+        tipo_local=ContentType.objects.get_for_model(Obra),
+        id_local=obra_id,
+        status='a_pagar'
+    )
+
+    # pega essas despesas q tem forma de pagamento cartao
+    despesas_cartao_gerais = despesas_gerais.filter(forma_pag='cartao')
+
+    total_fatura_geral = sum(despesa_cartao.valor for despesa_cartao in despesas_cartao_gerais)
+    #total_fatura_gerais = formatar_valor(total_fatura_gerais)
+
+
+    print(f'despesas_cartao_gerais: {despesas_cartao_gerais}')
+    print(f'total_fatura_geral: {total_fatura_geral}')
+
+    context = {
+        'obra': obra,
+        'obra_id': obra_id,
+        'cartoes': cartoes, 
+        'num_cartoes': num_cartoes,
+        'total_fatura_geral': total_fatura_geral
+    }
+
+    return render(request, 'financeiro/cartoes_obra.html', context)
+
+def fatura_mensal_cartoes(request, obra_id):
+    obra = get_object_or_404(Obra, id=obra_id)
+    cartoes = Cartao.objects.all()
+    num_cartoes = Cartao.objects.count()
+
+    hoje = date.today()
+
+    mes = hoje.month
+    ano = hoje.year
+
+    despesas_mensais = Despesa.objects.filter(
+        tipo_local=ContentType.objects.get_for_model(Obra),
+        id_local=obra_id,
+        status='a_pagar',
+        data__month=mes,
+        data__year=ano
+    )
+
+    despesas_cartao_mes = despesas_mensais.filter(forma_pag='cartao')
+
+    total_fatura_mensal = sum(despesa_cartao.valor for despesa_cartao in despesas_cartao_mes)
+    
+    context = {
+        'obra': obra,
+        'obra_id': obra_id,
+        'cartoes': cartoes, 
+        'num_cartoes': num_cartoes,
+        'despesas_cartao_mes': despesas_cartao_mes,
+        'total_fatura_mensal': total_fatura_mensal,
+    }
+
+    return render(request, 'financeiro/cartoes_fatura_obra.html', context)
 
 # Bancos
 @login_required

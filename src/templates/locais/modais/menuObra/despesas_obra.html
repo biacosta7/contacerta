@@ -37,7 +37,7 @@
         <span class="text-2xl font-semibold block">R$ {{ obra.debito_mensal|default:"0" }}</span>
     </div>
 
-    <a href={% url 'financeiro:cartoes' %}><div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+    <a href={% url 'financeiro:cartoes_obra' obra.id %}><div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
         <div class="absolute top-4 right-4 text-right">
             <i class="fa-solid fa-arrow-up-right-from-square"></i>
         </div>
