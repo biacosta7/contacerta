@@ -55,6 +55,37 @@
                     </div>
                 </div>
 
+                <!-- Forma de pagamento -->
+                <div class="relative group">
+                    
+                    <button type="button" class="dropdown-button flex items-center justify-between w-60 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-blue-500">
+                        <div>
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                            <span class="text-base ext-left ml-2">Forma de pagamento</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                    <div id="dropdown-menu" class="hidden dropdownMenu right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                        <!-- Dropdown content -->
+                        <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                            <input type="checkbox" name="forma_pag" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="cartao"/>
+                            <span class="text-base font-normal ml-2">Cartão</span>
+                        </label>
+                        <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                            <input type="checkbox" name="forma_pag" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="boleto"/>
+                            <span class="text-base font-normal ml-2">Boleto</span>
+                        </label>
+                        <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                            <input type="checkbox" name="forma_pag" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="pix"/>
+                            <span class="text-base font-normal ml-2">Pix</span>
+                        </label>
+                        <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
+                            <input type="checkbox" name="forma_pag" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="especie"/>
+                            <span class="text-base font-normal ml-2">Espécie</span>
+                        </label>
+                    </div>
+                </div>
+
             </div>
 
             <div class="space-y-4">

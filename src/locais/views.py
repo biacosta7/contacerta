@@ -48,6 +48,7 @@ def filtrar_despesas(request, despesas):
         funcionario = request.GET.getlist('funcionario_filtro')
         modalidade = request.GET.getlist('modalidade')
         categoria = request.GET.getlist('categoria')
+        forma_pag = request.GET.getlist('forma_pag')
 
         filtros_preenchidos = {
             "ano_mes": ano_mes,
@@ -55,6 +56,7 @@ def filtrar_despesas(request, despesas):
             "funcionario": funcionario,
             "modalidade": modalidade,
             "categoria": categoria,
+            "forma_pag": forma_pag,
         }
 
         filtros_preenchidos_filtrados = {}
@@ -96,6 +98,9 @@ def filtrar_despesas(request, despesas):
 
         if modalidade:
             despesas_filtro = despesas_filtro.filter(modalidade__in=modalidade) if modalidade else despesas_filtro
+
+        if forma_pag:
+            despesas_filtro = despesas_filtro.filter(forma_pag__in=forma_pag) if forma_pag else despesas_filtro
 
         if categoria:
             categoria_filtro = MaoDeObra.objects.filter(categoria__in=categoria)
