@@ -80,13 +80,8 @@ def criar_despesa(request, tipo, id):
                     messages.error(request, f'Erro na data: {str(e)}')
                     return redirect('locais:home')
 
-
                 tipo_local = ContentType.objects.get_for_model(local)
-                logger.debug(f"tipo_local: {tipo_local}")
-                print(" - DATA - ", data)
                 valor = limpar_e_converter_valor(valor)
-
-                print(f"Data final antes da criação: {data} ({type(data)})")
 
                 campos_despesa = {
                     "nome": descricao,
@@ -751,7 +746,7 @@ def deletar_bm(request, bm_id):
     return redirect(next_url if next_url else 'locais:home')
 
 
-
+@login_required
 def get_debito_mensal(request, id, ano, mes):
     meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
 

@@ -334,7 +334,7 @@
                 document.getElementById('modalidadeDespesaInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeFormatado; 
 
                 if (despesa.modalidade == 'mao_de_obra'){
-                    let mdo_despesa = maoDeObras.find(md => md.despesa.id === despesa.id); 
+                    let mdo_despesa = maoDeObras.find(md => md.despesa_id === despesaId); 
 
                     console.log(" md.despesa.id: " +  mdo_despesa);
 
@@ -366,11 +366,14 @@
                 if (despesa.forma_pag == 'cartao'){
                     let cartao_despesa = notaCartao.find(cd => cd.id === despesaId);
 
+                    let item_cartao_despesa = cartoes.find(icd => icd.id === cartao_despesa.cartao_id);
+                    console.log( "item_cartao_despesa.nome: ", item_cartao_despesa.nome );
+
                     const cartaoFieldsDespesaInfo = document.getElementById('cartaoFieldsInfo');
                     
                     cartaoFieldsDespesaInfo.classList.remove('hidden');
 
-                    document.getElementById('despesaCartaoNome').innerHTML = "<b>Cartão:</b> " + (cartao_despesa.nome || "-");
+                    document.getElementById('despesaCartaoNomeInfo').innerHTML = "<b>Cartão:</b> " + (item_cartao_despesa.nome || "-");
                     document.getElementById('despesaQntParcelasCartaoInfo').innerHTML = "<b>Quantidade de parcelas:</b> " + cartao_despesa.quant_parcelas;
                     document.getElementById('despesaValorParcelaCartaoInfo').innerHTML = "<b>Valor da parcela:</b> " + cartao_despesa.valor_parcela;
                 }

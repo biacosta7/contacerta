@@ -2,12 +2,13 @@ import locale
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from financeiro.models import Banco, Cartao, Funcionario
+from financeiro.models import Banco, Cartao, Funcionario, MaoDeObra
 from locais.models import Obra, Escritorio, Despesa
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
+from django.db.models import Q
 
 def formatar_valor(valor):
     if valor is None:
@@ -37,6 +38,50 @@ def calcular_range_meses():
     resultado = [f'{ano}/{meses_abreviados[mes]}' for ano, mes in meses]
 
     return resultado
+
+def filtrar_despesas(request, despesas_filtro):
+    ano_mes = request.GET.getlist('ano_mes')
+    data = request.GET.get('data_filtro')
+    funcionario = request.GET.getlist('funcionario_filtro')
+    modalidade = request.GET.getlist('modalidade')
+    categoria = request.GET.getlist('categoria')
+
+    meses_map = {
+        "JAN": 1, "FEV": 2, "MAR": 3, "ABR": 4,
+        "MAI": 5, "JUN": 6, "JUL": 7, "AGO": 8,
+        "SET": 9, "OUT": 10, "NOV": 11, "DEZ": 12
+    }
+
+    if ano_mes:
+        filtros = Q()
+
+        for item in ano_mes:
+            ano, mes_abrev = item.split('/')  # '2024/FEV' -> '2024', 'FEV'
+            mes = meses_map.get(mes_abrev.upper())  # Converte 'FEV' para 2
+            
+            if mes:  # Apenas adiciona se o mês for válido
+                filtros |= Q(data__year=int(ano), data__month=mes)
+        if filtros:
+            despesas_filtro = despesas_filtro.filter(filtros)
+    
+    if data:
+        data = datetime.strptime(data, '%d/%m/%Y').date()
+        despesas_filtro = despesas_filtro.filter(data=data)
+
+    if funcionario:
+        mao_de_obra_filtro = MaoDeObra.objects.filter(funcionario_id__in=funcionario)
+        if mao_de_obra_filtro.exists():
+            despesas_filtro = despesas_filtro.filter(id__in=mao_de_obra_filtro.values_list('despesa_id', flat=True))
+
+    if modalidade:
+        despesas_filtro = despesas_filtro.filter(modalidade__in=modalidade) if modalidade else despesas_filtro
+
+    if categoria:
+        categoria_filtro = MaoDeObra.objects.filter(categoria__in=categoria)
+        if categoria_filtro.exists():
+            despesas_filtro = despesas_filtro.filter(id__in=categoria_filtro.values_list('despesa_id', flat=True))
+
+    return despesas_filtro
 
 
 
@@ -166,15 +211,14 @@ def detalhar_obra(request, id):
         despesa_dict['valor'] = formatar_valor(despesa.valor)  # Formata o valor
         despesas_formatadas.append(despesa_dict)
 
-        # Calcula os valores para a obra, mas não formata aqui
-        obra.debito_mensal = obra.calcular_debito_mensal()
-        obra.valor_total = obra.calcular_valor_total()
-        obra.valor_receber = obra.calcular_valor_receber()
-        obra.debito_geral = obra.calcular_debito_geral()
-        obra.custo_total = obra.calcular_custo_total()
-        obra.prazo_atual = obra.calcular_prazo_atual()
+    # Calcula os valores para a obra, mas não formata aqui
+    obra.debito_mensal = obra.calcular_debito_mensal()
+    obra.valor_total = obra.calcular_valor_total()
+    obra.valor_receber = obra.calcular_valor_receber()
+    obra.debito_geral = obra.calcular_debito_geral()
+    obra.custo_total = obra.calcular_custo_total()
+    obra.prazo_atual = obra.calcular_prazo_atual()
 
-    
     orcamento_usado = obra.valor_total - obra.custo_total if obra.valor_total else 0
     
     porcentagem_orcamento_usado = (orcamento_usado / obra.valor_total) * 100 if obra.valor_total else 0
@@ -185,9 +229,12 @@ def detalhar_obra(request, id):
 
     meses = calcular_range_meses()
 
+    despesas_filtro = filtrar_despesas(request, despesas)
+
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
         'despesas': despesas_formatadas,
+        'despesas_filtro': despesas_filtro,
         'meses': meses,
         'porcentagem_orcamento_usado': porcentagem_orcamento_usado,
         'orcamento_usado': orcamento_usado

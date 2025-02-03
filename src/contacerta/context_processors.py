@@ -131,7 +131,7 @@ def despesas(request):
     nota_pix = NotaPix.objects.select_related('banco').all().values()
     nota_especie = NotaEspecie.objects.all().values()
     mao_de_obra = MaoDeObra.objects.all().values(
-        'id', 'despesa', 'categoria', 'funcionario_id', 'valor_reembolso'
+        'id', 'despesa_id', 'categoria', 'funcionario_id', 'valor_reembolso'
     )
 
     return {
