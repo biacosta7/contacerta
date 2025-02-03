@@ -39,50 +39,72 @@ def calcular_range_meses():
 
     return resultado
 
-def filtrar_despesas(request, despesas_filtro):
-    ano_mes = request.GET.getlist('ano_mes')
-    data = request.GET.get('data_filtro')
-    funcionario = request.GET.getlist('funcionario_filtro')
-    modalidade = request.GET.getlist('modalidade')
-    categoria = request.GET.getlist('categoria')
+def filtrar_despesas(request, despesas):
+    if request.method == 'GET':
+        despesas_filtro = despesas
 
-    meses_map = {
-        "JAN": 1, "FEV": 2, "MAR": 3, "ABR": 4,
-        "MAI": 5, "JUN": 6, "JUL": 7, "AGO": 8,
-        "SET": 9, "OUT": 10, "NOV": 11, "DEZ": 12
-    }
+        ano_mes = request.GET.getlist('ano_mes')
+        data = request.GET.get('data_filtro')
+        funcionario = request.GET.getlist('funcionario_filtro')
+        modalidade = request.GET.getlist('modalidade')
+        categoria = request.GET.getlist('categoria')
 
-    if ano_mes:
-        filtros = Q()
+        filtros_preenchidos = {
+            "ano_mes": ano_mes,
+            "data": data,
+            "funcionario": funcionario,
+            "modalidade": modalidade,
+            "categoria": categoria,
+        }
 
-        for item in ano_mes:
-            ano, mes_abrev = item.split('/')  # '2024/FEV' -> '2024', 'FEV'
-            mes = meses_map.get(mes_abrev.upper())  # Converte 'FEV' para 2
-            
-            if mes:  # Apenas adiciona se o mês for válido
-                filtros |= Q(data__year=int(ano), data__month=mes)
-        if filtros:
-            despesas_filtro = despesas_filtro.filter(filtros)
+        filtros_preenchidos_filtrados = {}
+
+        # Itera sobre cada chave e valor de 'filtros_preenchidos'
+        for k, v in filtros_preenchidos.items():
+            if v:
+                filtros_preenchidos_filtrados[k] = v
+
+        if not any(filtros_preenchidos.values()):
+            return None, {}
+
+        meses_map = {
+            "JAN": 1, "FEV": 2, "MAR": 3, "ABR": 4,
+            "MAI": 5, "JUN": 6, "JUL": 7, "AGO": 8,
+            "SET": 9, "OUT": 10, "NOV": 11, "DEZ": 12
+        }
+
+        if ano_mes:
+            filtros = Q()
+
+            for item in ano_mes:
+                ano, mes_abrev = item.split('/')  # '2024/FEV' -> '2024', 'FEV'
+                mes = meses_map.get(mes_abrev.upper())  # Converte 'FEV' para 2
+                
+                if mes:  # Apenas adiciona se o mês for válido
+                    filtros |= Q(data__year=int(ano), data__month=mes)
+            if filtros:
+                despesas_filtro = despesas_filtro.filter(filtros)
+        
+        if data:
+            data = datetime.strptime(data, '%d/%m/%Y').date()
+            despesas_filtro = despesas_filtro.filter(data=data)
+
+        if funcionario:
+            mao_de_obra_filtro = MaoDeObra.objects.filter(funcionario_id__in=funcionario)
+            if mao_de_obra_filtro.exists():
+                despesas_filtro = despesas_filtro.filter(id__in=mao_de_obra_filtro.values_list('despesa_id', flat=True))
+
+        if modalidade:
+            despesas_filtro = despesas_filtro.filter(modalidade__in=modalidade) if modalidade else despesas_filtro
+
+        if categoria:
+            categoria_filtro = MaoDeObra.objects.filter(categoria__in=categoria)
+            if categoria_filtro.exists():
+                despesas_filtro = despesas_filtro.filter(id__in=categoria_filtro.values_list('despesa_id', flat=True))
+
+        return despesas_filtro, filtros_preenchidos_filtrados
     
-    if data:
-        data = datetime.strptime(data, '%d/%m/%Y').date()
-        despesas_filtro = despesas_filtro.filter(data=data)
-
-    if funcionario:
-        mao_de_obra_filtro = MaoDeObra.objects.filter(funcionario_id__in=funcionario)
-        if mao_de_obra_filtro.exists():
-            despesas_filtro = despesas_filtro.filter(id__in=mao_de_obra_filtro.values_list('despesa_id', flat=True))
-
-    if modalidade:
-        despesas_filtro = despesas_filtro.filter(modalidade__in=modalidade) if modalidade else despesas_filtro
-
-    if categoria:
-        categoria_filtro = MaoDeObra.objects.filter(categoria__in=categoria)
-        if categoria_filtro.exists():
-            despesas_filtro = despesas_filtro.filter(id__in=categoria_filtro.values_list('despesa_id', flat=True))
-
-    return despesas_filtro
-
+    return None, {}
 
 
 @login_required
@@ -229,12 +251,13 @@ def detalhar_obra(request, id):
 
     meses = calcular_range_meses()
 
-    despesas_filtro = filtrar_despesas(request, despesas)
+    despesas_filtro, filtros_preenchidos = filtrar_despesas(request, despesas)
 
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
         'despesas': despesas_formatadas,
         'despesas_filtro': despesas_filtro,
+        'filtros_preenchidos': filtros_preenchidos,
         'meses': meses,
         'porcentagem_orcamento_usado': porcentagem_orcamento_usado,
         'orcamento_usado': orcamento_usado
