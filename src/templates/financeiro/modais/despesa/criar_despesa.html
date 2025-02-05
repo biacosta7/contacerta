@@ -16,7 +16,7 @@
                 <div class="flex space-x-4 justify-between w-full">
                     <div class="flex-1">
                         <label for="forma_pag" class="block mb-2 text-sm font-medium text-gray-900">Forma de pagamento*</label>
-                        <select id="forma_pag" name="forma_pag" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                        <select id="forma_pag" name="forma_pag" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none" required>
                             <option value="" selected disabled hidden>Selecione a forma</option>
                             <option value="cartao">Cartão</option>
                             <option value="boleto">Boleto</option>
@@ -27,7 +27,7 @@
                 
                     <div class="flex-1">
                         <label for="status" class="block mb-2 text-sm font-medium text-gray-900">Status*</label>
-                        <select id="status" name="status" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                        <select id="status" name="status" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none" required>
                             <option value="a_pagar">À pagar</option>
                             <option value="pago">Pago</option>
                         </select>
@@ -157,7 +157,7 @@
 
                 <div>
                     <label for="modalidade" class="block mb-2 text-sm font-medium text-gray-900">Modalidade*</label>
-                    <select id="modalidade" name="modalidade" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
+                    <select id="modalidade" name="modalidade" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none" required>
                         <option value="" selected disabled hidden>Selecione a modalidade</option>
                         <option value="mao_de_obra">Mão de Obra</option>
                         <option value="insumos">Insumos</option>

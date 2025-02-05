@@ -27,11 +27,17 @@
         <!-- charts -->
         <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 
+        <!-- SweetAlert2 CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 
         <link rel="icon" type="image/png" href="{% static 'assets/favicon.png' %}">
 
     </head>
     <body>
+        {% include 'mensagens.html' %}
+
         {% block content %}{% endblock content %}
         <script src="https://kit.fontawesome.com/d774daea05.js" crossorigin="anonymous"></script>
     </body>
@@ -443,7 +449,7 @@
                     const maoDeObraFieldsDespesa = document.getElementById('maoDeObraFields');
                     maoDeObraFieldsDespesa.classList.remove('hidden');
 
-                    let mdo_despesa = maoDeObras.find(md => md.despesa === despesaId); 
+                    let mdo_despesa = maoDeObras.find(md => md.despesa_id === despesaId); 
             
                     document.getElementById('despesaFuncionarioMDOEditar').value = mdo_despesa.funcionario_id;
                     document.getElementById('despesaCategoriaMDOEditar').value = mdo_despesa.categoria;

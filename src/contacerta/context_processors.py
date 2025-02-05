@@ -77,6 +77,11 @@ def cartoes(request):
     # Obtém todos os cartões com os dados necessários (evitando consultas adicionais)
     cartoes = Cartao.objects.select_related('banco').all()
 
+    # notas_cartao = NotaCartao.objects.select_related('cartao__banco').all()
+
+    # for nota_cartao in notas_cartao:
+    #     nota_cartao.atualizar_proximo_pagamento()
+
     cartoes_lista = []
     for cartao in cartoes:
         cartao_dict = {

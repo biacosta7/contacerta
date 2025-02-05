@@ -130,7 +130,7 @@
                                     {{ despesa.observacao|default:'-' }}
                                 </td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+                                  <button onclick="despesaModal('editarDespesa', {{ despesa.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
                                 </td>
                             </tr>
                         {% endfor %}

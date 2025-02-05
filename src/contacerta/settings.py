@@ -70,6 +70,19 @@ LOGGING = {
     },
 }
 
+from django.contrib.messages import constants as messages
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# Mapeia os tipos de mensagens para as classes CSS do SweetAlert2
+MESSAGE_TAGS = {
+    messages.DEBUG: 'info',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'error',
+}
+
 
 TEMPLATES = [
     {

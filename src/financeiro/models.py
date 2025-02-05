@@ -3,6 +3,8 @@ from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils.timezone import now
+from dateutil.relativedelta import relativedelta
 
 
 class Banco(models.Model):
@@ -128,6 +130,59 @@ class NotaCartao(Despesa):
     cartao = models.ForeignKey(Cartao, on_delete=models.SET_NULL, null=True)
     quant_parcelas = models.IntegerField()
     valor_parcela = models.DecimalField(max_digits=10, decimal_places=2)
+    proximo_pagamento = models.DateField(blank=True, null=True)
+    contador_parcelas = models.IntegerField()
+    status_parcelamento = models.CharField(max_length=20, choices=[
+        ('a_pagar', 'À pagar'),
+        ('pago', 'Pago'),
+    ])
+
+    def atualizar_proximo_pagamento(self):
+        quitado = self.status # status da despesa
+
+        if self.contador_parcelas > 0:
+            print('self.contador_parcelas > 0')
+            self.contador_parcelas -= 1
+
+            if self.contador_parcelas != 0:
+                print('self.contador_parcelas != 0')
+                self.proximo_pagamento += relativedelta(months=1)
+                self.status_parcelamento = 'a_pagar'
+            else:
+                print('self.contador_parcelas == 0')
+                self.status_parcelamento = 'pago'
+                self.status = 'pago'
+
+            self.save()
+
+        return self.proximo_pagamento, quitado
+
+    def save(self, *args, **kwargs):
+        if self.pk is None:  # Se for uma nova despesa
+            self.status_parcelamento = 'a_pagar'
+
+            self.contador_parcelas = self.quant_parcelas  
+            hoje = date.today()
+            vencimento_dia = self.cartao.vencimento  # O dia de vencimento do cartão
+
+            # Define o vencimento para o mês atual
+            vencimento = date(year=hoje.year, month=hoje.month, day=vencimento_dia)
+
+            # Se hoje já passou do vencimento, atualiza para o próximo mês
+            if hoje > vencimento:
+                vencimento = vencimento + relativedelta(months=1)
+
+            print("Hoje:", hoje)
+            print("Vencimento correto:", vencimento)
+
+            self.proximo_pagamento = vencimento  # Define a data corrigida
+            
+
+        super().save(*args, **kwargs)
+
+    
+            
+        
 
 class NotaBoleto(Despesa):
     recipiente = models.CharField(max_length=100)

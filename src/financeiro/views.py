@@ -449,6 +449,7 @@ def ver_cartoes_obra(request, obra_id):
 
 def fatura_mensal_cartoes(request, obra_id):
     obra = get_object_or_404(Obra, id=obra_id)
+    
     cartoes = Cartao.objects.all()
     num_cartoes = Cartao.objects.count()
 
@@ -469,6 +470,13 @@ def fatura_mensal_cartoes(request, obra_id):
 
     total_fatura_mensal = sum(despesa_cartao.valor for despesa_cartao in despesas_cartao_mes)
     
+    for despesa in despesas_cartao_mes:
+        try:
+            nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)  # Busca a NotaCartao correspondente
+            despesa.nota_cartao = nota_cartao  # Adiciona um atributo à instância de Despesa
+        except NotaCartao.DoesNotExist:
+            despesa.nota_cartao = None  # Garante que a variável não fique indefinida
+        
     context = {
         'obra': obra,
         'obra_id': obra_id,
@@ -479,6 +487,37 @@ def fatura_mensal_cartoes(request, obra_id):
     }
 
     return render(request, 'financeiro/cartoes_fatura_obra.html', context)
+
+def atualizar_parcelamento(request, despesa_id):
+    next_url = request.GET.get('next')
+
+    nota_cartao = get_object_or_404(NotaCartao, despesa_ptr_id=despesa_id)
+    despesa = get_object_or_404(Despesa, id=despesa_id)
+
+    proximo_pagamento, quitado = nota_cartao.atualizar_proximo_pagamento()
+
+    if quitado == 'pago':
+        messages.success(request, 'Parcelamento quitado.')
+        # atualizar status da despesa para pago
+        # despesa.status = 'pago'
+        # despesa.save()
+        print(f'despesa.status: {despesa.status}')
+        print(f'quitado: {quitado}')
+
+    else:
+        messages.success(request, f'Fatura do mês paga. Próximo pagamento: {proximo_pagamento}')
+        print(f'Fatura do mês paga. Próximo pagamento: {proximo_pagamento}')
+        print(f'despesa.status: {despesa.status}')
+        print(f'quitado: {quitado}')
+
+
+    return redirect(next_url if next_url else 'financeiro:cartoes')
+
+
+
+
+
+
 
 # Bancos
 @login_required
