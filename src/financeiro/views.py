@@ -476,7 +476,8 @@ def fatura_mensal_cartoes(request, obra_id):
             despesa.nota_cartao = nota_cartao  # Adiciona um atributo à instância de Despesa
         except NotaCartao.DoesNotExist:
             despesa.nota_cartao = None  # Garante que a variável não fique indefinida
-        
+
+      
     context = {
         'obra': obra,
         'obra_id': obra_id,

@@ -2,7 +2,7 @@ import locale
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from financeiro.models import Banco, Cartao, Funcionario, MaoDeObra
+from financeiro.models import Banco, Cartao, Funcionario, MaoDeObra, NotaCartao
 from locais.models import Obra, Escritorio, Despesa
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
@@ -231,12 +231,17 @@ def detalhar_obra(request, id):
     obra = get_object_or_404(Obra, id=id)
     despesas = Despesa.objects.filter(id_local=id)
     
-    # Formata os valores das despesas
-    despesas_formatadas = []
     for despesa in despesas:
-        despesa_dict = despesa.__dict__.copy()  # Converte o objeto em dicionário
-        despesa_dict['valor'] = formatar_valor(despesa.valor)  # Formata o valor
-        despesas_formatadas.append(despesa_dict)
+        try:
+            nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
+            despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
+        except NotaCartao.DoesNotExist:
+            despesa.nota_cartao = None
+    
+    # Formata os valores das despesas
+    for despesa in despesas:
+        despesa.valor_formatado = formatar_valor(despesa.valor)
+      
 
     # Calcula os valores para a obra, mas não formata aqui
     obra.debito_mensal = obra.calcular_debito_mensal()
@@ -260,7 +265,7 @@ def detalhar_obra(request, id):
 
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
-        'despesas': despesas_formatadas,
+        'despesas': despesas,
         'despesas_filtro': despesas_filtro,
         'filtros_preenchidos': filtros_preenchidos,
         'meses': meses,
