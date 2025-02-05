@@ -420,10 +420,8 @@ def ver_cartoes_obra(request, obra_id):
     num_cartoes = Cartao.objects.count()
 
     #Calcular soma notas
-    #pega todas as despesas nao pagas da obra
+    #pega todas as despesas nao pagas
     despesas_gerais = Despesa.objects.filter(
-        tipo_local=ContentType.objects.get_for_model(Obra),
-        id_local=obra_id,
         status='a_pagar'
     )
 
@@ -459,8 +457,6 @@ def fatura_mensal_cartoes(request, obra_id):
     ano = hoje.year
 
     despesas_mensais = Despesa.objects.filter(
-        tipo_local=ContentType.objects.get_for_model(Obra),
-        id_local=obra_id,
         status='a_pagar',
         data__month=mes,
         data__year=ano
