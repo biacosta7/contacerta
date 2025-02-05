@@ -382,6 +382,19 @@
                     document.getElementById('despesaCartaoNomeInfo').innerHTML = "<b>Cartão:</b> " + (item_cartao_despesa.nome || "-");
                     document.getElementById('despesaQntParcelasCartaoInfo').innerHTML = "<b>Quantidade de parcelas:</b> " + cartao_despesa.quant_parcelas;
                     document.getElementById('despesaValorParcelaCartaoInfo').innerHTML = "<b>Valor da parcela:</b> " + cartao_despesa.valor_parcela;
+
+
+                    // Adicionar a lógica para exibir as parcelas pagas
+                    let parcelasPagas = cartao_despesa.pagamentos || [];  // Pega as parcelas pagas
+                    let parcelasPagasText = parcelasPagas.length > 0 ? parcelasPagas.map(pagamento => {
+                        return `Data: ${pagamento.data_pagamento}, Valor: ${pagamento.valor_pago}`;
+                    }).join('<br>') : "Nenhuma parcela paga ainda";
+
+                    console.log('parcelasPagas: ', parcelasPagasText);
+
+                    document.getElementById('despesaParcelasPagasCartaoInfo').innerHTML = "<b>Parcelas pagas:</b><br>" + parcelasPagasText;
+
+
                 }
                     
                 else if (despesa.forma_pag == 'boleto'){

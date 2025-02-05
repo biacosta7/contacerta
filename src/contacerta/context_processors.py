@@ -132,12 +132,29 @@ def despesas(request):
         if nota.get('vencimento'):
             nota['vencimento'] = format_date(nota['vencimento'])
 
-
     nota_pix = NotaPix.objects.select_related('banco').all().values()
     nota_especie = NotaEspecie.objects.all().values()
     mao_de_obra = MaoDeObra.objects.all().values(
         'id', 'despesa_id', 'categoria', 'funcionario_id', 'valor_reembolso'
     )
+
+    # informações sobre os pagamentos das parcelas
+    pagamentos = Pagamento.objects.all().values('nota_cartao_id', 'data_pagamento', 'valor_pago')
+    pagamentos_dict = {}
+    for pagamento in pagamentos:
+        nota_cartao_id = pagamento['nota_cartao_id']
+        if nota_cartao_id not in pagamentos_dict:
+            pagamentos_dict[nota_cartao_id] = []
+        pagamentos_dict[nota_cartao_id].append({
+            'data_pagamento': format_date(pagamento['data_pagamento']),
+            'valor_pago': pagamento['valor_pago']
+        })
+
+    # Adiciona os pagamentos ao contexto
+    for nota in nota_cartao:
+        if nota.get('id') in pagamentos_dict:
+            nota['pagamentos'] = pagamentos_dict[nota['id']]
+
 
     return {
         'nota_cartao_json': json.dumps(list(nota_cartao), cls=DjangoJSONEncoder),

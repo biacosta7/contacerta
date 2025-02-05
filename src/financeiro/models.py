@@ -1,11 +1,9 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, timezone
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.utils.timezone import now
 from dateutil.relativedelta import relativedelta
-
 
 class Banco(models.Model):
     nome = models.CharField(max_length=100)
@@ -138,37 +136,37 @@ class NotaCartao(Despesa):
     ])
 
     def atualizar_proximo_pagamento(self):
-        quitado = self.status # status da despesa
+        quitado = self.status  # status da despesa
 
         if self.contador_parcelas > 0:
-            print('self.contador_parcelas > 0')
             self.contador_parcelas -= 1
 
+            # Registrar o pagamento da parcela atual
+            Pagamento.objects.create(
+                nota_cartao=self,
+                data_pagamento=date.today(),  # Data do pagamento
+                valor_pago=self.valor_parcela  # Valor pago
+            )
+
             if self.contador_parcelas != 0:
-                print('self.contador_parcelas != 0')
                 self.proximo_pagamento += relativedelta(months=1)
                 self.status_parcelamento = 'a_pagar'
             else:
-                print('self.contador_parcelas == 0')
                 self.status_parcelamento = 'pago'
                 self.status = 'pago'
 
             self.save()
 
         return self.proximo_pagamento, quitado
-
+    
     def save(self, *args, **kwargs):
         if self.pk is None:  # Se for uma nova despesa
             self.status_parcelamento = 'a_pagar'
-
             self.contador_parcelas = self.quant_parcelas  
             hoje = date.today()
             vencimento_dia = self.cartao.vencimento  # O dia de vencimento do cartão
 
-            # Define o vencimento para o mês atual
             vencimento = date(year=hoje.year, month=hoje.month, day=vencimento_dia)
-
-            # Se hoje já passou do vencimento, atualiza para o próximo mês
             if hoje > vencimento:
                 vencimento = vencimento + relativedelta(months=1)
 
@@ -180,10 +178,15 @@ class NotaCartao(Despesa):
 
         super().save(*args, **kwargs)
 
-    
-            
-        
 
+class Pagamento(models.Model):
+    nota_cartao = models.ForeignKey(NotaCartao, on_delete=models.CASCADE, related_name='pagamentos')
+    data_pagamento = models.DateField()
+    valor_pago = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Pagamento em {self.data_pagamento} - {self.valor_pago} reais"
+    
 class NotaBoleto(Despesa):
     recipiente = models.CharField(max_length=100)
     quant_boletos = models.IntegerField()

@@ -52,6 +52,18 @@
         {% include "locais/modais/menuObra/despesas_obra.html" %}
     </div>
 </div>
+
+<div id="modal" class="hidden">
+    {% for despesa in despesas %}
+        <div class="modal-content" id="modal-despesa-{{ despesa.id }}" style="display: none;">
+            <p><b>Cartão:</b> {{ despesa.cartao_nome }}</p>
+            <p><b>Quantidade de parcelas:</b> {{ despesa.quant_parcelas }}</p>
+            <p><b>Valor da parcela:</b> {{ despesa.valor_parcela }}</p>
+            <p><b>Parcelas pagas:</b> {{ despesa.parcelas_pagamento.pagas }} de {{ despesa.parcelas_pagamento.total }}</p>
+        </div>
+    {% endfor %}
+</div>
+
 {% include "locais/modais/obra/editar_obra.html" %}
 {% include "locais/modais/obra/deletar_obra.html" %}
 
