@@ -225,8 +225,6 @@ def editar_despesa(request, despesa_id):
                 messages.error(request, f'Erro na data: {str(e)}')
                 return redirect('locais:home')
 
-
-            print(" - DATA - ", data)
             valor = limpar_e_converter_valor(valor)
 
             print(f"Data final antes da edição: {data} ({type(data)})")

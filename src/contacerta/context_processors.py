@@ -124,6 +124,8 @@ def despesas(request):
             despesa['data'] = format_date(despesa['data'])
         if despesa.get('data_pagamento'):
             despesa['data_pagamento'] = format_date(despesa['data_pagamento'])
+        if despesa.get('valor'):
+            despesa['valor'] = formatar_valor(despesa['valor'])
 
     # Otimização usando select_related e prefetch_related
     nota_cartao = NotaCartao.objects.select_related('cartao__banco').all().values()
@@ -147,7 +149,7 @@ def despesas(request):
             pagamentos_dict[nota_cartao_id] = []
         pagamentos_dict[nota_cartao_id].append({
             'data_pagamento': format_date(pagamento['data_pagamento']),
-            'valor_pago': pagamento['valor_pago']
+            'valor_pago': formatar_valor(pagamento['valor_pago'])
         })
 
     # Adiciona os pagamentos ao contexto

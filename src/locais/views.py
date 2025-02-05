@@ -237,6 +237,7 @@ def detalhar_obra(request, id):
             pagamentos = nota_cartao.pagamentos.all()
             despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
             despesa.pagamentos_parcela = pagamentos
+            despesa.valor_formatado = formatar_valor(despesa.valor)
         except NotaCartao.DoesNotExist:
             despesa.nota_cartao = None
             despesa.pagamentos_parcela = None

@@ -36,7 +36,7 @@
                         <th scope="col" class="px-6 py-3">Forma</th>
                         <th scope="col" class="px-6 py-3">Valor</th>
                         <th scope="col" class="px-6 py-3">Status</th>
-                        <th scope="col" class="px-6 py-3">Data</th>
+                        <th scope="col" class="px-6 py-3">Data da compra</th>
                         <th scope="col" class="px-6 py-3">Observação</th>
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">Editar</span>
@@ -54,10 +54,18 @@
                             </th>
                             
                             <td class="px-6 py-4">
-                                {{ despesa.forma_pag }}
+                                {% if despesa.forma_pag == 'cartao' %}
+                                    Cartão
+                                {% elif despesa.forma_pag == 'boleto' %}
+                                    Boleto
+                                {% elif despesa.forma_pag == 'pix' %}
+                                    Pix
+                                {% elif despesa.forma_pag == 'especie' %}
+                                    Espécie
+                                {% endif %}
                             </td>
                             <td class="px-6 py-4">
-                                {{ despesa.valor }}
+                                {{ despesa.valor_formatado }}
                             </td>
                             <td class="px-6 py-4">
                                 {% if despesa.forma_pag == 'cartao' %}

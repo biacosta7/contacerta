@@ -332,7 +332,7 @@
                 document.getElementById('nomeDespesaInfo').innerHTML = "<b>Nome:</b> " + despesa.nome;
 
                 document.getElementById('formaPagDespesaInfo').innerHTML = "<b>Forma de pagamento:</b> " + formaPagFormatado;
-                document.getElementById('dataDespesaInfo').innerHTML = "<b>Data de emissão:</b> " + despesa.data;
+                document.getElementById('dataDespesaInfo').innerHTML = "<b>Data da compra:</b> " + despesa.data;
                 document.getElementById('valorDespesaInfo').innerHTML = "<b>Valor:</b> R$" + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(despesa.valor);
                 document.getElementById('obsDespesaInfo').innerHTML = "<b>Observação:</b> " + (despesa.observacao|| "-");
                 document.getElementById('statusDespesaInfo').innerHTML = "<b>Status:</b> " + statusFormatado;

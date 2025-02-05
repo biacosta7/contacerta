@@ -33,11 +33,16 @@
                                 {% if despesa.forma_pag == 'cartao' %}
                                     {{ despesa.notacartao.cartao.nome }}
                                 {% else %}
-                                    {{ despesa.forma_pag }}
+                                    {% if despesa.forma_pag == 'boleto' %}
+                                        Boleto
+                                    {% elif despesa.forma_pag == 'pix' %}
+                                        Pix
+                                    {% elif despesa.forma_pag == 'especie' %}
+                                        Espécie
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4">
-                                {{ despesa.valor }}
+                                {{ despesa.valor_formatado }}
                             </td>
                             <td class="px-6 py-4">
                                 {% if despesa.forma_pag == 'cartao' %}
