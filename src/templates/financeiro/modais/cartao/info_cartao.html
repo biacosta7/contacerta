@@ -12,6 +12,15 @@
             <p id="finalCartaoInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Final:</b> {{ cartao.final }}</p>
             <p id="quantdiasCartaoInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Quantidade de dias:</b> {{ cartao.quant_dias }}</p>
             <p id="melhordiaCartaoInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Melhor dia de compra:</b> {{ cartao.melhor_dia }}</p>            
-        </div>        
+        </div>      
+        
+        <form id="cartaoPagarBtn" action="" method=POST>
+            {% csrf_token %}
+            <button type="submit" 
+                    class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-4 py-2 text-center me-2 mb-2">
+                Pagar Fatura
+            </button>
+        </form>
+
     </div>
 </div>

@@ -489,7 +489,7 @@ def fatura_mensal_cartoes(request, obra_id):
         'total_fatura_mensal': total_fatura_mensal_formatado,
     }
 
-    return render(request, 'financeiro/cartoes_fatura_obra.html', context)
+    return render(request, 'financeiro/cartoes_fatura.html', context)
 
 def atualizar_parcelamento(request, despesa_id):
     next_url = request.GET.get('next')
@@ -518,7 +518,17 @@ def atualizar_parcelamento(request, despesa_id):
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
 
+def pagar_cartao(request, cartao_id):
+    next_url = request.GET.get('next')
+    # cartao = get_object_or_404(Cartao, id=cartao_id)
 
+    notas_cartao = NotaCartao.objects.filter(cartao=cartao_id, status='a_pagar')
+
+    for nota in notas_cartao:
+        nota.atualizar_proximo_pagamento()
+        print(nota)
+    
+    return redirect(next_url if next_url else 'financeiro:cartoes')
 
 
 

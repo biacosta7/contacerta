@@ -200,6 +200,8 @@
             if (action === 'infoCartao') {
                 infoModalCartao.classList.toggle('hidden');
                 let cartao = cartoes.find(c => c.id === cartaoId);
+
+                document.getElementById('cartaoPagarBtn').action = `/financeiro/cartoes/pagar-fatura/${cartaoId}/?next=${window.location.pathname}`;
                 
                 document.getElementById('cartaoTituloInfo').innerHTML = "Cartão " + cartao.nome;
                 document.getElementById('nomeCartaoInfo').innerHTML = "<b>Nome:</b> " + cartao.nome;
