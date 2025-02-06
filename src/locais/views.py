@@ -271,7 +271,6 @@ def detalhar_obra(request, id):
     if despesas_filtro:
         for despesa in despesas_filtro:
             despesa.valor = formatar_valor(despesa.valor)
-            print(despesa.valor)
 
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,

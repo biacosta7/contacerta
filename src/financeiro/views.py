@@ -430,6 +430,8 @@ def ver_cartoes_obra(request, obra_id):
     total_fatura_geral = sum(despesa_cartao.valor for despesa_cartao in despesas_cartao_gerais)
     #total_fatura_gerais = formatar_valor(total_fatura_gerais)
 
+    total_fatura_geral_formatado = formatar_valor(total_fatura_geral)
+
 
     print(f'despesas_cartao_gerais: {despesas_cartao_gerais}')
     print(f'total_fatura_geral: {total_fatura_geral}')
@@ -439,7 +441,7 @@ def ver_cartoes_obra(request, obra_id):
         'obra_id': obra_id,
         'cartoes': cartoes, 
         'num_cartoes': num_cartoes,
-        'total_fatura_geral': total_fatura_geral
+        'total_fatura_geral': total_fatura_geral_formatado
     }
 
     return render(request, 'financeiro/cartoes_obra.html', context)
@@ -464,6 +466,7 @@ def fatura_mensal_cartoes(request, obra_id):
     despesas_cartao_mes = despesas_mensais.filter(forma_pag='cartao')
 
     total_fatura_mensal = sum(despesa_cartao.valor for despesa_cartao in despesas_cartao_mes)
+    total_fatura_mensal_formatado = formatar_valor(total_fatura_mensal)
     
     for despesa in despesas_cartao_mes:
         try:
@@ -480,7 +483,7 @@ def fatura_mensal_cartoes(request, obra_id):
         'cartoes': cartoes, 
         'num_cartoes': num_cartoes,
         'despesas_cartao_mes': despesas_cartao_mes,
-        'total_fatura_mensal': total_fatura_mensal,
+        'total_fatura_mensal': total_fatura_mensal_formatado,
     }
 
     return render(request, 'financeiro/cartoes_fatura_obra.html', context)

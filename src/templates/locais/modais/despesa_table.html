@@ -9,7 +9,7 @@
             <div id="" class="text-base px-6 py-3 font-semibold" >
                 {% if despesas_filtro %}
                 Com Filtro: {% for k, v in filtros_preenchidos.items %}
-                    {{ k }} - {{ v|join:", " }}
+                    {{ k | capfirst }} - {{ v|join:", " |capfirst }}
                     {% endfor %}
                 {% else %}
                 Sem Filtro
