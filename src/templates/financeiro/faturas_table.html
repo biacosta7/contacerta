@@ -8,7 +8,7 @@
                 
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
                     <tr>
-                        <th scope="col" class="px-6 py-3">Título</th>
+                        <th scope="col" class="px-6 py-3">Descrição</th>
                         <th scope="col" class="px-6 py-3">Cartão</th>
                         <th scope="col" class="px-6 py-3">Valor</th>
                         <th scope="col" class="px-6 py-3">Status</th>
@@ -39,6 +39,7 @@
                                         Pix
                                     {% elif despesa.forma_pag == 'especie' %}
                                         Espécie
+                                    {% endif %}
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4">

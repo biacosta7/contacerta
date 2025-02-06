@@ -229,7 +229,7 @@ def deletar_obra(request, obra_id):
 @login_required
 def detalhar_obra(request, id):
     obra = get_object_or_404(Obra, id=id)
-    despesas = Despesa.objects.filter(id_local=id)
+    despesas = Despesa.objects.filter(id_local=id).order_by('data')  # Ordena por data decrescente (mais nova primeiro)
     
     for despesa in despesas:
         try:
@@ -245,6 +245,7 @@ def detalhar_obra(request, id):
     # Formata os valores das despesas
     for despesa in despesas:
         despesa.valor_formatado = formatar_valor(despesa.valor)
+        despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
       
 
     # Calcula os valores para a obra, mas não formata aqui
@@ -265,7 +266,7 @@ def detalhar_obra(request, id):
 
     meses = calcular_range_meses()
 
-    despesas_filtro, filtros_preenchidos = filtrar_despesas(request, despesas)
+    despesas_filtro, filtros_preenchidos = filtrar_despesas(request, despesas.order_by('data'))
 
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,

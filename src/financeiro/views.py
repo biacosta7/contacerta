@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from locais.models import Obra, Escritorio
+from locais.views import formatar_valor
 from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
@@ -468,6 +469,7 @@ def fatura_mensal_cartoes(request, obra_id):
         try:
             nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)  # Busca a NotaCartao correspondente
             despesa.nota_cartao = nota_cartao  # Adiciona um atributo à instância de Despesa
+            despesa.valor_formatado = formatar_valor(despesa.valor)
         except NotaCartao.DoesNotExist:
             despesa.nota_cartao = None  # Garante que a variável não fique indefinida
 
@@ -491,6 +493,8 @@ def atualizar_parcelamento(request, despesa_id):
 
     proximo_pagamento, quitado = nota_cartao.atualizar_proximo_pagamento()
 
+    proximo_pagamento_formatado = proximo_pagamento.strftime('%d/%m/%Y')
+
     if quitado == 'pago':
         messages.success(request, 'Parcelamento quitado.')
         # atualizar status da despesa para pago
@@ -500,11 +504,10 @@ def atualizar_parcelamento(request, despesa_id):
         print(f'quitado: {quitado}')
 
     else:
-        messages.success(request, f'Fatura do mês paga. Próximo pagamento: {proximo_pagamento}')
-        print(f'Fatura do mês paga. Próximo pagamento: {proximo_pagamento}')
+        messages.success(request, f'Fatura do mês paga.\nPróximo pagamento: {proximo_pagamento_formatado}')
+        print(f'Fatura do mês paga. Próximo pagamento: {proximo_pagamento_formatado}')
         print(f'despesa.status: {despesa.status}')
         print(f'quitado: {quitado}')
-
 
     return redirect(next_url if next_url else 'financeiro:cartoes')
 

@@ -117,7 +117,8 @@ def cartoes(request):
 
 
 def despesas(request):
-    despesas = Despesa.objects.all().values() 
+    despesas_queryset = Despesa.objects.all().order_by('data')  # Garante a ordenação
+    despesas = list(despesas_queryset.values())  # Converte para lista de dicionários mantendo a ordem
 
     for despesa in despesas:
         if despesa.get('data'):

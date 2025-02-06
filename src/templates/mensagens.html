@@ -6,8 +6,9 @@
           title: '{{ message|escapejs }}',
           icon: '{{ message.tags }}',
           confirmButtonText: 'OK',
+          confirmButtonColor: '#1F2937',
           customClass: {
-            confirmButton: 'swal2-confirm swal2-blue'
+            confirmButton: 'swal2-confirm'
           }
         });
       {% endfor %}

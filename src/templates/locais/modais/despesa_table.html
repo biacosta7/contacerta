@@ -32,11 +32,11 @@
                 
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
                     <tr>
-                        <th scope="col" class="px-6 py-3">Título</th>
-                        <th scope="col" class="px-6 py-3">Forma</th>
-                        <th scope="col" class="px-6 py-3">Valor</th>
-                        <th scope="col" class="px-6 py-3">Status</th>
                         <th scope="col" class="px-6 py-3">Data da compra</th>
+                        <th scope="col" class="px-6 py-3">Descrição</th>
+                        <th scope="col" class="px-6 py-3">Valor</th>
+                        <th scope="col" class="px-6 py-3">Forma</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
                         <th scope="col" class="px-6 py-3">Observação</th>
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">Editar</span>
@@ -45,13 +45,22 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     {% for despesa in despesas_filtro|default:despesas %}
+
                         <tr class="bg-white border-b">
+
+                            <td class="px-6 py-4">
+                                {{ despesa.data_formatada }}
+                            </td>
                             
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                 <a id="infoDespesaBtn" href="#" onclick="despesaModal('infoDespesa', {{ despesa.id }})">
                                     {{ despesa.nome }}
                                 </a>                                                             
                             </th>
+
+                            <td class="px-6 py-4">
+                                {{ despesa.valor_formatado }}
+                            </td>
                             
                             <td class="px-6 py-4">
                                 {% if despesa.forma_pag == 'cartao' %}
@@ -64,9 +73,7 @@
                                     Espécie
                                 {% endif %}
                             </td>
-                            <td class="px-6 py-4">
-                                {{ despesa.valor_formatado }}
-                            </td>
+
                             <td class="px-6 py-4">
                                 {% if despesa.forma_pag == 'cartao' %}
                                     <form action="{% url 'financeiro:atualizar_parcelamento' despesa_id=despesa.id %}?next={{ request.path }}" method=POST>
@@ -102,9 +109,7 @@
                                     </form>
                                 {% endif %}
                             </td>
-                            <td class="px-6 py-4">
-                                {{ despesa.data }}
-                            </td>
+                            
                             <td class="px-6 py-4">
                                 {{ despesa.observacao|default:'-' }}
                             </td>
