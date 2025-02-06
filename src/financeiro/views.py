@@ -420,21 +420,16 @@ def ver_cartoes_obra(request, obra_id):
 
     #Calcular soma notas
     #pega todas as despesas nao pagas
-    despesas_gerais = Despesa.objects.filter(
-        status='a_pagar'
+    despesas_cartao_gerais = Despesa.objects.filter(
+        status='a_pagar',
+        forma_pag='cartao'
     )
-
-    # pega essas despesas q tem forma de pagamento cartao
-    despesas_cartao_gerais = despesas_gerais.filter(forma_pag='cartao')
 
     total_fatura_geral = sum(despesa_cartao.valor for despesa_cartao in despesas_cartao_gerais)
     #total_fatura_gerais = formatar_valor(total_fatura_gerais)
 
     total_fatura_geral_formatado = formatar_valor(total_fatura_geral)
 
-
-    print(f'despesas_cartao_gerais: {despesas_cartao_gerais}')
-    print(f'total_fatura_geral: {total_fatura_geral}')
 
     context = {
         'obra': obra,
@@ -457,13 +452,16 @@ def fatura_mensal_cartoes(request, obra_id):
     mes = hoje.month
     ano = hoje.year
 
-    despesas_mensais = Despesa.objects.filter(
+    notas_cartao = NotaCartao.objects.filter(
         status='a_pagar',
-        data__month=mes,
-        data__year=ano
+        proximo_pagamento__month=mes,
+        proximo_pagamento__year=ano
     )
 
-    despesas_cartao_mes = despesas_mensais.filter(forma_pag='cartao')
+    # Obtém os IDs das despesas associadas às notas do cartão
+    ids_despesas = notas_cartao.values_list('despesa_ptr_id', flat=True)
+
+    despesas_cartao_mes = Despesa.objects.filter(id__in=ids_despesas)
 
     total_fatura_mensal = sum(despesa_cartao.valor for despesa_cartao in despesas_cartao_mes)
     total_fatura_mensal_formatado = formatar_valor(total_fatura_mensal)

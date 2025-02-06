@@ -18,7 +18,7 @@
         <div class="flex justify-between bg-gray-800 text-black rounded-[9px] border px-12 py-12 mt-2">
             <div class="flex flex-col">
                 <h1 class="text-base text-white font-medium mb-2">Fatura do mês <i class="fa-solid fa-circle-question ml-1" style="color:rgb(163, 163, 163);"></i></h1> 
-                <span class="text-4xl text-white font-bold mb-1">{{ total_fatura_geral }} </span> <!--{{ obra.valor_total|default:"0" }}-->
+                <span class="text-4xl text-white font-bold mb-1">{{ total_fatura_mensal|default:'R$ 0' }} </span>
             </div>
             <div class="flex items-center">
                 <a id="" class="text-base text-white bg-green-600 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" href={% url 'financeiro:fatura_mensal_cartoes' obra_id %}>
@@ -185,7 +185,6 @@
         </div>
     </div>
 </div>
-
 {% include 'financeiro/modais/cartao/criar_cartao.html' %}
 {% include 'financeiro/modais/cartao/editar_cartao.html' %}
 {% include 'financeiro/modais/cartao/deletar_cartao.html' %}

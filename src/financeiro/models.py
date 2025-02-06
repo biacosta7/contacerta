@@ -163,20 +163,31 @@ class NotaCartao(Despesa):
         if self.pk is None:  # Se for uma nova despesa
             self.status_parcelamento = 'a_pagar'
             self.contador_parcelas = self.quant_parcelas  
+
             hoje = date.today()
             vencimento_dia = self.cartao.vencimento  # O dia de vencimento do cartão
 
-            vencimento = date(year=hoje.year, month=hoje.month, day=vencimento_dia)
-            if hoje > vencimento:
-                vencimento = vencimento + relativedelta(months=1)
+            # Tenta criar a data com o vencimento do mês atual
+            try:
+                vencimento = date(year=hoje.year, month=hoje.month, day=vencimento_dia)
+            except ValueError:
+                # Se o vencimento não existir (ex: 31 de fevereiro), ajusta para último dia do mês
+                proximo_mes = hoje.month + 1 if hoje.month < 12 else 1
+                ano_ajustado = hoje.year if hoje.month < 12 else hoje.year + 1
+                vencimento = date(ano_ajustado, proximo_mes, 1) - timedelta(days=1)
+
+            # Se a compra foi feita APÓS o fechamento, o primeiro pagamento vai para o próximo mês
+            melhor_dia = self.cartao.melhor_dia  # Data do melhor dia de compra
+            if melhor_dia and hoje > melhor_dia:
+                vencimento += relativedelta(months=1)
 
             print("Hoje:", hoje)
             print("Vencimento correto:", vencimento)
 
             self.proximo_pagamento = vencimento  # Define a data corrigida
-            
 
         super().save(*args, **kwargs)
+
 
 
 class Pagamento(models.Model):

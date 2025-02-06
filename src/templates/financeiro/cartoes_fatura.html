@@ -35,11 +35,11 @@
                     <div class="mesesDropdownList hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-full left-0 w-full flex flex-col space-y-2" data-modal-id="modal_3">
                         <form method="post" action="">
                             {% csrf_token %}
-                            <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto overflow-x-hidden">
+                            <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto w-full overflow-x-hidden">
                                 <ul class="list-none">
                                     {% for ano_mes_valor in meses %}
                                     <li>
-                                        <button type="submit" name="ano_mes" value="{{ ano_mes_valor }}" class="consultarDebitoMensalBtn dropdown-item text-left text-base py-2 border-b w-full" data-modal-id="modal_3">
+                                        <button type="submit" name="ano_mes" value="{{ ano_mes_valor }}" class="consultarDebitoMensalBtn dropdown-item text-center text-base py-2 border-b w-full" data-modal-id="modal_3">
                                             {{ ano_mes_valor }}
                                         </button>
                                     </li>
