@@ -8,7 +8,9 @@
             </div>
             <div id="" class="text-base px-6 py-3 font-semibold" >
                 {% if despesas_filtro %}
-                Com Filtro: {{ filtros_preenchidos }}
+                Com Filtro: {% for k, v in filtros_preenchidos.items %}
+                    {{ k }} - {{ v|join:", " }}
+                    {% endfor %}
                 {% else %}
                 Sem Filtro
                 {% endif %}
@@ -49,7 +51,7 @@
                         <tr class="bg-white border-b">
 
                             <td class="px-6 py-4">
-                                {{ despesa.data_formatada }}
+                                {{ despesa.data }}
                             </td>
                             
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
@@ -59,7 +61,7 @@
                             </th>
 
                             <td class="px-6 py-4">
-                                {{ despesa.valor_formatado }}
+                                {{ despesa.valor_formatado|default:despesa.valor }}
                             </td>
                             
                             <td class="px-6 py-4">

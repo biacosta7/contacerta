@@ -268,6 +268,11 @@ def detalhar_obra(request, id):
 
     despesas_filtro, filtros_preenchidos = filtrar_despesas(request, despesas.order_by('data'))
 
+    if despesas_filtro:
+        for despesa in despesas_filtro:
+            despesa.valor = formatar_valor(despesa.valor)
+            print(despesa.valor)
+
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
         'despesas': despesas,
