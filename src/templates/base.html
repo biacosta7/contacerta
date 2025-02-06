@@ -226,7 +226,7 @@
                 console.log('Cartão encontrada:', cartao);
                 console.log('ID da cartão:', cartao.id);
                 
-                document.getElementById('formEditarCartao').action = `/editar/cartao/${id}`;
+                document.getElementById('formEditarCartao').action = `/financeiro/cartoes/editar/${id}/?next=${window.location.pathname}`;
                 
                 document.getElementById('cartaoTituloEditar').innerHTML = `Editar "${cartao.nome}"`;
                 document.getElementById('cartaoId').value = cartao.id;
@@ -261,7 +261,8 @@
                 document.getElementById('textDeletarCartao').innerHTML = `Tem certeza de que deseja excluir o cartão "${cartao.nome}"? Esta ação não pode ser desfeita.`; 
                 
                 // Defina a URL do formulário de exclusão com o ID correto
-                document.getElementById('formDeletarCartao').action = `/deletar/cartao/${id}`;
+                document.getElementById('formDeletarCartao').action = `/financeiro/cartoes/deletar/${id}/?next=${window.location.pathname}`;
+
                 
                 // Mostra o modal de exclusão
                 deletarModalCartao.classList.remove('hidden');
@@ -328,7 +329,7 @@
                     formaPagFormatado = 'Espécie';
                 }
                 
-                document.getElementById('despesaTituloInfo').innerHTML = "Informações " + despesa.nome;
+                document.getElementById('despesaTituloInfo').innerHTML = `Informações de "${despesa.nome}"`;
                 document.getElementById('nomeDespesaInfo').innerHTML = "<b>Nome:</b> " + despesa.nome;
 
                 document.getElementById('formaPagDespesaInfo').innerHTML = "<b>Forma de pagamento:</b> " + formaPagFormatado;

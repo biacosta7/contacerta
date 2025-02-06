@@ -1,7 +1,8 @@
 from django.db import models
-from financeiro.models import Aditivo, Adiantamento, BM, Despesa, MaoDeObra
+from financeiro.models import Aditivo, Adiantamento, BM, Despesa, MaoDeObra, NotaBoleto, NotaCartao, NotaEspecie, NotaPix
 from django.contrib.contenttypes.models import ContentType
 from datetime import date, timedelta
+from django.db.models import Sum
 
 class Obra(models.Model):
     nome = models.CharField(max_length=100)
@@ -59,14 +60,55 @@ class Obra(models.Model):
         mes = mes if mes else hoje.month
         ano = ano if ano else hoje.year
 
-        despesas_mensais = Despesa.objects.filter(
+        notas_boleto = NotaBoleto.objects.filter(
             tipo_local=ContentType.objects.get_for_model(Obra),
             id_local=self.id,
             status='a_pagar',
             data__month=mes,
             data__year=ano
         )
-        total_mensal = sum(despesa.valor for despesa in despesas_mensais)
+
+        notas_especie = NotaEspecie.objects.filter(
+            tipo_local=ContentType.objects.get_for_model(Obra),
+            id_local=self.id,
+            status='a_pagar',
+            data__month=mes,
+            data__year=ano
+        )
+
+        notas_pix = NotaPix.objects.filter(
+            tipo_local=ContentType.objects.get_for_model(Obra),
+            id_local=self.id,
+            status='a_pagar',
+            data__month=mes,
+            data__year=ano
+        )
+
+        notas_cartao = NotaCartao.objects.filter(
+            tipo_local=ContentType.objects.get_for_model(Obra),
+            id_local=self.id,
+            status='a_pagar',
+            proximo_pagamento__month=mes,
+            proximo_pagamento__year=ano
+        )
+
+        print(f'Notas_cartao: {notas_cartao}\n\n Notas_pix: {notas_pix}\n\n Notas_especie: {notas_especie}\n\n Notas_boleto: {notas_boleto}')
+
+        soma_cartao = notas_cartao.aggregate(total=Sum('valor'))['total'] or 0
+        soma_pix = notas_pix.aggregate(total=Sum('valor'))['total'] or 0
+        soma_boleto = notas_boleto.aggregate(total=Sum('valor'))['total'] or 0
+        soma_especie = notas_especie.aggregate(total=Sum('valor'))['total'] or 0
+
+        total_mensal = soma_cartao + soma_pix + soma_boleto + soma_especie
+
+        # despesas_mensais = Despesa.objects.filter(
+        #     tipo_local=ContentType.objects.get_for_model(Obra),
+        #     id_local=self.id,
+        #     status='a_pagar',
+        #     data__month=mes,
+        #     data__year=ano
+        # )
+        # total_mensal = sum(despesa.valor for despesa in despesas_mensais)
         self.debito_mensal = total_mensal
         self.save()
         return self.debito_mensal
