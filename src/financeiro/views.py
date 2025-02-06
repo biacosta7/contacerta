@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from locais.models import Obra, Escritorio
-from locais.views import formatar_valor
+from locais.views import calcular_range_meses, formatar_valor
 from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
@@ -476,11 +476,14 @@ def fatura_mensal_cartoes(request, obra_id):
         except NotaCartao.DoesNotExist:
             despesa.nota_cartao = None  # Garante que a variável não fique indefinida
 
-      
+    
+    meses = calcular_range_meses()
+
     context = {
         'obra': obra,
         'obra_id': obra_id,
         'cartoes': cartoes, 
+        'meses': meses,
         'num_cartoes': num_cartoes,
         'despesas_cartao_mes': despesas_cartao_mes,
         'total_fatura_mensal': total_fatura_mensal_formatado,

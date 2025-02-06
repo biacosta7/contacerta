@@ -247,7 +247,6 @@ def detalhar_obra(request, id):
         despesa.valor_formatado = formatar_valor(despesa.valor)
         despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
       
-
     # Calcula os valores para a obra, mas não formata aqui
     obra.debito_mensal = obra.calcular_debito_mensal()
     obra.valor_total = obra.calcular_valor_total()

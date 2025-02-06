@@ -21,30 +21,47 @@
                 <span class="text-4xl text-white font-bold mb-1">{{ total_fatura_mensal }} </span> 
             </div>
             <div class="flex flex-col space-y-4 items-center">
-                <button id="" class="w-44 text-base text-white bg-green-600 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="">
-                    <i class="fa-solid fa-calendar-days mr-1" style="color: #ffffff;"></i> Alterar mês 
-                </button>   
+                
+                <!-- Alterar mês  -->
+                <div class="relative">
+                    <button class="w-44 text-base text-white bg-green-600 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" data-modal-id="modal_3" onclick="toggleMesesMenu(event, 'modal_3')">
+                        <i class="mesesDropdownIcon fa-solid fa-calendar-days mr-1" 
+                        data-modal-id="modal_3" ></i> Alterar mês 
+                    </button>
+
+                    <span class="debito-mensal-obra text-2xl font-semibold block" data-modal-id="modal_3"></span>
+
+                    <!-- mesesDropdownList -->
+                    <div class="mesesDropdownList hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-full left-0 w-full flex flex-col space-y-2" data-modal-id="modal_3">
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto overflow-x-hidden">
+                                <ul class="list-none">
+                                    {% for ano_mes_valor in meses %}
+                                    <li>
+                                        <button type="submit" name="ano_mes" value="{{ ano_mes_valor }}" class="consultarDebitoMensalBtn dropdown-item text-left text-base py-2 border-b w-full" data-modal-id="modal_3">
+                                            {{ ano_mes_valor }}
+                                        </button>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
                 <button id="" class="w-44 text-base text-white bg-green-600 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="">
                     <i class="fa-solid fa-credit-card mr-1" style="color: #ffffff;"></i> Filtrar cartão 
                 </button> 
+
             </div>
 
-            <div class="mesesDropdownList hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2" data-modal-id="modal_2">
-                <form method="post" action="">
-                    {% csrf_token %}
-                    <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto overflow-x-hidden">
-                        <ul class="list-none">
-                            {% for ano_mes_valor in meses %}
-                            <li>
-                                <button type="submit" name="ano_mes" value="{{ ano_mes_valor }}" class="consultarDebitoMensalBtn dropdown-item text-left text-base py-2 border-b w-full" data-modal-id="modal_2">
-                                    {{ ano_mes_valor }}
-                                </button>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </form>
-            </div>
+            
+
+            
+
+
         </div>
         {% include 'financeiro/faturas_table.html' %}
         <div class="flex flex-col justify-between bg-gray-50 text-black rounded-[9px] border-2 px-6 py-12 mt-2">
