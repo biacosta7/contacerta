@@ -117,7 +117,7 @@ def cartoes(request):
 
 
 def despesas(request):
-    despesas_queryset = Despesa.objects.all().order_by('data')  # Garante a ordenação
+    despesas_queryset = Despesa.objects.all().order_by('-data')  # Garante a ordenação
     despesas = list(despesas_queryset.values())  # Converte para lista de dicionários mantendo a ordem
 
     for despesa in despesas:
@@ -125,8 +125,7 @@ def despesas(request):
             despesa['data'] = format_date(despesa['data'])
         if despesa.get('data_pagamento'):
             despesa['data_pagamento'] = format_date(despesa['data_pagamento'])
-        if despesa.get('valor'):
-            despesa['valor'] = formatar_valor(despesa['valor'])
+
 
     # Otimização usando select_related e prefetch_related
     nota_cartao = NotaCartao.objects.select_related('cartao__banco').all().values()

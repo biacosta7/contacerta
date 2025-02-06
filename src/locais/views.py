@@ -67,7 +67,7 @@ def filtrar_despesas(request, despesas):
                 filtros_preenchidos_filtrados[k] = v
 
         if not any(filtros_preenchidos.values()):
-            return None, {}
+            return None, {}, 0
 
         meses_map = {
             "JAN": 1, "FEV": 2, "MAR": 3, "ABR": 4,
@@ -106,10 +106,12 @@ def filtrar_despesas(request, despesas):
             categoria_filtro = MaoDeObra.objects.filter(categoria__in=categoria)
             if categoria_filtro.exists():
                 despesas_filtro = despesas_filtro.filter(id__in=categoria_filtro.values_list('despesa_id', flat=True))
+        
+        total_filtro = sum(despesa.valor for despesa in despesas_filtro)
 
-        return despesas_filtro, filtros_preenchidos_filtrados
+        return despesas_filtro, filtros_preenchidos_filtrados, total_filtro
     
-    return None, {}
+    return None, {}, 0
 
 
 @login_required
@@ -229,7 +231,7 @@ def deletar_obra(request, obra_id):
 @login_required
 def detalhar_obra(request, id):
     obra = get_object_or_404(Obra, id=id)
-    despesas = Despesa.objects.filter(id_local=id).order_by('data')  # Ordena por data decrescente (mais nova primeiro)
+    despesas = Despesa.objects.filter(id_local=id).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
     
     for despesa in despesas:
         try:
@@ -257,19 +259,18 @@ def detalhar_obra(request, id):
 
     orcamento_usado = obra.valor_total - obra.custo_total if obra.valor_total else 0
     
-    porcentagem_orcamento_usado = (orcamento_usado / obra.valor_total) * 100 if obra.valor_total else 0
+    porcentagem_orcamento_usado = 100 - ((orcamento_usado / obra.valor_total) * 100) if obra.valor_total else 0
 
     porcentagem_orcamento_usado = f"{porcentagem_orcamento_usado:.2f}"
+    print(f"ORCAMENTO: {porcentagem_orcamento_usado}" )
 
     orcamento_usado = formatar_valor(orcamento_usado)
 
     meses = calcular_range_meses()
 
-    despesas_filtro, filtros_preenchidos = filtrar_despesas(request, despesas.order_by('data'))
+    despesas_filtro, filtros_preenchidos, total_filtro = filtrar_despesas(request, despesas.order_by('-data'))
 
-    if despesas_filtro:
-        for despesa in despesas_filtro:
-            despesa.valor = formatar_valor(despesa.valor)
+    total_filtro = formatar_valor(total_filtro)
 
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
@@ -278,7 +279,8 @@ def detalhar_obra(request, id):
         'filtros_preenchidos': filtros_preenchidos,
         'meses': meses,
         'porcentagem_orcamento_usado': porcentagem_orcamento_usado,
-        'orcamento_usado': orcamento_usado
+        'orcamento_usado': orcamento_usado,
+        'total_filtro': total_filtro
     })
 
 
