@@ -45,8 +45,14 @@
                                     {% endif %}
                                 </td>
                                 <td class="px-6 py-4">
-                                    {{ despesa.valor_formatado }}
-                                </td>
+                                    {% if despesa.parcela_do_mes %}
+                                        {% with parcela=despesa.parcela_do_mes.0 %}
+                                            {{ parcela.valor_formatado|default:'-' }}
+                                        {% endwith %}
+                                    {% else %}
+                                        <p>-</p>
+                                    {% endif %}
+                                </td>                                
                                 <td class="px-6 py-4">
                                     {% if despesa.forma_pag == 'cartao' %}
                                         <form action="{% url 'financeiro:atualizar_parcelamento' despesa_id=despesa.id %}?next={{ request.path }}" method=POST>
@@ -83,18 +89,26 @@
                                     {% endif %}
                                 </td>
                                 <td class="px-6 py-4">
-                                    {% if despesa.forma_pag == 'cartao' %}
-                                        {{ despesa.notacartao.proximo_pagamento|default:'-'  }}
+                                    {% if despesa.parcela_do_mes %}
+                                        {% with parcela=despesa.parcela_do_mes.0 %}
+                                            {{ parcela.data_vencimento|default:'-' }}
+                                        {% endwith %}
                                     {% else %}
-                                        {{ despesa.data }}
+                                        <p>-</p>
                                     {% endif %}
+
                                 </td>
                                 <td class="px-6 py-4">
                                     {{ despesa.observacao|default:'-' }}
                                 </td>
                                 <td class="px-6 py-4">
-                                    {{ despesa.parcelas_lista|default:'-' }}
-                                    {{ despesa.pagamentos_lista|default:'-' }}
+                                    {% if despesa.parcela_do_mes %}
+                                        {% with parcela=despesa.parcela_do_mes.0 %}
+                                            Parcela {{ parcela.numero }}/{{ despesa.notacartao.quant_parcelas }}
+                                        {% endwith %}
+                                    {% else %}
+                                        <p>Sem parcela</p>
+                                    {% endif %}
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <button onclick="despesaModal('editarDespesa', {{ despesa.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>

@@ -12,6 +12,8 @@ from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Funcionario, Not
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from dateutil.relativedelta import relativedelta
+from django.db.models import Prefetch
+
 
 
 import logging
@@ -484,45 +486,41 @@ def fatura_mensal_cartoes(request, obra_id):
     hoje = date.today()
     mes, ano = hoje.month, hoje.year
 
-    # Filtrando as despesas do mês de forma otimizada
     notas_cartao = NotaCartao.objects.filter(
         status='a_pagar',
         parcelas__status='a_pagar',
         parcelas__data_vencimento__month=mes,
         parcelas__data_vencimento__year=ano
-        
-    ).select_related('despesa_ptr')  # Evita múltiplas consultas ao banco
-
+    ).distinct().prefetch_related(
+        Prefetch(
+            'parcelas',
+            queryset=Parcela.objects.filter(
+                status='a_pagar',
+                data_vencimento__month=mes,
+                data_vencimento__year=ano
+            ),
+            to_attr='parcela_do_mes'  # Nome do atributo para acessar no template
+        )
+    )
     despesas_cartao_mes = list(notas_cartao)  # Convertendo em lista para manipular diretamente
 
     # Calcula o total da fatura mensal
-    total_fatura_mensal = sum(
-        sum(parcela.valor for parcela in despesa.parcelas.filter(status='a_pagar')) 
-        for despesa in despesas_cartao_mes
-    )
+    total_fatura_mensal = 0
 
-    total_fatura_mensal_formatado = formatar_valor(total_fatura_mensal)
-
-    # Adiciona informações formatadas diretamente às instâncias
     for despesa in despesas_cartao_mes:
         despesa.valor_formatado = formatar_valor(despesa.valor)
         despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
 
-        try:
-            nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
-            parcelas = list(Parcela.objects.filter(nota_cartao=nota_cartao))  # Converte em lista
-            pagamentos = list(Pagamento.objects.filter(parcela__in=parcelas))  # Converte em lista
+        despesa.nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
 
-            despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
-            despesa.pagamentos_lista = pagamentos if pagamentos else []  # Usa um nome diferente
-            despesa.parcelas_lista = parcelas if parcelas else []  # Usa um nome diferente
+        if despesa.parcela_do_mes:  # Verifique se existe alguma parcela para este mês
+            parcela = despesa.parcela_do_mes[0]
+            parcela.valor_formatado = formatar_valor(parcela.valor)
+            total_fatura_mensal += parcela.valor
 
-            despesa.valor_formatado = formatar_valor(despesa.valor)
-        except NotaCartao.DoesNotExist:
-            despesa.nota_cartao = None
-            despesa.pagamentos_lista = []
-            despesa.parcelas_lista = []
     
+    total_fatura_mensal_formatado = formatar_valor(total_fatura_mensal)
+
       
     meses = calcular_range_meses()
 
