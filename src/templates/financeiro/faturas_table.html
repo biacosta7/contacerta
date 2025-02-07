@@ -14,6 +14,7 @@
                         <th scope="col" class="px-6 py-3">Status</th>
                         <th scope="col" class="px-6 py-3">Vencimento</th>
                         <th scope="col" class="px-6 py-3">Observação</th>
+                        <th scope="col" class="px-6 py-3">Parcelas</th>
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">Editar</span>
                         </th>
@@ -90,6 +91,10 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     {{ despesa.observacao|default:'-' }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ despesa.parcelas_lista|default:'-' }}
+                                    {{ despesa.pagamentos_lista|default:'-' }}
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <button onclick="despesaModal('editarDespesa', {{ despesa.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>

@@ -1,3 +1,4 @@
+from itertools import chain
 from django.db import models
 from financeiro.models import Aditivo, Adiantamento, BM, Despesa, MaoDeObra, NotaBoleto, NotaCartao, NotaEspecie, NotaPix
 from django.contrib.contenttypes.models import ContentType
@@ -54,64 +55,39 @@ class Obra(models.Model):
         self.save()
         return self.debito_geral
 
-    def calcular_debito_mensal(self, mes=None, ano=None):
+    def calcular_debito_mensal(self, mes=None, ano=None, salvar=True):
         hoje = date.today()
+        mes = mes or hoje.month
+        ano = ano or hoje.year
 
-        mes = mes if mes else hoje.month
-        ano = ano if ano else hoje.year
+        tipo_local_obra = ContentType.objects.get_for_model(Obra)
 
-        notas_boleto = NotaBoleto.objects.filter(
-            tipo_local=ContentType.objects.get_for_model(Obra),
-            id_local=self.id,
-            status='a_pagar',
-            data__month=mes,
-            data__year=ano
-        )
+        # Obtém todas as notas filtradas pelo mês e ano especificados
+        notas = list(chain(
+            NotaBoleto.objects.filter(tipo_local=tipo_local_obra, id_local=self.id, status='a_pagar', data__month=mes, data__year=ano),
+            NotaEspecie.objects.filter(tipo_local=tipo_local_obra, id_local=self.id, status='a_pagar', data__month=mes, data__year=ano),
+            NotaPix.objects.filter(tipo_local=tipo_local_obra, id_local=self.id, status='a_pagar', data__month=mes, data__year=ano),
+            NotaCartao.objects.filter(
+                tipo_local=tipo_local_obra,
+                id_local=self.id,
+                status='a_pagar',
+                parcelas__status='a_pagar',
+                parcelas__data_vencimento__month=mes,
+                parcelas__data_vencimento__year=ano
+            ).distinct()  # Evita duplicação caso haja várias parcelas no mesmo mês
+        ))
+        
+        # Soma todos os valores das notas
+        total_mensal = sum(nota.valor for nota in notas)
 
-        notas_especie = NotaEspecie.objects.filter(
-            tipo_local=ContentType.objects.get_for_model(Obra),
-            id_local=self.id,
-            status='a_pagar',
-            data__month=mes,
-            data__year=ano
-        )
+        print(f'Total Mensal: {total_mensal}, Notas: {notas}')
 
-        notas_pix = NotaPix.objects.filter(
-            tipo_local=ContentType.objects.get_for_model(Obra),
-            id_local=self.id,
-            status='a_pagar',
-            data__month=mes,
-            data__year=ano
-        )
+        # Atualiza e salva a Obra apenas se salvar=True
+        if salvar:
+            self.debito_mensal = total_mensal
+            self.save(update_fields=['debito_mensal'])  # Otimiza o update para não salvar tudo
 
-        notas_cartao = NotaCartao.objects.filter(
-            tipo_local=ContentType.objects.get_for_model(Obra),
-            id_local=self.id,
-            status='a_pagar',
-            proximo_pagamento__month=mes,
-            proximo_pagamento__year=ano
-        )
-
-        print(f'Notas_cartao: {notas_cartao}\n\n Notas_pix: {notas_pix}\n\n Notas_especie: {notas_especie}\n\n Notas_boleto: {notas_boleto}')
-
-        soma_cartao = notas_cartao.aggregate(total=Sum('valor'))['total'] or 0
-        soma_pix = notas_pix.aggregate(total=Sum('valor'))['total'] or 0
-        soma_boleto = notas_boleto.aggregate(total=Sum('valor'))['total'] or 0
-        soma_especie = notas_especie.aggregate(total=Sum('valor'))['total'] or 0
-
-        total_mensal = soma_cartao + soma_pix + soma_boleto + soma_especie
-
-        # despesas_mensais = Despesa.objects.filter(
-        #     tipo_local=ContentType.objects.get_for_model(Obra),
-        #     id_local=self.id,
-        #     status='a_pagar',
-        #     data__month=mes,
-        #     data__year=ano
-        # )
-        # total_mensal = sum(despesa.valor for despesa in despesas_mensais)
-        self.debito_mensal = total_mensal
-        self.save()
-        return self.debito_mensal
+        return total_mensal
     
 
     def calcular_custo_total(self):

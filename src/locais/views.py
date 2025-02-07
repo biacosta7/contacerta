@@ -2,7 +2,7 @@ import locale
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from financeiro.models import Banco, Cartao, Funcionario, MaoDeObra, NotaCartao
+from financeiro.models import Banco, Cartao, Funcionario, MaoDeObra, NotaCartao, Pagamento, Parcela
 from locais.models import Obra, Escritorio, Despesa
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
@@ -236,7 +236,9 @@ def detalhar_obra(request, id):
     for despesa in despesas:
         try:
             nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
-            pagamentos = nota_cartao.pagamentos.all()
+            parcelas = Parcela.objects.filter(nota_cartao=nota_cartao)
+            pagamentos = Pagamento.objects.filter(parcela__in=parcelas)
+
             despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
             despesa.pagamentos_parcela = pagamentos
             despesa.valor_formatado = formatar_valor(despesa.valor)
@@ -262,7 +264,6 @@ def detalhar_obra(request, id):
     porcentagem_orcamento_usado = 100 - ((orcamento_usado / obra.valor_total) * 100) if obra.valor_total else 0
 
     porcentagem_orcamento_usado = f"{porcentagem_orcamento_usado:.2f}"
-    print(f"ORCAMENTO: {porcentagem_orcamento_usado}" )
 
     orcamento_usado = formatar_valor(orcamento_usado)
 

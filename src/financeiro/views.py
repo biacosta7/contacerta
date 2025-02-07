@@ -8,9 +8,10 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from locais.models import Obra, Escritorio
 from locais.views import calcular_range_meses, formatar_valor
-from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
+from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco, Pagamento, Parcela
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from dateutil.relativedelta import relativedelta
 
 
 import logging
@@ -101,21 +102,54 @@ def criar_despesa(request, tipo, id):
                 # Tratando formas de pagamento
                 if forma_pag == 'cartao':
                     logger.debug("Processando pagamento com cartão...")
+
                     cartao_id = request.POST.get('cartao')
-                    quant_parcelas = request.POST.get('quant_parcelas')
-                    valor_parcela = request.POST.get('valor_parcela')
+                    quant_parcelas = int(request.POST.get('quant_parcelas'))
+                    valor_parcela = limpar_e_converter_valor(request.POST.get('valor_parcela'))
 
                     cartao = get_object_or_404(Cartao, id=cartao_id)
-                    valor_parcela = limpar_e_converter_valor(valor_parcela)
 
-                    despesa = NotaCartao.objects.create(
+                    # Criar a NotaCartao sem chamar `save()` ainda
+                    despesa = NotaCartao(
                         **campos_despesa,
                         cartao=cartao,
                         quant_parcelas=quant_parcelas,
-                        valor_parcela=valor_parcela
+                        valor_parcela=valor_parcela,
+                        status_parcelamento='a_pagar'
                     )
+                    despesa.save()  # Agora salva no banco
+
                     logger.info(f"NotaCartao criada para despesa com cartão {cartao.id}")
-                    print("Nota:", despesa)
+
+                    # Verifica se já existem parcelas antes de criar
+                    if not Parcela.objects.filter(nota_cartao=despesa).exists():
+                        # Gerando as datas de pagamento das parcelas
+                        vencimentos = despesa.calcular_vencimentos_parcelas()
+
+                        # Criando as parcelas
+                        parcelas = []
+                        for i, vencimento in enumerate(vencimentos):
+                            parcela = Parcela.objects.create(
+                                nota_cartao=despesa,
+                                numero=i + 1,
+                                data_vencimento=vencimento,
+                                valor=valor_parcela,
+                                status="a_pagar"
+                            )
+                            parcelas.append(parcela)
+
+                        # Criando os pagamentos para cada parcela
+                        for parcela in parcelas:
+                            Pagamento.objects.create(
+                                parcela=parcela,
+                                data_pagamento=parcela.data_vencimento,
+                                valor_pago=valor_parcela
+                            )
+
+                        logger.info(f"{quant_parcelas} parcelas geradas e pagas para NotaCartao com vencimentos a partir de {vencimentos[0]}")
+                    else:
+                        logger.warning(f"Parcelas já existem para NotaCartao {despesa.id}, evitando duplicação.")
+
                 
                 elif forma_pag == 'boleto':
                     logger.debug("Processando pagamento com boleto...")
@@ -445,42 +479,57 @@ def fatura_mensal_cartoes(request, obra_id):
     obra = get_object_or_404(Obra, id=obra_id)
     
     cartoes = Cartao.objects.all()
-    num_cartoes = Cartao.objects.count()
+    num_cartoes = cartoes.count()
 
     hoje = date.today()
+    mes, ano = hoje.month, hoje.year
 
-    mes = hoje.month
-    ano = hoje.year
-
+    # Filtrando as despesas do mês de forma otimizada
     notas_cartao = NotaCartao.objects.filter(
         status='a_pagar',
-        proximo_pagamento__month=mes,
-        proximo_pagamento__year=ano
+        parcelas__status='a_pagar',
+        parcelas__data_vencimento__month=mes,
+        parcelas__data_vencimento__year=ano
+        
+    ).select_related('despesa_ptr')  # Evita múltiplas consultas ao banco
+
+    despesas_cartao_mes = list(notas_cartao)  # Convertendo em lista para manipular diretamente
+
+    # Calcula o total da fatura mensal
+    total_fatura_mensal = sum(
+        sum(parcela.valor for parcela in despesa.parcelas.filter(status='a_pagar')) 
+        for despesa in despesas_cartao_mes
     )
 
-    # Obtém os IDs das despesas associadas às notas do cartão
-    ids_despesas = notas_cartao.values_list('despesa_ptr_id', flat=True)
-
-    despesas_cartao_mes = Despesa.objects.filter(id__in=ids_despesas)
-
-    total_fatura_mensal = sum(despesa_cartao.valor for despesa_cartao in despesas_cartao_mes)
     total_fatura_mensal_formatado = formatar_valor(total_fatura_mensal)
-    
+
+    # Adiciona informações formatadas diretamente às instâncias
     for despesa in despesas_cartao_mes:
+        despesa.valor_formatado = formatar_valor(despesa.valor)
+        despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
+
         try:
-            nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)  # Busca a NotaCartao correspondente
-            despesa.nota_cartao = nota_cartao  # Adiciona um atributo à instância de Despesa
+            nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
+            parcelas = list(Parcela.objects.filter(nota_cartao=nota_cartao))  # Converte em lista
+            pagamentos = list(Pagamento.objects.filter(parcela__in=parcelas))  # Converte em lista
+
+            despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
+            despesa.pagamentos_lista = pagamentos if pagamentos else []  # Usa um nome diferente
+            despesa.parcelas_lista = parcelas if parcelas else []  # Usa um nome diferente
+
             despesa.valor_formatado = formatar_valor(despesa.valor)
         except NotaCartao.DoesNotExist:
-            despesa.nota_cartao = None  # Garante que a variável não fique indefinida
-
+            despesa.nota_cartao = None
+            despesa.pagamentos_lista = []
+            despesa.parcelas_lista = []
     
+      
     meses = calcular_range_meses()
 
     context = {
         'obra': obra,
         'obra_id': obra_id,
-        'cartoes': cartoes, 
+        'cartoes': cartoes,
         'meses': meses,
         'num_cartoes': num_cartoes,
         'despesas_cartao_mes': despesas_cartao_mes,
@@ -488,6 +537,7 @@ def fatura_mensal_cartoes(request, obra_id):
     }
 
     return render(request, 'financeiro/cartoes_fatura.html', context)
+
 
 def atualizar_parcelamento(request, despesa_id):
     next_url = request.GET.get('next')
@@ -497,37 +547,41 @@ def atualizar_parcelamento(request, despesa_id):
 
     proximo_pagamento, quitado = nota_cartao.atualizar_proximo_pagamento()
 
-    proximo_pagamento_formatado = proximo_pagamento.strftime('%d/%m/%Y')
+    proximo_pagamento_formatado = proximo_pagamento.strftime('%d/%m/%Y') if proximo_pagamento else 'N/A'
 
-    if quitado == 'pago':
+    if quitado:  # Quitado retorna True ou False, então não precisa comparar com 'pago'
         messages.success(request, 'Parcelamento quitado.')
-        # atualizar status da despesa para pago
-        # despesa.status = 'pago'
-        # despesa.save()
-        print(f'despesa.status: {despesa.status}')
-        print(f'quitado: {quitado}')
-
+        despesa.status = 'pago'
+        despesa.save()
+        print(f'despesa.status: {despesa.status} (quitado)')
     else:
         messages.success(request, f'Fatura do mês paga.\nPróximo pagamento: {proximo_pagamento_formatado}')
         print(f'Fatura do mês paga. Próximo pagamento: {proximo_pagamento_formatado}')
-        print(f'despesa.status: {despesa.status}')
-        print(f'quitado: {quitado}')
+        print(f'despesa.status: {despesa.status} (ainda a pagar)')
 
     return redirect(next_url if next_url else 'financeiro:cartoes')
+
 
 
 def pagar_cartao(request, cartao_id):
     next_url = request.GET.get('next')
-    # cartao = get_object_or_404(Cartao, id=cartao_id)
 
-    notas_cartao = NotaCartao.objects.filter(cartao=cartao_id, status='a_pagar')
+    cartao = get_object_or_404(Cartao, id=cartao_id)
+    notas_cartao = NotaCartao.objects.filter(cartao=cartao, status='a_pagar')
+
+    if not notas_cartao.exists():
+        messages.info(request, "Nenhuma fatura pendente para este cartão.")
+        return redirect(next_url if next_url else 'financeiro:cartoes')
 
     for nota in notas_cartao:
-        nota.atualizar_proximo_pagamento()
+        proximo_pagamento, quitado = nota.atualizar_proximo_pagamento()
+        if quitado:
+            nota.status = 'pago'
+            nota.save()
         print(nota)
-    
-    return redirect(next_url if next_url else 'financeiro:cartoes')
 
+    messages.success(request, "Pagamentos atualizados com sucesso.")
+    return redirect(next_url if next_url else 'financeiro:cartoes')
 
 
 
