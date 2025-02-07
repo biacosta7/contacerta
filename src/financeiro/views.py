@@ -451,8 +451,7 @@ def deletar_cartao(request, cartao_id):
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
 @login_required
-def ver_cartoes_obra(request, obra_id):
-    obra = get_object_or_404(Obra, id=obra_id)
+def ver_cartoes(request):
 
     cartoes = Cartao.objects.all()
     num_cartoes = Cartao.objects.count()
@@ -471,17 +470,14 @@ def ver_cartoes_obra(request, obra_id):
 
 
     context = {
-        'obra': obra,
-        'obra_id': obra_id,
         'cartoes': cartoes, 
         'num_cartoes': num_cartoes,
         'total_fatura_geral': total_fatura_geral_formatado
     }
 
-    return render(request, 'financeiro/cartoes_obra.html', context)
+    return render(request, 'financeiro/cartoes.html', context)
 
-def fatura_mensal_cartoes(request, obra_id):
-    obra = get_object_or_404(Obra, id=obra_id)
+def fatura_mensal_cartoes(request):
     
     cartoes = Cartao.objects.all()
     num_cartoes = cartoes.count()
@@ -528,8 +524,6 @@ def fatura_mensal_cartoes(request, obra_id):
     meses = calcular_range_meses()
 
     context = {
-        'obra': obra,
-        'obra_id': obra_id,
         'cartoes': cartoes,
         'meses': meses,
         'num_cartoes': num_cartoes,
