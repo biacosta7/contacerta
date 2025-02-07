@@ -173,19 +173,19 @@ class NotaCartao(Despesa):
 
 
     def save(self, *args, **kwargs):
-        """Salva a NotaCartao e cria os registros de parcelas."""
-        super().save(*args, **kwargs)  
+        is_new = self._state.adding  # Verifica se a instância é nova
+        super().save(*args, **kwargs)  # Salva a NotaCartao antes de criar as parcelas
 
-        # Criar os vencimentos das parcelas
-        vencimentos = self.calcular_vencimentos_parcelas()
-        for i, vencimento in enumerate(vencimentos):
-            Parcela.objects.create(
-                nota_cartao=self,
-                numero=i + 1,
-                data_vencimento=vencimento,
-                valor=self.valor_parcela,
-                status="a_pagar"
-            )
+        if is_new and not self.parcelas.exists():  # Garante que só cria parcelas se for uma nova NotaCartao
+            vencimentos = self.calcular_vencimentos_parcelas()
+            for i, vencimento in enumerate(vencimentos):
+                Parcela.objects.create(
+                    nota_cartao=self,
+                    numero=i + 1,
+                    data_vencimento=vencimento,
+                    valor=self.valor_parcela,
+                    status="a_pagar"
+                )
 
 
 class Parcela(models.Model):

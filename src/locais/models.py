@@ -80,8 +80,6 @@ class Obra(models.Model):
         # Soma todos os valores das notas
         total_mensal = sum(nota.valor for nota in notas)
 
-        print(f'Total Mensal: {total_mensal}, Notas: {notas}')
-
         # Atualiza e salva a Obra apenas se salvar=True
         if salvar:
             self.debito_mensal = total_mensal

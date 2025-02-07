@@ -141,12 +141,12 @@ def criar_despesa(request, tipo, id):
                             parcelas.append(parcela)
 
                         # Criando os pagamentos para cada parcela
-                        for parcela in parcelas:
-                            Pagamento.objects.create(
-                                parcela=parcela,
-                                data_pagamento=parcela.data_vencimento,
-                                valor_pago=valor_parcela
-                            )
+                        # for parcela in parcelas:
+                        #     Pagamento.objects.create(
+                        #         parcela=parcela,
+                        #         data_pagamento=parcela.data_vencimento,
+                        #         valor_pago=valor_parcela
+                        #     )
 
                         logger.info(f"{quant_parcelas} parcelas geradas e pagas para NotaCartao com vencimentos a partir de {vencimentos[0]}")
                     else:
@@ -552,6 +552,7 @@ def atualizar_parcelamento(request, despesa_id):
         despesa.status = 'pago'
         despesa.save()
         print(f'despesa.status: {despesa.status} (quitado)')
+
     else:
         messages.success(request, f'Fatura do mês paga.\nPróximo pagamento: {proximo_pagamento_formatado}')
         print(f'Fatura do mês paga. Próximo pagamento: {proximo_pagamento_formatado}')
@@ -564,24 +565,64 @@ def atualizar_parcelamento(request, despesa_id):
 def pagar_cartao(request, cartao_id):
     next_url = request.GET.get('next')
 
+    # Obtém o cartão com o ID fornecido
     cartao = get_object_or_404(Cartao, id=cartao_id)
-    notas_cartao = NotaCartao.objects.filter(cartao=cartao, status='a_pagar')
+
+    hoje = date.today()
+    mes, ano = hoje.month, hoje.year
+    
+    # Obtém as notas de cartão com status "a pagar"
+    notas_cartao = NotaCartao.objects.filter(
+        status='a_pagar',
+        parcelas__status='a_pagar',
+        parcelas__data_vencimento__month=mes,
+        parcelas__data_vencimento__year=ano
+    ).distinct().prefetch_related(
+        Prefetch(
+            'parcelas',
+            queryset=Parcela.objects.filter(
+                status='a_pagar',
+                data_vencimento__month=mes,
+                data_vencimento__year=ano
+            ),
+            to_attr='parcela_do_mes'  # Nome do atributo para acessar no template
+        )
+    )
 
     if not notas_cartao.exists():
         messages.info(request, "Nenhuma fatura pendente para este cartão.")
         return redirect(next_url if next_url else 'financeiro:cartoes')
 
     for nota in notas_cartao:
-        proximo_pagamento, quitado = nota.atualizar_proximo_pagamento()
-        if quitado:
-            nota.status = 'pago'
-            nota.save()
+        despesa = Despesa.objects.get(id=nota.despesa_ptr_id)
+        nota.atualizar_proximo_pagamento()
+
+        if nota.status_parcelamento == 'pago':
+            despesa.status = 'pago'
+            despesa.save()
+
+        for parcela in nota.parcela_do_mes:
+            if parcela.status == 'a_pagar':  # Verifica se a parcela ainda está pendente
+                # Cria o pagamento
+                Pagamento.objects.create(
+                    parcela=parcela,
+                    valor_pago=parcela.valor,
+                    data_pagamento=date.today()
+                )
+
+                # Marca a parcela como paga
+                parcela.status = 'pago'
+                parcela.save()
+
         print(nota)
 
     messages.success(request, "Pagamentos atualizados com sucesso.")
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
 
+# TO-DO: User Editar data pagamento da parcela (que foi colocada automaticamente no pagamento da fatura)
+def editar_data_pagamento_parcela(request):
+    pass
 
 # Bancos
 @login_required
