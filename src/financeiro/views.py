@@ -361,15 +361,18 @@ def atualizar_status(request, despesa_id):
     next_url = request.GET.get('next')
     # Pega a despesa com o id fornecido, ou retorna 404 se não existir
     despesa = get_object_or_404(Despesa, id=despesa_id)
-    
-    # Alterna o status da despesa entre 'a_pagar' e 'pago'
-    if despesa.status == 'a_pagar':
-        despesa.status = 'pago'
+
+    if despesa.forma_pag == 'cartao':
+        messages.info(request, "Operação indisponível para forma de pagamento 'Cartão'.\nPor favor, pague a fatura do cartão para alterar o status.")
     else:
-        despesa.status = 'a_pagar'
-    
-    # Salva a despesa com o novo status
-    despesa.save()
+        # Alterna o status da despesa entre 'a_pagar' e 'pago'
+        if despesa.status == 'a_pagar':
+            despesa.status = 'pago'
+        else:
+            despesa.status = 'a_pagar'
+        
+        # Salva a despesa com o novo status
+        despesa.save()
     
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
@@ -535,31 +538,6 @@ def fatura_mensal_cartoes(request, obra_id):
     }
 
     return render(request, 'financeiro/cartoes_fatura.html', context)
-
-
-def atualizar_parcelamento(request, despesa_id):
-    next_url = request.GET.get('next')
-
-    nota_cartao = get_object_or_404(NotaCartao, despesa_ptr_id=despesa_id)
-    despesa = get_object_or_404(Despesa, id=despesa_id)
-
-    proximo_pagamento, quitado = nota_cartao.atualizar_proximo_pagamento()
-
-    proximo_pagamento_formatado = proximo_pagamento.strftime('%d/%m/%Y') if proximo_pagamento else 'N/A'
-
-    if quitado:  # Quitado retorna True ou False, então não precisa comparar com 'pago'
-        messages.success(request, 'Parcelamento quitado.')
-        despesa.status = 'pago'
-        despesa.save()
-        print(f'despesa.status: {despesa.status} (quitado)')
-
-    else:
-        messages.success(request, f'Fatura do mês paga.\nPróximo pagamento: {proximo_pagamento_formatado}')
-        print(f'Fatura do mês paga. Próximo pagamento: {proximo_pagamento_formatado}')
-        print(f'despesa.status: {despesa.status} (ainda a pagar)')
-
-    return redirect(next_url if next_url else 'financeiro:cartoes')
-
 
 
 def pagar_cartao(request, cartao_id):

@@ -17,7 +17,6 @@ urlpatterns = [
     path('cartoes/editar/<int:cartao_id>/', views.editar_cartao, name='editar_cartao'),
     path('cartoes/deletar/<int:cartao_id>/', views.deletar_cartao, name='deletar_cartao'),
     path('cartoes/fatura/<int:obra_id>/', views.fatura_mensal_cartoes, name='fatura_mensal_cartoes'),
-    path('cartoes/atualizar-status/<int:despesa_id>/', views.atualizar_parcelamento, name='atualizar_parcelamento'),
     path('cartoes/pagar-fatura/<int:cartao_id>/', views.pagar_cartao, name='pagar_cartao'),
 
     # Aditivos
