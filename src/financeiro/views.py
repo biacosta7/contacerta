@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from locais.models import Obra, Escritorio
-from locais.views import calcular_range_meses, formatar_valor
+from locais.views import calcular_range_meses, filtrar_despesas, formatar_valor
 from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco, Pagamento, Parcela
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
@@ -406,13 +406,6 @@ def criar_cartao(request):
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
 @login_required
-def ver_cartoes(request):
-    cartoes = Cartao.objects.all()
-    num_cartoes = Cartao.objects.count()
-
-    return render(request, 'financeiro/cartoes.html', {'cartoes': cartoes, 'num_cartoes': num_cartoes})
-
-@login_required
 def editar_cartao(request, cartao_id):
     next_url = request.GET.get('next')
 
@@ -478,12 +471,38 @@ def ver_cartoes(request):
     return render(request, 'financeiro/cartoes.html', context)
 
 def fatura_mensal_cartoes(request):
-    
-    cartoes = Cartao.objects.all()
-    num_cartoes = cartoes.count()
 
     hoje = date.today()
-    mes, ano = hoje.month, hoje.year
+
+    # Definição padrão: mês e ano atuais
+    mes = hoje.month
+    ano = hoje.year
+    
+    meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
+
+    ano_mes = f"{meses_abreviados[mes]}/{ano}"
+
+    if request.method == 'GET':
+        ano_mes_filtro = request.GET.get('ano_mes')
+
+        if ano_mes_filtro:
+            # Divide a string ano_mes_filtro
+            ano_mes_filtro_dividido = ano_mes_filtro.split('/')
+
+            # Extrair o ano
+            ano = int(ano_mes_filtro_dividido[0])
+
+            # Encontrar o mês na lista
+            mes = 0
+            for i, n in enumerate(meses_abreviados):
+                if n == ano_mes_filtro_dividido[1]:
+                    mes = i
+                    break
+            
+            ano_mes = ano_mes_filtro
+
+    cartoes = Cartao.objects.all()
+    num_cartoes = cartoes.count()
 
     notas_cartao = NotaCartao.objects.filter(
         status='a_pagar',
@@ -498,9 +517,10 @@ def fatura_mensal_cartoes(request):
                 data_vencimento__month=mes,
                 data_vencimento__year=ano
             ),
-            to_attr='parcela_do_mes'  # Nome do atributo para acessar no template
+            to_attr='parcela_do_mes'
         )
     )
+
     despesas_cartao_mes = list(notas_cartao)  # Convertendo em lista para manipular diretamente
 
     # Calcula o total da fatura mensal
@@ -520,7 +540,6 @@ def fatura_mensal_cartoes(request):
     
     total_fatura_mensal_formatado = formatar_valor(total_fatura_mensal)
 
-      
     meses = calcular_range_meses()
 
     context = {
@@ -529,6 +548,7 @@ def fatura_mensal_cartoes(request):
         'num_cartoes': num_cartoes,
         'despesas_cartao_mes': despesas_cartao_mes,
         'total_fatura_mensal': total_fatura_mensal_formatado,
+        'ano_mes_selecionado': ano_mes if ano_mes else None
     }
 
     return render(request, 'financeiro/cartoes_fatura.html', context)
@@ -595,6 +615,7 @@ def pagar_cartao(request, cartao_id):
 # TO-DO: User Editar data pagamento da parcela (que foi colocada automaticamente no pagamento da fatura)
 def editar_data_pagamento_parcela(request):
     pass
+
 
 # Bancos
 @login_required
