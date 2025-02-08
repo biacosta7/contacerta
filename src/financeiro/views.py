@@ -480,10 +480,11 @@ def fatura_mensal_cartoes(request):
     
     meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
 
-    ano_mes = f"{meses_abreviados[mes]}/{ano}"
+    ano_mes = f"{ano}/{meses_abreviados[mes]}"
 
     if request.method == 'GET':
         ano_mes_filtro = request.GET.get('ano_mes')
+        cartao_filtro = request.GET.get('cartao')
 
         if ano_mes_filtro:
             # Divide a string ano_mes_filtro
@@ -498,28 +499,50 @@ def fatura_mensal_cartoes(request):
                 if n == ano_mes_filtro_dividido[1]:
                     mes = i
                     break
-            
+
             ano_mes = ano_mes_filtro
 
     cartoes = Cartao.objects.all()
     num_cartoes = cartoes.count()
 
-    notas_cartao = NotaCartao.objects.filter(
-        status='a_pagar',
-        parcelas__status='a_pagar',
-        parcelas__data_vencimento__month=mes,
-        parcelas__data_vencimento__year=ano
-    ).distinct().prefetch_related(
-        Prefetch(
-            'parcelas',
-            queryset=Parcela.objects.filter(
-                status='a_pagar',
-                data_vencimento__month=mes,
-                data_vencimento__year=ano
-            ),
-            to_attr='parcela_do_mes'
+    if cartao_filtro:
+        notas_cartao = NotaCartao.objects.filter(
+            status='a_pagar',
+            parcelas__status='a_pagar',
+            parcelas__data_vencimento__month=mes,
+            parcelas__data_vencimento__year=ano,
+            cartao=cartao_filtro,
+        ).distinct().prefetch_related(
+            Prefetch(
+                'parcelas',
+                queryset=Parcela.objects.filter(
+                    status='a_pagar',
+                    data_vencimento__month=mes,
+                    data_vencimento__year=ano
+                ),
+                to_attr='parcela_do_mes'
+            )
         )
-    )
+        cartao_selecionado = Cartao.objects.filter(id=cartao_filtro).first()
+
+    else:
+        notas_cartao = NotaCartao.objects.filter(
+            status='a_pagar',
+            parcelas__status='a_pagar',
+            parcelas__data_vencimento__month=mes,
+            parcelas__data_vencimento__year=ano,
+        ).distinct().prefetch_related(
+            Prefetch(
+                'parcelas',
+                queryset=Parcela.objects.filter(
+                    status='a_pagar',
+                    data_vencimento__month=mes,
+                    data_vencimento__year=ano
+                ),
+                to_attr='parcela_do_mes'
+            )
+        )
+        cartao_selecionado = None
 
     despesas_cartao_mes = list(notas_cartao)  # Convertendo em lista para manipular diretamente
 
@@ -548,7 +571,8 @@ def fatura_mensal_cartoes(request):
         'num_cartoes': num_cartoes,
         'despesas_cartao_mes': despesas_cartao_mes,
         'total_fatura_mensal': total_fatura_mensal_formatado,
-        'ano_mes_selecionado': ano_mes if ano_mes else None
+        'ano_mes_selecionado': ano_mes if ano_mes else None,
+        'cartao_selecionado': cartao_selecionado
     }
 
     return render(request, 'financeiro/cartoes_fatura.html', context)
