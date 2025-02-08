@@ -8,13 +8,13 @@
                 
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
                     <tr>
+                        <th scope="col" class="px-6 py-3">Vencimento</th>
                         <th scope="col" class="px-6 py-3">Descrição</th>
-                        <th scope="col" class="px-6 py-3">Cartão</th>
                         <th scope="col" class="px-6 py-3">Valor</th>
                         <th scope="col" class="px-6 py-3">Status</th>
-                        <th scope="col" class="px-6 py-3">Vencimento</th>
-                        <th scope="col" class="px-6 py-3">Observação</th>
+                        <th scope="col" class="px-6 py-3">Cartão</th>
                         <th scope="col" class="px-6 py-3">Parcelas</th>
+                        <th scope="col" class="px-6 py-3">Observação</th>
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">Editar</span>
                         </th>
@@ -24,27 +24,22 @@
                     {% if despesas_cartao_mes or despesas_filtro %}
                         {% for despesa in despesas_filtro|default:despesas_cartao_mes %}
                             <tr class="bg-white border-b">
+                                <td class="px-6 py-4">
+                                    {% if despesa.parcela_do_mes %}
+                                        {% with parcela=despesa.parcela_do_mes.0 %}
+                                            {{ parcela.data_vencimento|default:'-' }}
+                                        {% endwith %}
+                                    {% else %}
+                                        <p>-</p>
+                                    {% endif %}
+                                </td>
                                 
-                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 break-words whitespace-normal">
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 break-words whitespace-normal max-w-[300px]">
                                     <a id="infoDespesaBtn" href="#" onclick="despesaModal('infoDespesa', {{ despesa.id }})">
                                         {{ despesa.nome }}
                                     </a>                                                             
                                 </th>
-                                
-                                <td class="px-6 py-4">
-                                    {% if despesa.forma_pag == 'cartao' %}
-                                        {{ despesa.notacartao.cartao.nome }}
-                                    {% else %}
-                                        {% if despesa.forma_pag == 'boleto' %}
-                                            Boleto
-                                        {% elif despesa.forma_pag == 'pix' %}
-                                            Pix
-                                        {% elif despesa.forma_pag == 'especie' %}
-                                            Espécie
-                                        {% endif %}
-                                    {% endif %}
-                                </td>
-                                <td class="px-6 py-4">
+                                <td class="px-6 py-4 min-w-[150px]">
                                     {% if despesa.parcela_do_mes %}
                                         {% with parcela=despesa.parcela_do_mes.0 %}
                                             {{ parcela.valor_formatado|default:'-' }}
@@ -52,8 +47,9 @@
                                     {% else %}
                                         <p>-</p>
                                     {% endif %}
-                                </td>                                
-                                <td class="px-6 py-4">
+                                </td>     
+                                
+                                <td class="px-6 py-4  min-w-[140px]">
                                     <form action="{% url 'financeiro:atualizar_status' despesa_id=despesa.id %}?next={{ request.path }}" method=POST>
                                         {% csrf_token %}
                                         {% if despesa.status == 'a_pagar' %}
@@ -70,19 +66,12 @@
                                         {% endif %}
                                     </form>
                                 </td>
+                                
                                 <td class="px-6 py-4">
-                                    {% if despesa.parcela_do_mes %}
-                                        {% with parcela=despesa.parcela_do_mes.0 %}
-                                            {{ parcela.data_vencimento|default:'-' }}
-                                        {% endwith %}
-                                    {% else %}
-                                        <p>-</p>
-                                    {% endif %}
+                                    {{ despesa.notacartao.cartao.nome }}
+                                </td>
 
-                                </td>
-                                <td class="px-6 py-4">
-                                    {{ despesa.observacao|default:'-' }}
-                                </td>
+                                
                                 <td class="px-6 py-4">
                                     {% if despesa.parcela_do_mes %}
                                         {% with parcela=despesa.parcela_do_mes.0 %}
@@ -92,6 +81,13 @@
                                         <p>Sem parcela</p>
                                     {% endif %}
                                 </td>
+                                                          
+                                
+
+                                <td class="px-6 py-4">
+                                    {{ despesa.observacao|default:'-' }}
+                                </td>
+                                
                                 <td class="px-6 py-4 text-right">
                                     <button onclick="despesaModal('editarDespesa', {{ despesa.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
                                 </td>
