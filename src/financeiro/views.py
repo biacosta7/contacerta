@@ -522,7 +522,7 @@ def fatura_mensal_cartoes(request):
                 ),
                 to_attr='parcela_do_mes'
             )
-        )
+        ).order_by('parcelas__data_vencimento')
         cartao_selecionado = Cartao.objects.filter(id=cartao_filtro).first()
 
     else:
@@ -541,10 +541,10 @@ def fatura_mensal_cartoes(request):
                 ),
                 to_attr='parcela_do_mes'
             )
-        )
+        ).order_by('parcelas__data_vencimento')
         cartao_selecionado = None
 
-    despesas_cartao_mes = list(notas_cartao)  # Convertendo em lista para manipular diretamente
+    despesas_cartao_mes = list(notas_cartao)   # Convertendo em lista para manipular diretamente
 
     # Calcula o total da fatura mensal
     total_fatura_mensal = 0
