@@ -42,6 +42,7 @@
     <script>
         const obras = JSON.parse('{{ obras_json|safe }}');
         const cartoes = JSON.parse('{{ cartoes_json|safe }}');
+        const faturas = JSON.parse('{{ faturas_json|safe }}');
         console.log(obras);
 
         function ToBRCurrency(ElementID, valor){
@@ -200,6 +201,7 @@
             if (action === 'infoCartao') {
                 infoModalCartao.classList.toggle('hidden');
                 let cartao = cartoes.find(c => c.id === cartaoId);
+                let faturasCartao = faturas.filter(f => f.cartao_id === cartaoId); // Filtra as faturas do cartão selecionado
 
                 document.getElementById('cartaoPagarBtn').action = `/financeiro/cartoes/pagar-fatura/${cartaoId}/?next=${window.location.pathname}`;
                 
@@ -210,6 +212,21 @@
                 document.getElementById('finalCartaoInfo').innerHTML = "<b>Final:</b> " + cartao.final;
                 document.getElementById('quantdiasCartaoInfo').innerHTML = "<b>Quantidade de dias:</b> " + cartao.quant_dias;
                 document.getElementById('melhordiaCartaoInfo').innerHTML = "<b>Melhor dia de compra:</b> " + (cartao.melhor_dia || "-");
+
+                // **Atualizar a lista de faturas**
+                let faturasList = document.getElementById('faturasCartaoInfo');
+                faturasList.innerHTML = ""; // Limpa a lista antes de adicionar novos itens
+
+                if (faturasCartao.length > 0) {
+                    faturasCartao.forEach(fatura => {
+                        let listItem = document.createElement('li');
+                        listItem.classList.add("text-gray-700", "py-2", "border-b", "border-gray-300", "text-sm");
+                        listItem.innerHTML = `<b>${fatura.data_pagamento}:</b> ${fatura.valor}`;
+                        faturasList.appendChild(listItem);
+                    });
+                } else {
+                    faturasList.innerHTML = "<li class='text-gray-500 py-2'>Nenhuma fatura encontrada.</li>";
+                }
         
             } else if (action === 'fecharInfoCartao') {
                 infoModalCartao.classList.add('hidden');

@@ -8,7 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from locais.models import Obra, Escritorio
 from locais.views import calcular_range_meses, filtrar_despesas, formatar_valor
-from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco, Pagamento, Parcela
+from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Fatura, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco, Pagamento, Parcela
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from dateutil.relativedelta import relativedelta
@@ -139,14 +139,6 @@ def criar_despesa(request, tipo, id):
                                 status="a_pagar"
                             )
                             parcelas.append(parcela)
-
-                        # Criando os pagamentos para cada parcela
-                        # for parcela in parcelas:
-                        #     Pagamento.objects.create(
-                        #         parcela=parcela,
-                        #         data_pagamento=parcela.data_vencimento,
-                        #         valor_pago=valor_parcela
-                        #     )
 
                         logger.info(f"{quant_parcelas} parcelas geradas e pagas para NotaCartao com vencimentos a partir de {vencimentos[0]}")
                     else:
@@ -609,6 +601,8 @@ def pagar_cartao(request, cartao_id):
         messages.info(request, "Nenhuma fatura pendente para este cartão.")
         return redirect(next_url if next_url else 'financeiro:cartoes')
 
+    total = 0
+
     for nota in notas_cartao:
         despesa = Despesa.objects.get(id=nota.despesa_ptr_id)
         nota.atualizar_proximo_pagamento()
@@ -629,9 +623,15 @@ def pagar_cartao(request, cartao_id):
                 # Marca a parcela como paga
                 parcela.status = 'pago'
                 parcela.save()
+                total += parcela.valor
 
-        print(nota)
-
+    
+    Fatura.objects.create(
+        cartao=cartao,
+        data_pagamento=hoje,
+        valor=total
+    )
+    
     messages.success(request, "Pagamentos atualizados com sucesso.")
     return redirect(next_url if next_url else 'financeiro:cartoes')
 

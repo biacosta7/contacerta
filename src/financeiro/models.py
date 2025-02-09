@@ -210,7 +210,12 @@ class Pagamento(models.Model):
     def __str__(self):
         return f"Pagamento em {self.data_pagamento} - {self.valor_pago} reais"
 
-    
+class Fatura(models.Model):    
+    cartao = models.ForeignKey(Cartao, on_delete=models.SET_NULL, null=True)
+    data_pagamento = models.DateField()
+    valor = models.IntegerField()
+
+
 class NotaBoleto(Despesa):
     recipiente = models.CharField(max_length=100)
     quant_boletos = models.IntegerField()

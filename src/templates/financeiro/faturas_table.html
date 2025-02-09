@@ -13,7 +13,7 @@
                         <th scope="col" class="px-6 py-3">Valor</th>
                         <th scope="col" class="px-6 py-3">Status</th>
                         <th scope="col" class="px-6 py-3">Cartão</th>
-                        <th scope="col" class="px-6 py-3">Parcelas</th>
+                        <th scope="col" class="px-6 py-3">Parcela</th>
                         <th scope="col" class="px-6 py-3">Observação</th>
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">Editar</span>
@@ -75,7 +75,7 @@
                                 <td class="px-6 py-4">
                                     {% if despesa.parcela_do_mes %}
                                         {% with parcela=despesa.parcela_do_mes.0 %}
-                                            Parcela {{ parcela.numero }}/{{ despesa.notacartao.quant_parcelas }}
+                                            {{ parcela.numero }}/{{ despesa.notacartao.quant_parcelas }}
                                         {% endwith %}
                                     {% else %}
                                         <p>Sem parcela</p>
