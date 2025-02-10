@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cadastro{% endblock title %}
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-full lg:py-0 ">
+        <img class="mt-2 w-1/4" src="{% static '/assets/contacerta-logoH.png' %}" alt="logo">
+        <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mb-4">
+            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                    Acesso ao Escritório
+                </h1>
+                <div class="space-y-3">
+                    <span class="text-base font-medium text-gray-900 dark:text-white">
+                        Você é...
+                    </span>
+                    <div class="flex space-x-4">
+                        <div class="w-1/2">
+                            <button id="btn_funcionario" type="button"
+                                class="w-full py-4 text-sm font-medium border border-gray-600 text-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition"
+                                onclick="selecionarCargo('FUNC')">
+                                Funcionário
+                            </button>
+                        </div>
+                        <div class="w-1/2">
+                            <button id="btn_adm" type="button"
+                                class="w-full py-4 text-sm font-medium border border-gray-600 text-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition"
+                                onclick="selecionarCargo('ADM')">
+                                Administrador
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="acessarEscritorioSection" class="hidden space-y-8">
+                    {% if escritorios %}
+                        <h1 class="text-xl font-semibold border-b border-gray-500 leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white py-3">
+                            Acessar Escritório existente
+                        </h1>
+                        <button type="button" class="escritorio-dropdown-button w-full flex items-center justify-between px-6 py-3 rounded-[9px] text-sm font-semibold hover:bg-gray-600 hover:text-[#edf0e9] text-white bg-green-600 shadow-sm focus:outline-none">
+                            <span class="text-base text-left ml-2">
+                                Selecionar Escritório
+                            </span>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+
+                        <div id="escritorio-dropdown-menu" class="hidden dropdownMenu w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                            <div class="h-max-40 overflow-y-auto">
+                                {% for escritorio in escritorios %}
+                                    <label class="{% if escritorio_selecionado.id == escritorio.id %} bg-green-500 {% endif %} block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md" data-value="{{ escritorio.id }}">
+                                        <span class="text-base font-normal">{{ escritorio.nome }}</span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Acessar Escritório</button>
+                    {% else %}
+                        <span class="text-white">Não há escritórios cadastrados.</span>
+                    {% endif %}
+                </div>
+
+                <div id="criarEscritorioSection" class="hidden">
+                    <h1 class="text-xl font-semibold border-b border-gray-500 leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white py-3">
+                        Criar Escritório
+                    </h1>
+                    <form action="{% url 'locais:criar_escritorio' user_id %}" method="POST" class="space-y-4 md:space-y-6">
+                        {% csrf_token %}
+                        <div class="flex space-x-4">
+                            <div class="w-1/2">
+                                <label for="nome" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome</label>
+                                <input type="text" name="nome" id="nome" value="{{ form_data.nome }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                            </div>
+                            <div class="w-1/2">
+                                <label for="telefone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Telefone</label>
+                                <input type="text" name="telefone" id="telefone" value="{{ form_data.telefone }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                            </div>
+                        </div>                    
+                        <div>
+                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email do escritório</label>
+                            <input type="text" name="email" id="email" value="{{ form_data.email }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="exemplo@gmail.com" required>
+                        </div>
+                        <div>
+                            <label for="cnpj" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">CNPJ</label>
+                            <input type="text" name="cnpj" id="cnpj" value="{{ form_data.cnpj }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                        </div>
+                        
+                        
+                    
+                        <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Criar</button>
+                        
+                    </form>
+                    <p class="mt-6 text-sm font-light text-gray-500 dark:text-gray-400">
+                        {% comment %} TO-DO: entrar no escritorio existente {% endcomment %}
+                        Já possui um escritório? <a href="{% url 'login' %}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Entrar</a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>    
+<script>
+    function selecionarCargo(cargo) {
+        // Obtendo os botões
+        let btnFuncionario = document.getElementById('btn_funcionario');
+        let btnAdm = document.getElementById('btn_adm');
+        let criarEscritorioSection = document.getElementById('criarEscritorioSection');
+        let acessarEscritorioSection = document.getElementById('acessarEscritorioSection');
+
+        // Resetando estilos de ambos os botões
+        btnFuncionario.classList.remove('bg-[#66b346]', 'text-white');
+        btnAdm.classList.remove('bg-[#66b346]', 'text-white');
+
+        // Selecionando o cargo correto e aplicando estilo
+        if (cargo === 'FUNC') {
+            btnFuncionario.classList.add('bg-[#66b346]', 'text-white');
+            criarEscritorioSection.classList.add('hidden')
+            acessarEscritorioSection.classList.remove('hidden')
+        } else {
+            btnAdm.classList.add('bg-[#66b346]', 'text-white');
+            criarEscritorioSection.classList.remove('hidden')
+            acessarEscritorioSection.classList.add('hidden')
+        }
+        
+    }
+
+  
+</script>
+
+
+
+
+{% endblock content %}

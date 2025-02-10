@@ -1,9 +1,54 @@
 from itertools import chain
 from django.db import models
-from financeiro.models import Aditivo, Adiantamento, BM, Despesa, MaoDeObra, NotaBoleto, NotaCartao, NotaEspecie, NotaPix
+from financeiro.models import Aditivo, Adiantamento, BM, Despesa, NotaBoleto, NotaCartao, NotaEspecie, NotaPix
 from django.contrib.contenttypes.models import ContentType
 from datetime import date, timedelta
-from django.db.models import Sum
+
+from users.models import User
+
+class Escritorio(models.Model):
+    nome = models.CharField(max_length=100)
+    email = models.EmailField()
+    telefone = models.CharField(max_length=20)
+    cnpj = models.CharField(max_length=18)
+    debito_mensal = models.DecimalField(max_digits=10, decimal_places=2, default='0') # mensal, despesas com status de 'à pagar' somadas
+    debito_geral = models.DecimalField(max_digits=10, decimal_places=2, default='0') # todas as despesas com status de 'à pagar' somadas
+    funcionarios = models.ManyToManyField(User, related_name='funcionarios_escritorio', blank=True)
+    admins = models.ManyToManyField(User, related_name='admin_escritorio', blank=True)
+
+    def calcular_debito_geral(self):
+        despesas_gerais = Despesa.objects.filter(
+            tipo_local=ContentType.objects.get_for_model(Escritorio),
+            id_local=self.id,
+            status='a_pagar'
+        )
+        total_despesas_gerais = sum(despesa.valor for despesa in despesas_gerais)
+
+        self.debito_geral = total_despesas_gerais
+        self.save()
+
+    def calcular_debito_mensal(self, mes=None, ano=None):
+        hoje = date.today()
+
+        # Se mês ou ano não forem passados, utiliza o mês e ano atual
+        mes = mes if mes else hoje.month
+        ano = ano if ano else hoje.year
+
+        despesas_mensais = Despesa.objects.filter(
+            tipo_local=ContentType.objects.get_for_model(Escritorio),
+            id_local=self.id,
+            status='a_pagar',
+            data__month=mes,
+            data__year=ano
+        )
+        total_mensal = sum(despesa.valor for despesa in despesas_mensais)
+        self.debito_mensal = total_mensal
+        self.save()
+
+    def __str__(self):
+        return f"{self.nome} (CNPJ: {self.cnpj})"
+
+
 
 class Obra(models.Model):
     nome = models.CharField(max_length=100)
@@ -18,6 +63,8 @@ class Obra(models.Model):
     custo_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True) # todas as despesas somadas geral (independente do status)
     prazo_inicial = models.DateField()
     prazo_atual = models.DateField(blank=True, null=True) #prazo_inicial + dias de aditivo do tipo prazo
+
+    escritorio = models.ForeignKey(Escritorio, on_delete=models.CASCADE, related_name="obras")
 
     # Função para calcular o valor total
     def calcular_valor_total(self):
@@ -128,43 +175,3 @@ class Obra(models.Model):
         return self.nome
 
         
-class Escritorio(models.Model):
-    nome = models.CharField(max_length=100)
-    email = models.EmailField()
-    telefone = models.CharField(max_length=20)
-    cnpj = models.CharField(max_length=18)
-    ceo = models.CharField(max_length=100)
-    debito_mensal = models.DecimalField(max_digits=10, decimal_places=2) # mensal, despesas com status de 'à pagar' somadas
-    debito_geral = models.DecimalField(max_digits=10, decimal_places=2) # todas as despesas com status de 'à pagar' somadas
-
-    def calcular_debito_geral(self):
-        despesas_gerais = Despesa.objects.filter(
-            tipo_local=ContentType.objects.get_for_model(Escritorio),
-            id_local=self.id,
-            status='a_pagar'
-        )
-        total_despesas_gerais = sum(despesa.valor for despesa in despesas_gerais)
-
-        self.debito_geral = total_despesas_gerais
-        self.save()
-
-    def calcular_debito_mensal(self, mes=None, ano=None):
-        hoje = date.today()
-
-        # Se mês ou ano não forem passados, utiliza o mês e ano atual
-        mes = mes if mes else hoje.month
-        ano = ano if ano else hoje.year
-
-        despesas_mensais = Despesa.objects.filter(
-            tipo_local=ContentType.objects.get_for_model(Escritorio),
-            id_local=self.id,
-            status='a_pagar',
-            data__month=mes,
-            data__year=ano
-        )
-        total_mensal = sum(despesa.valor for despesa in despesas_mensais)
-        self.debito_mensal = total_mensal
-        self.save()
-
-    def __str__(self):
-        return f"{self.nome} (CNPJ: {self.cnpj})"

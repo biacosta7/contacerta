@@ -462,6 +462,7 @@ def ver_cartoes(request):
 
     return render(request, 'financeiro/cartoes.html', context)
 
+@login_required
 def fatura_mensal_cartoes(request):
 
     hoje = date.today()
@@ -569,7 +570,7 @@ def fatura_mensal_cartoes(request):
 
     return render(request, 'financeiro/cartoes.html', context)
 
-
+@login_required
 def pagar_cartao(request, cartao_id):
     next_url = request.GET.get('next')
 
@@ -641,8 +642,8 @@ def pagar_cartao(request, cartao_id):
     messages.success(request, "Pagamentos atualizados com sucesso.")
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
-
-# TO-DO: User Editar data pagamento da parcela (que foi colocada automaticamente no pagamento da fatura)
+@login_required
+# Editar data pagamento da parcela (que foi colocada automaticamente no pagamento da fatura)
 def editar_fatura(request, fatura_id):
     next_url = request.GET.get('next')
 

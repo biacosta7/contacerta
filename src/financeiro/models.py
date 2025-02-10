@@ -97,6 +97,8 @@ class Cartao(models.Model):
     quant_dias = models.IntegerField()  # Dias entre fechamento e vencimento
     melhor_dia = models.DateField(blank=True, null=True)  # Será calculado
 
+    escritorio = models.ForeignKey("locais.Escritorio", on_delete=models.CASCADE, related_name="cartoes")
+
     def calcular_melhor_dia(self):
         """Calcula o melhor dia de compra com base no vencimento."""
         hoje = date.today()

@@ -1,9 +1,12 @@
+from locais.models import Escritorio
 from .models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as login_django, logout as logout_django
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, authenticate, logout
+
 
 def criar_user(request):
     if request.method == 'POST':
@@ -45,16 +48,22 @@ def criar_user(request):
                 user.set_password(password)  # Criptografa a senha
                 user.save()
                 messages.success(request, 'Usuário criado com sucesso!')
-                return redirect('login')
+
+                # Autentica o usuário recém-criado
+                user = authenticate(request, email=email, password=password)  # Verifique se o username é 'email'
+                if user is not None:
+                    login(request, user)  # Faz login automaticamente
+                    return redirect('locais:hub', user.id)  # Redireciona para a página desejada
+
             except IntegrityError:
                 messages.error(request, 'Já existe um usuário com este email. Tente novamente.')
-                return render(request, 'cadastro.html', form_data)
+                return render(request, 'users/cadastro.html', form_data)
         else:
             return render(request, 'users/cadastro.html', {'error': 'As senhas não coincidem.'})
     else:
         return render(request, 'users/cadastro.html')
     
-def login(request):
+def login_user(request):
     if request.user.is_authenticated:
         return redirect('locais:home')
 
@@ -68,15 +77,30 @@ def login(request):
         if user:
             login_django(request, user)
             messages.success(request, 'Autenticado com sucesso.')
+
             if remember_me: 
                 request.session.set_expiry(None)  
             else:
                 request.session.set_expiry(0) 
 
-            return redirect('locais:home')
+            # Verifica a qual escritório o usuário pertence
+            escritorios = Escritorio.objects.filter(admins=user)
+
+            if escritorios.exists():
+                # Se houver mais de um escritório, direcionar para um específico ou permitir escolha
+                escritorio = escritorios.first()  # Pegando o primeiro por padrão
+                return redirect('locais:home', escritorio_id=escritorio.id)
+            else:
+                messages.warning(request, 'Você não está associado a nenhum escritório.')
+                return redirect('locais:escolher_escritorio')
+
         else:
             messages.error(request, 'Email ou senha inválidos. Tente novamente.')
-            print('Email ou senha inválidos. Tente novamente.')
             return render(request, 'users/login.html')
-    else:
-        return render(request, 'users/login.html')
+    
+    return render(request, 'users/login.html')
+
+    
+def logout_user(request):
+    logout(request)
+    return redirect('login')

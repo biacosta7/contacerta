@@ -9,6 +9,9 @@ from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
 from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
+
+from users.models import User
 
 def formatar_valor(valor):
     if valor is None:
@@ -164,11 +167,17 @@ def criar_obra(request):
     return render(request, 'locais/home.html') 
 
 @login_required
-def listar_obras(request):
-    obras = Obra.objects.all()
+def listar_obras(request, escritorio_id):
+    escritorio = get_object_or_404(Escritorio, id=escritorio_id)
+
+    # Pegando apenas as obras do escritório do usuário
+    obras = Obra.objects.filter(escritorio=escritorio)
+
     for obra in obras:
         obra.valor_inicial = formatar_valor(obra.valor_inicial)
-    return render(request, 'locais/home.html', {'obras': obras})
+
+    return render(request, 'locais/home.html', {'obras': obras, 'escritorio': escritorio})
+
 
 @login_required
 def editar_obra(request, obra_id):
@@ -231,7 +240,9 @@ def deletar_obra(request, obra_id):
 @login_required
 def detalhar_obra(request, id):
     obra = get_object_or_404(Obra, id=id)
-    despesas = Despesa.objects.filter(id_local=id).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
+    tipo_local_obra = ContentType.objects.get_for_model(Obra)
+
+    despesas = Despesa.objects.filter(tipo_local=tipo_local_obra, id_local=id).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
     
     for despesa in despesas:
         try:
@@ -314,15 +325,29 @@ def consultar_debito_mensal(request, id):
 
     return JsonResponse({"debito_mensal": formatar_valor(debito_mensal)})
 
-    
+
+
+
+# Escritório 
 @login_required
-def criar_escritorio(request):
+def acesso_hub(request, user_id):
+    escritorios = Escritorio.objects.all()
+
+    context = {
+        'user_id': user_id,
+        'escritorios': escritorios
+    }
+    return render(request, 'locais/hub.html', context)
+
+@login_required
+def criar_escritorio(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+
     if request.method == 'POST':
         nome = request.POST.get('nome')
         email = request.POST.get('email')
         telefone = request.POST.get('telefone')
         cnpj = request.POST.get('cnpj')
-        ceo = request.POST.get('ceo')
 
         if Escritorio.objects.filter(nome=nome).exists():
             messages.error(request, 'Já existe um escritório com esse nome.')
@@ -333,8 +358,8 @@ def criar_escritorio(request):
             email=email,
             telefone=telefone,
             cnpj=cnpj,
-            ceo=ceo
         )
+        escritorio.admins.add(user)
         escritorio.save()
         messages.success(request, 'Escritório cadastrado com sucesso.')
         return redirect('locais:home')
@@ -343,22 +368,50 @@ def criar_escritorio(request):
 
 
 @login_required
-def detalhar_escritorio(request, id=None):
+def detalhar_escritorio(request, escritorio_id=None):
     escritorio = Escritorio.objects.first()
     funcionarios = Funcionario.objects.all()
     bancos = Banco.objects.all()
     cartoes = Cartao.objects.all()
+    tipo_local_escritorio = ContentType.objects.get_for_model(Escritorio)
 
-    if escritorio:
-        escritorio_id = escritorio.id
-        escritorio = get_object_or_404(Escritorio, id=id)
+    if escritorio_id:
+        escritorio = get_object_or_404(Escritorio, id=escritorio_id)
+        escritorio.debito_mensal = escritorio.calcular_debito_geral()
+        escritorio.valor_total = escritorio.calcular_debito_mensal()
     else:
-        # Trate o caso em que não há nenhum escritório
-        escritorio_id = None
+        escritorio = None
+
+    despesas = Despesa.objects.filter(
+        tipo_local=tipo_local_escritorio,
+        id_local=escritorio_id
+    ).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
+    
+    for despesa in despesas:
+        try:
+            nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
+            parcelas = Parcela.objects.filter(nota_cartao=nota_cartao)
+            pagamentos = Pagamento.objects.filter(parcela__in=parcelas)
+
+            despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
+            despesa.pagamentos_parcela = pagamentos
+            despesa.valor_formatado = formatar_valor(despesa.valor)
+        except NotaCartao.DoesNotExist:
+            despesa.nota_cartao = None
+            despesa.pagamentos_parcela = None
+    
+    # Formata os valores das despesas
+    for despesa in despesas:
+        despesa.valor_formatado = formatar_valor(despesa.valor)
+        despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
+      
     
     return render(request, 'locais/detalhe_escritorio.html', {
         'escritorio': escritorio,
         'funcionarios': funcionarios,
         'bancos': bancos,
         'cartoes': cartoes,
+        'escritorio': escritorio
     })
+
+
