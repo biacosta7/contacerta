@@ -11,12 +11,13 @@ urlpatterns = [
     path('deletar/despesa/<int:despesa_id>/', views.deletar_despesa, name='deletar_despesa'),
 
     # Cartões
-    path('cartoes/', views.ver_cartoes, name='cartoes'),
+    path('cartoes/', views.fatura_mensal_cartoes, name='cartoes'),
+
     path('cartoes/criar/', views.criar_cartao, name='criar_cartao'),
     path('cartoes/editar/<int:cartao_id>/', views.editar_cartao, name='editar_cartao'),
     path('cartoes/deletar/<int:cartao_id>/', views.deletar_cartao, name='deletar_cartao'),
 
-    path('cartoes/fatura/', views.fatura_mensal_cartoes, name='fatura_mensal_cartoes'),
+    path('cartoes/editar-fatura/', views.editar_fatura, name='editar_fatura'),
 
     path('cartoes/pagar-fatura/<int:cartao_id>/', views.pagar_cartao, name='pagar_cartao'),
 

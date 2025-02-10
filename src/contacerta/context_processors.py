@@ -101,6 +101,7 @@ def cartoes(request):
             'id': fatura.id,
             'cartao_id': fatura.cartao.id,
             'valor': formatar_valor(fatura.valor),
+            'observacao': fatura.observacao,
             'data_pagamento': fatura.data_pagamento.strftime('%d/%m/%Y') if fatura.data_pagamento else None,
         }
         faturas_lista.append(faturas_dict)

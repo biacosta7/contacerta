@@ -202,6 +202,7 @@
                 infoModalCartao.classList.toggle('hidden');
                 let cartao = cartoes.find(c => c.id === cartaoId);
                 let faturasCartao = faturas.filter(f => f.cartao_id === cartaoId); // Filtra as faturas do cartão selecionado
+                console.log("faturasCartao: ", faturasCartao);
 
                 document.getElementById('cartaoPagarBtn').action = `/financeiro/cartoes/pagar-fatura/${cartaoId}/?next=${window.location.pathname}`;
                 
@@ -213,19 +214,37 @@
                 document.getElementById('quantdiasCartaoInfo').innerHTML = "<b>Quantidade de dias:</b> " + cartao.quant_dias;
                 document.getElementById('melhordiaCartaoInfo').innerHTML = "<b>Melhor dia de compra:</b> " + (cartao.melhor_dia || "-");
 
-                // **Atualizar a lista de faturas**
-                let faturasList = document.getElementById('faturasCartaoInfo');
-                faturasList.innerHTML = ""; // Limpa a lista antes de adicionar novos itens
+                // **Atualizar a tabela de faturas**
+                let tabelaFaturas = document.getElementById('tabelaFaturasBody');
+                tabelaFaturas.innerHTML = ""; // Limpa a tabela antes de adicionar novos itens
 
                 if (faturasCartao.length > 0) {
                     faturasCartao.forEach(fatura => {
-                        let listItem = document.createElement('li');
-                        listItem.classList.add("text-gray-700", "py-2", "border-b", "border-gray-300", "text-sm");
-                        listItem.innerHTML = `<b>${fatura.data_pagamento}:</b> ${fatura.valor}`;
-                        faturasList.appendChild(listItem);
+                        let row = document.createElement('tr');
+                        row.classList.add("bg-white", "border-b");
+            
+                        row.innerHTML = `
+                            <td scope="row" class="px-6 py-4 break-words whitespace-normal max-w-[300px]">
+                                ${fatura.data_pagamento}
+                            </td>
+                            <td class="px-6 py-4 min-w-[150px]">
+                                ${fatura.valor || '-'}
+                            </td>     
+                            <td class="px-6 py-4 break-words whitespace-normal max-w-[300px]">
+                                ${fatura.observacao || '-'}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="faturaModal('editarFatura', ${fatura.id})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
+                            </td>
+                        `;
+                        tabelaFaturas.appendChild(row);
                     });
                 } else {
-                    faturasList.innerHTML = "<li class='text-gray-500 py-2'>Nenhuma fatura encontrada.</li>";
+                    let emptyRow = document.createElement('tr');
+                    emptyRow.innerHTML = `
+                        <td colspan="4" class="px-6 py-4 text-center text-gray-500">Nenhuma fatura encontrada.</td>
+                    `;
+                    tabelaFaturas.appendChild(emptyRow);
                 }
         
             } else if (action === 'fecharInfoCartao') {
