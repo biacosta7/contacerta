@@ -649,10 +649,12 @@ def editar_fatura(request, fatura_id):
     fatura = get_object_or_404(Fatura, id=fatura_id)
     cartao_da_fatura = fatura.cartao
     data_fatura = fatura.data_pagamento
+    
 
     if request.method == 'POST':
-        data = request.POST.get('data_pagamento')
+        data_form = request.POST.get('data_pagamento')
         observacao = request.POST.get('observacao_fatura')
+        data = limpar_e_converter_data(data_form, request)
 
         if data:
             notas_cartao = NotaCartao.objects.filter(

@@ -17,7 +17,7 @@ urlpatterns = [
     path('cartoes/editar/<int:cartao_id>/', views.editar_cartao, name='editar_cartao'),
     path('cartoes/deletar/<int:cartao_id>/', views.deletar_cartao, name='deletar_cartao'),
 
-    path('cartoes/editar-fatura/', views.editar_fatura, name='editar_fatura'),
+    path('cartoes/editar-fatura/<int:fatura_id>/', views.editar_fatura, name='editar_fatura'),
 
     path('cartoes/pagar-fatura/<int:cartao_id>/', views.pagar_cartao, name='pagar_cartao'),
 

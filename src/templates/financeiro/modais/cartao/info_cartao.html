@@ -1,38 +1,69 @@
 <!-- Modal de informações de cartão -->
 <div class="hidden fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" id="modalInfoCartao">
-    <div class="bg-white px-14 py-12 rounded-[34px] w-full sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] max-w-[900px] max-h-[663px] overflow-y-auto">
-        <div class="flex space-x-8 justify-between items-center mb-4">
-            <h5 id="cartaoTituloInfo" class="text-2xl font-semibold text-center flex-grow ml-8">Cartão {{ cartao.nome }}</h5>
+    <div class="bg-white px-14 py-12 rounded-[34px] w-full sm:w-[90%] md:w-[80%] lg:w-[70%] xl:w-[60%] max-w-[900px] max-h-[700px] overflow-y-auto">
+        <div class="flex space-x-8 justify-between mb-4 border-b-2 mb-6">
+            <h5 id="cartaoTituloInfo" class="text-2xl font-semibold text-cleft flex-grow mb-3">Cartão {{ cartao.nome }}</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="cartaoModal('fecharInfoCartao')"></i>
         </div>
-        <div class="flex flex-col space-y-4">
-            <p id="nomeCartaoInfo" class="block text-sm font-medium text-gray-900"><b>Nome:</b> {{ cartao.nome }}</p>
-            <p id="bancoCartaoInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Banco:</b> {{ cartao.banco }}</p>
-            <p id="vencimentoCartaoInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Vencimento:</b> {{ cartao.vencimento }}</p>
-            <p id="finalCartaoInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Final:</b> {{ cartao.final }}</p>
-            <p id="quantdiasCartaoInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Quantidade de dias:</b> {{ cartao.quant_dias }}</p>
-            <p id="melhordiaCartaoInfo" class="block mb-2 text-sm font-medium text-gray-900"><b>Melhor dia de compra:</b> {{ cartao.melhor_dia }}</p>            
-        </div>    
-        <h3 class="mt-4 font-semibold my-3">Faturas</h3>
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-2">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-sm text-gray-700 border bg-gray-100">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 font-semibold">Data de pagamento</th>
-                        <th scope="col" class="px-6 py-3 font-semibold">Valor</th>
-                        <th scope="col" class="px-6 py-3 font-semibold">Observação</th>
-                        <th scope="col" class="px-6 py-3 font-semibold">
-                            <span class="sr-only">Editar</span>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="tabelaFaturasBody" class="text-sm text-gray-700">
-                    <!-- dados via javascript -->
-                </tbody>
-            </table>
+        <div class="mb-8">
+            <h3 class="mt-4 text-base font-semibold my-3"> Dados do cartão</h3>
+            
+            <div class="flex justify-between mb-4">
+                <div class="flex flex-col space-y-4 pl-2">
+                    <div>
+                        <span class="text-sm text-gray-400">Nome</span>
+                        <p id="nomeCartaoInfo" class="w-full "></p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-400">Banco</span>
+                        <p id="bancoCartaoInfo" class="w-full "></p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-400">Final</span>
+                        <p id="finalCartaoInfo" class="w-full "></p>
+                    </div>
+                </div> 
+        
+                <div class="flex flex-col space-y-4 pr-20">  
+                    <div>
+                        <span class="text-sm font-medium text-gray-400">Vencimento</span>
+                        <p id="vencimentoCartaoInfo" class="w-full "></p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-400">Quantidade de dias para o melhor dia</span>
+                        <p id="quantdiasCartaoInfo" class="w-full "></p>
+                    </div>
+                    <div>
+                        <span class="text-sm font-medium text-gray-400">Melhor dia de compra</span>
+                        <p id="melhordiaCartaoInfo" class="w-full "></p>
+                    </div>
+                </div>
+            </div>    
         </div>
 
-        
+        <div class="mb-4">
+            <h3 class="mt-4 text-base font-semibold my-3"> Histórico de Faturas Pagas</h3>
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg my-2">
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead class="text-sm text-gray-700 border bg-gray-100">
+                        <tr id="trFaturas">
+                            <th scope="col" class="px-6 py-3 font-semibold">Data de pagamento</th>
+                            <th scope="col" class="px-6 py-3 font-semibold">Valor</th>
+                            <th scope="col" class="px-6 py-3 font-semibold">Observação</th>
+                            <th scope="col" class="px-6 py-3 font-semibold">
+                                <span class="sr-only">Editar</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaFaturasBody" class="text-sm text-gray-700">
+                        <!-- dados via javascript -->
+                    </tbody>
+                </table>
+            </div>
+
+            {% include 'financeiro/modais/cartao/editar_fatura.html' %}
+        </div>
+
         <form id="cartaoPagarBtn" action="" method=POST>
             {% csrf_token %}
             <button type="submit" 
