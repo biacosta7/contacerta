@@ -2,13 +2,16 @@ import locale
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from financeiro.models import Banco, Cartao, Funcionario, MaoDeObra, NotaCartao
-from locais.models import Obra, Escritorio, Despesa
+from financeiro.models import Banco, Cartao, Funcionario, MaoDeObra, NotaCartao, Pagamento, Parcela
+from locais.models import AcessoEscritorio, Obra, Escritorio, Despesa
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from decimal import Decimal, InvalidOperation
 from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
+
+from users.models import User
 
 def formatar_valor(valor):
     if valor is None:
@@ -164,11 +167,17 @@ def criar_obra(request):
     return render(request, 'locais/home.html') 
 
 @login_required
-def listar_obras(request):
-    obras = Obra.objects.all()
+def listar_obras(request, escritorio_id):
+    escritorio = get_object_or_404(Escritorio, id=escritorio_id)
+
+    # Pegando apenas as obras do escritório do usuário
+    obras = Obra.objects.filter(escritorio=escritorio)
+
     for obra in obras:
         obra.valor_inicial = formatar_valor(obra.valor_inicial)
-    return render(request, 'locais/home.html', {'obras': obras})
+
+    return render(request, 'locais/home.html', {'obras': obras, 'escritorio': escritorio})
+
 
 @login_required
 def editar_obra(request, obra_id):
@@ -231,12 +240,16 @@ def deletar_obra(request, obra_id):
 @login_required
 def detalhar_obra(request, id):
     obra = get_object_or_404(Obra, id=id)
-    despesas = Despesa.objects.filter(id_local=id).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
+    tipo_local_obra = ContentType.objects.get_for_model(Obra)
+
+    despesas = Despesa.objects.filter(tipo_local=tipo_local_obra, id_local=id).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
     
     for despesa in despesas:
         try:
             nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
-            pagamentos = nota_cartao.pagamentos.all()
+            parcelas = Parcela.objects.filter(nota_cartao=nota_cartao)
+            pagamentos = Pagamento.objects.filter(parcela__in=parcelas)
+
             despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
             despesa.pagamentos_parcela = pagamentos
             despesa.valor_formatado = formatar_valor(despesa.valor)
@@ -262,7 +275,6 @@ def detalhar_obra(request, id):
     porcentagem_orcamento_usado = 100 - ((orcamento_usado / obra.valor_total) * 100) if obra.valor_total else 0
 
     porcentagem_orcamento_usado = f"{porcentagem_orcamento_usado:.2f}"
-    print(f"ORCAMENTO: {porcentagem_orcamento_usado}" )
 
     orcamento_usado = formatar_valor(orcamento_usado)
 
@@ -313,51 +325,172 @@ def consultar_debito_mensal(request, id):
 
     return JsonResponse({"debito_mensal": formatar_valor(debito_mensal)})
 
-    
+
+
+
+# Escritório 
 @login_required
-def criar_escritorio(request):
+def acesso_hub(request, user_id):
+    acessos = AcessoEscritorio.objects.filter(user_receptor=user_id, status='pendente')
+    escritorios = Escritorio.objects.filter(membros=request.user)
+
+    context = {
+        'user_id': user_id,
+        'escritorios': escritorios,
+        'acessos': acessos
+    }
+    return render(request, 'locais/hub.html', context)
+
+@login_required
+def criar_escritorio(request, user_id):
+    next_url = request.GET.get('next')
+    user = get_object_or_404(User, id=user_id)
+
     if request.method == 'POST':
         nome = request.POST.get('nome')
         email = request.POST.get('email')
         telefone = request.POST.get('telefone')
         cnpj = request.POST.get('cnpj')
-        ceo = request.POST.get('ceo')
 
         if Escritorio.objects.filter(nome=nome).exists():
             messages.error(request, 'Já existe um escritório com esse nome.')
-            return redirect('locais:home')
+            return redirect(next_url if next_url else 'locais:hub', user_id=user_id)
 
         escritorio = Escritorio.objects.create(
             nome=nome,
             email=email,
             telefone=telefone,
             cnpj=cnpj,
-            ceo=ceo
         )
+        escritorio.admins.add(user)
+        escritorio.membros.add(user)
         escritorio.save()
         messages.success(request, 'Escritório cadastrado com sucesso.')
-        return redirect('locais:home')
+        return redirect('locais:home', escritorio.id)
 
-    return redirect('locais:home')
+    return redirect(next_url if next_url else 'locais:hub', user_id=user_id)
+
+@login_required
+def enviar_acesso_escritorio(request, escritorio_id):
+    next_url = request.GET.get('next')
+
+    admin = request.user
+    escritorio = get_object_or_404(Escritorio, id=escritorio_id)
+
+    # Verifica se o usuário logado é admin do escritório
+    if admin not in escritorio.admins.all():
+        messages.error(request, 'Você não tem permissão para conceder acesso a este escritório.')
+        return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
+
+    if request.method == 'POST':
+        receptor_email = request.POST.get('receptor')
+
+        if not receptor_email:
+            messages.error(request, 'Por favor, informe um e-mail válido.')
+            return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
+
+        user_receptor = User.objects.filter(email=receptor_email).first()
+
+        if not user_receptor:
+            messages.error(request, f'O email "{receptor_email}" não está cadastrado no sistema.')
+            return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
+
+        cargo = request.POST.get('cargo')
+
+        AcessoEscritorio.objects.create(
+            user_receptor=user_receptor,
+            cargo=cargo,
+            escritorio=escritorio,
+            admin=admin,
+        )
+
+        messages.success(request, 'Acesso enviado com sucesso.')
+        return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
+
+    return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
 
 
 @login_required
-def detalhar_escritorio(request, id=None):
+def responder_acesso_escritorio(request, acesso_id, escritorio_id):
+    next_url = request.GET.get('next')
+    acesso = get_object_or_404(AcessoEscritorio, id=acesso_id)
+    escritorio = get_object_or_404(Escritorio, id=escritorio_id)
+    
+    if acesso.user_receptor == request.user:
+        if request.method == 'POST':
+            status_form = request.POST.get('status')
+
+            if status_form == 'aprovado':
+                acesso.status = 'aprovado'
+
+                escritorio.membros.add(acesso.user_receptor)
+
+                if acesso.cargo == 'ADM':
+                    escritorio.admins.add(acesso.user_receptor)
+                elif acesso.cargo == 'FUNC':
+                    escritorio.funcionarios.add(acesso.user_receptor)
+
+                acesso.save()
+                escritorio.save()
+
+                messages.success(request, 'Acesso concedido com sucesso.')
+                return redirect('locais:home', escritorio_id=escritorio_id)
+                
+            elif status_form == 'rejeitado':
+                acesso.status = 'rejeitado'
+                acesso.save()
+                messages.info(request, 'Acesso rejeitado com sucesso.')
+            return redirect(next_url) if next_url else redirect('locais:hub', user_id=request.user.id)
+            
+
+    return redirect(next_url) if next_url else redirect('locais:hub', user_id=request.user.id)
+
+
+@login_required
+def detalhar_escritorio(request, escritorio_id=None):
     escritorio = Escritorio.objects.first()
     funcionarios = Funcionario.objects.all()
     bancos = Banco.objects.all()
     cartoes = Cartao.objects.all()
+    tipo_local_escritorio = ContentType.objects.get_for_model(Escritorio)
 
-    if escritorio:
-        escritorio_id = escritorio.id
-        escritorio = get_object_or_404(Escritorio, id=id)
+    if escritorio_id:
+        escritorio = get_object_or_404(Escritorio, id=escritorio_id)
+        escritorio.debito_mensal = escritorio.calcular_debito_geral()
+        escritorio.valor_total = escritorio.calcular_debito_mensal()
     else:
-        # Trate o caso em que não há nenhum escritório
-        escritorio_id = None
+        escritorio = None
+
+    despesas = Despesa.objects.filter(
+        tipo_local=tipo_local_escritorio,
+        id_local=escritorio_id
+    ).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
+    
+    for despesa in despesas:
+        try:
+            nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
+            parcelas = Parcela.objects.filter(nota_cartao=nota_cartao)
+            pagamentos = Pagamento.objects.filter(parcela__in=parcelas)
+
+            despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
+            despesa.pagamentos_parcela = pagamentos
+            despesa.valor_formatado = formatar_valor(despesa.valor)
+        except NotaCartao.DoesNotExist:
+            despesa.nota_cartao = None
+            despesa.pagamentos_parcela = None
+    
+    # Formata os valores das despesas
+    for despesa in despesas:
+        despesa.valor_formatado = formatar_valor(despesa.valor)
+        despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
+      
     
     return render(request, 'locais/detalhe_escritorio.html', {
         'escritorio': escritorio,
         'funcionarios': funcionarios,
         'bancos': bancos,
         'cartoes': cartoes,
+        'escritorio': escritorio
     })
+
+

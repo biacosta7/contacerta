@@ -5,26 +5,85 @@
 {% block title %}Cartões{% endblock %}
 {% block content %}
 <div class="flex border items-center justify-between p-4 py-6">
-<a href={% url 'locais:home' %}><i class="fa-solid fa-arrow-left fa-xl p-3 pt-3.5 pb-3.5 ml-4 flex-grow-0"></i></a>
-    <h1 class="text-3xl font-semibold">Cartões</h1>
-<!-- Ícone de opções no canto direito -->
-<i class="fa-solid fa-ellipsis-vertical fa-xl p-3 pt-3.5 pb-3.5 rounded-[9px] mr-4 flex-grow-0"></i>
+<a href={% url 'financeiro:cartoes' %}><i class="fa-solid fa-arrow-left fa-xl p-3 pt-3.5 pb-3.5 ml-4 flex-grow-0"></i></a>
+    <div>
+        <h1 class="text-3xl font-semibold text-center">Cartões</h1>
+    </div>
+<!-- Ícone de home no canto direito -->
+<a href={% url 'locais:home'%}><i class="fa-solid fa-house fa-xl p-3 pt-3.5 pb-3.5 rounded-[9px] mr-4 flex-grow-0"></i></a>
 </div>
-
 <div class="flex flex-row p-4 pt-0">
     <div class="p-4 w-3/4">
-
+        
         <div class="flex justify-between bg-gray-800 text-black rounded-[9px] border px-12 py-12 mt-2">
+            
             <div class="flex flex-col">
                 <h1 class="text-base text-white font-medium mb-2">Fatura do mês <i class="fa-solid fa-circle-question ml-1" style="color:rgb(163, 163, 163);"></i></h1> 
-                <span class="text-4xl text-white font-bold mb-1">{{ total_fatura_geral }} </span> <!--{{ obra.valor_total|default:"0" }}-->
+                <span class="text-4xl text-white font-bold mb-1">{{ total_fatura_mensal }} </span> 
+
+                {% if ano_mes_selecionado %}<span class="text-base text-green-400 font-normal mb-1">({{ ano_mes_selecionado }})</span>{% endif %}
+                {% if cartao_selecionado %}<span class="text-base text-green-400 font-normal mb-2">Cartão: {{ cartao_selecionado.final }} - {{ cartao_selecionado.nome }}</span>{% endif %}
             </div>
-            <div class="flex items-center">
-                <button id="" class="text-base text-white bg-green-600 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="">
-                    Ver detalhes <i class="fa-solid fa-arrow-right-long ml-1" style="color: #ffffff;"></i>
-                </button>   
-            </div>
+            <form method="GET" action="{% url 'financeiro:cartoes' %}">
+                <input type="hidden" name="ano_mes" value=""> <!-- Input escondido para armazenar a seleção do mês -->
+                <input type="hidden" name="cartao" value=""> <!-- Input escondido para armazenar o cartão selecionado -->
+            
+                <div class="flex flex-col space-y-4 items-center">
+                    <!-- Dropdown para seleção de Mês -->
+                    <div class="relative group">
+                        <button type="button" class="dropdown-button flex items-center justify-between w-60 px-6 py-3 rounded-[9px] text-sm font-semibold hover:bg-gray-600 hover:text-[#edf0e9] text-white bg-green-600 shadow-sm focus:outline-none">
+                            <div>
+                                <i class="fa-solid fa-calendar" style="color: #ffffff;"></i>
+                                <span class="text-base text-left ml-2">
+                                    Alterar mês
+                                </span> <!-- Texto atualizado com a seleção -->
+                            </div>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+            
+                        <div id="dropdown-menu" class="hidden dropdownMenu w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                            <div class="h-40 overflow-y-auto">
+                                {% for mes in meses %}
+                                    <label class="{% if ano_mes_selecionado == mes %} bg-green-500 {% endif %} block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md" data-value="{{ mes }}">
+                                        <span class="text-base font-normal">{{ mes }}</span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Dropdown para Filtrar Cartão -->
+                    <div class="relative group">
+                        <button type="button" class="cartao-dropdown-button flex items-center justify-between w-60 px-6 py-3 rounded-[9px] text-sm font-semibold hover:bg-gray-600 hover:text-[#edf0e9] text-white bg-green-600 shadow-sm focus:outline-none">
+                            <div>
+                                <i class="fa-solid fa-credit-card" style="color: #ffffff;"></i>
+                                <span class="text-base text-left ml-2">
+                                    Filtrar cartão
+                                </span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </button>
+            
+                        <div id="cartao-dropdown-menu" class="hidden dropdownMenu w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                            <div class="h-max-40 overflow-y-auto">
+                                {% for cartao in cartoes %}
+                                    <label class="{% if cartao_selecionado.id == cartao.id %} bg-green-500 {% endif %} block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md" data-value="{{ cartao.id }}">
+                                        <span class="text-base font-normal">{{ cartao.final }} - {{ cartao.nome }}</span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Botão de Submissão -->
+                    <button type="submit" class="w-60 text-base text-white bg-gray-600 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]">
+                        <i class="fa-solid fa-filter mr-1" style="color: #ffffff;"></i> Aplicar Filtros
+                    </button>
+                </div>
+            </form>
+            
         </div>
+        {% include 'financeiro/modais/cartao/faturas_table.html' %}
         <div class="flex flex-col justify-between bg-gray-50 text-black rounded-[9px] border-2 px-6 py-12 mt-2">
             <div class="flex space-x-2 items-center mb-4">
                 <h1 class="text-2xl font-medium">Cartões</h1>
@@ -190,6 +249,9 @@
 {% include 'financeiro/modais/cartao/deletar_cartao.html' %}
 {% include 'financeiro/modais/cartao/info_cartao.html' %}
 {% include 'financeiro/modais/criar_banco.html' %}
+{% include 'financeiro/modais/despesa/info_despesa.html' %}
+{% include 'financeiro/modais/despesa/editar_despesa.html' %}
+{% include 'financeiro/modais/despesa/deletar_despesa.html' %}
 
 <div>
 </div>
@@ -231,13 +293,6 @@
 
     }
 
-    $(document).ready(function () {
-        $('#vencimento').datepicker({
-            dateFormat: 'dd/mm/yy',
-            changeMonth: true,     
-            changeYear: true     
-        });
-    });
 
     const container = document.getElementById('cartoes-container');
     const nextBtn = document.getElementById('next-btn');
@@ -259,6 +314,47 @@
             container.style.transform = `translateX(-${currentPosition}px)`;
         }
     });
+
+
+    // Função para alternar o estado do dropdown
+    function toggleDropdown(button, menu) {
+        menu.classList.toggle('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        function setupDropdown(buttonClass, menuId, hiddenInputName) {
+            const dropdownButton = document.querySelector(buttonClass);
+            const dropdownMenu = document.querySelector(menuId);
+            const hiddenInput = document.querySelector(`input[name="${hiddenInputName}"]`);
+            
+            dropdownButton.addEventListener('click', (event) => {
+                dropdownMenu.classList.toggle('hidden');
+                event.stopPropagation();
+            });
+    
+            dropdownMenu.querySelectorAll('label').forEach((label) => {
+                label.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const selectedValue = label.getAttribute('data-value');
+                    hiddenInput.value = selectedValue;
+                    dropdownButton.querySelector('span').innerText = selectedValue;
+                    dropdownMenu.classList.add('hidden');
+                });
+            });
+    
+            document.addEventListener('click', (event) => {
+                if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                    dropdownMenu.classList.add('hidden');
+                }
+            });
+        }
+    
+        // Configurar os dropdowns
+        setupDropdown('.dropdown-button', '#dropdown-menu', 'ano_mes');
+        setupDropdown('.cartao-dropdown-button', '#cartao-dropdown-menu', 'cartao');
+    });
+    
+    
 
 </script>
 {% endblock content %}

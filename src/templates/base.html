@@ -42,6 +42,7 @@
     <script>
         const obras = JSON.parse('{{ obras_json|safe }}');
         const cartoes = JSON.parse('{{ cartoes_json|safe }}');
+        const faturas = JSON.parse('{{ faturas_json|safe }}');
         console.log(obras);
 
         function ToBRCurrency(ElementID, valor){
@@ -189,6 +190,62 @@
             
         }
 
+        // modal de editar fatura
+        function faturaModal(action, faturaId) {
+            let faturaSelecionada = faturas.find(f => f.id === faturaId);
+            
+            if (!faturaSelecionada) {
+                console.error("Fatura não encontrada.");
+                return;
+            }
+        
+            if (action === 'editarFatura') {
+                // Remove a classe de destaque de qualquer outra linha
+                document.querySelectorAll("#tabelaFaturasBody tr").forEach(row => {
+                    row.classList.remove("bg-green-300");
+                });
+
+                // Encontra e destaca a linha correspondente
+                let row = document.querySelector(`#tabelaFaturasBody tr[data-fatura-id="${faturaId}"]`);
+                if (row) {
+                    row.classList.add("bg-green-300");
+                }
+
+                // Preenche os campos do formulário com os dados da fatura selecionada
+                document.getElementById('dataFaturaEditar').value = faturaSelecionada.data_pagamento || '';
+                document.getElementById('obsFaturaEditar').value = faturaSelecionada.observacao || '';
+        
+                // Atualiza a ação do formulário para enviar os dados corretamente
+                document.getElementById('formEditarFatura').action = `/financeiro/cartoes/editar-fatura/${faturaId}/?next=${window.location.pathname}`;
+        
+                // Exibe os campos de edição dentro do modal de informações do cartão
+                document.getElementById('formEditarFatura').classList.remove('hidden');
+
+                 // Adiciona o evento de clique ao botão "Cancelar"
+                document.getElementById('cancelarEdicaoFatura').addEventListener('click', cancelarEdicaoFatura);
+
+            }
+        }
+
+        function cancelarEdicaoFatura() {
+            // Oculta o formulário de edição
+            document.getElementById('formEditarFatura').classList.add('hidden');
+            
+            // Remove a classe de destaque de qualquer linha
+            document.querySelectorAll("#tabelaFaturasBody tr").forEach(row => {
+                row.classList.remove("bg-green-300");
+            });
+        }
+        
+        
+        function salvarEdicaoFatura(event) {
+            event.preventDefault(); // Evita o reload da página
+            
+            let form = document.getElementById('formEditarFatura');
+            form.submit(); // Envia o formulário com os novos dados
+        }
+        
+
         // modal de editar e excluir cartao
         function cartaoModal(action, id) {
             const infoModalCartao = document.getElementById('modalInfoCartao');
@@ -200,16 +257,54 @@
             if (action === 'infoCartao') {
                 infoModalCartao.classList.toggle('hidden');
                 let cartao = cartoes.find(c => c.id === cartaoId);
+                let faturasCartao = faturas.filter(f => f.cartao_id === cartaoId); // Filtra as faturas do cartão selecionado
+                console.log("faturasCartao: ", faturasCartao);
 
                 document.getElementById('cartaoPagarBtn').action = `/financeiro/cartoes/pagar-fatura/${cartaoId}/?next=${window.location.pathname}`;
+
                 
-                document.getElementById('cartaoTituloInfo').innerHTML = "Cartão " + cartao.nome;
-                document.getElementById('nomeCartaoInfo').innerHTML = "<b>Nome:</b> " + cartao.nome;
-                document.getElementById('bancoCartaoInfo').innerHTML = "<b>Banco:</b> " + cartao.banco;
-                document.getElementById('vencimentoCartaoInfo').innerHTML = "<b>Vencimento (dia):</b> " + cartao.vencimento;
-                document.getElementById('finalCartaoInfo').innerHTML = "<b>Final:</b> " + cartao.final;
-                document.getElementById('quantdiasCartaoInfo').innerHTML = "<b>Quantidade de dias:</b> " + cartao.quant_dias;
-                document.getElementById('melhordiaCartaoInfo').innerHTML = "<b>Melhor dia de compra:</b> " + (cartao.melhor_dia || "-");
+                document.getElementById('cartaoTituloInfo').innerHTML =  "Cartão " + cartao.nome;
+                document.getElementById('nomeCartaoInfo').innerHTML = cartao.nome;
+                document.getElementById('bancoCartaoInfo').innerHTML = cartao.banco;
+                document.getElementById('vencimentoCartaoInfo').innerHTML = cartao.vencimento;
+                document.getElementById('finalCartaoInfo').innerHTML = cartao.final;
+                document.getElementById('quantdiasCartaoInfo').innerHTML =  cartao.quant_dias;
+                document.getElementById('melhordiaCartaoInfo').innerHTML = (cartao.melhor_dia || "-");
+
+                // tabela de faturas
+                let tabelaFaturas = document.getElementById('tabelaFaturasBody');
+                tabelaFaturas.innerHTML = ""; // Limpa a tabela antes de adicionar novos itens
+
+                if (faturasCartao.length > 0) {
+                    faturasCartao.forEach(fatura => {
+                        let row = document.createElement('tr');
+                        row.classList.add("bg-white", "border-b");
+                        row.setAttribute("data-fatura-id", fatura.id); // Adiciona um identificador único
+                        
+                        row.innerHTML = `
+                            <td scope="row" class="px-6 py-4 break-words whitespace-normal max-w-[300px]">
+                                ${fatura.data_pagamento}
+                            </td>
+                            <td class="px-6 py-4 min-w-[150px]">
+                                ${fatura.valor || '-'}
+                            </td>     
+                            <td class="px-6 py-4 break-words whitespace-normal max-w-[300px]">
+                                ${fatura.observacao || '-'}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="faturaModal('editarFatura', ${fatura.id})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
+                            </td>
+                        `;
+                        tabelaFaturas.appendChild(row);
+                    });
+                } else {
+                    let emptyRow = document.createElement('tr');
+                    emptyRow.innerHTML = `
+                        <td colspan="4" class="px-6 py-4 text-center text-gray-500">Nenhuma fatura encontrada.</td>
+                    `;
+                    tabelaFaturas.appendChild(emptyRow);
+                }
+
         
             } else if (action === 'fecharInfoCartao') {
                 infoModalCartao.classList.add('hidden');

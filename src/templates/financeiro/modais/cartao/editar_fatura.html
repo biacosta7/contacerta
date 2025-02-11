@@ -1,0 +1,40 @@
+<form method="POST" id="formEditarFatura" action="" class="px-6 space-y-8 hidden">
+    {% csrf_token %}
+
+    <div class="flex space-x-4 justify-between w-full">
+        <!-- Data de Pagamento -->
+        <div class="flex-1">
+            <label for="dataFaturaEditar" class="block mb-2 text-sm font-medium text-gray-900">Data de pagamento</label>
+            <input
+                type="text"
+                id="dataFaturaEditar"
+                name="data_pagamento"
+                class="bg-gray-100 w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#8ABF17] focus:border-[#8ABF17] py-2 px-3"
+            />
+        </div>
+
+        <!-- Observação -->
+        <div class="flex-1">
+            <label for="obsFaturaEditar" class="block mb-2 text-sm font-medium text-gray-900">Observação</label>
+            <textarea id="obsFaturaEditar" name="observacao_fatura" rows="4" class="bg-gray-100 block p-2.5 w-full text-sm text-gray-700 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"></textarea>
+        </div>
+    </div>
+
+    <div class="flex justify-end space-x-4">
+        <button id="cancelarEdicaoFatura" type="button" class="text-gray-600 bg-gray-200 px-4 py-2 rounded-lg hover:bg-gray-300">Cancelar</button>
+
+        <button type="submit" onclick="salvarEdicaoFatura(event)" class="text-white bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg">
+            Salvar
+        </button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+        $('#dataFaturaEditar').datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,     
+            changeYear: true     
+        });
+    });
+</script>

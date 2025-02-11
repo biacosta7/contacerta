@@ -1,0 +1,124 @@
+
+<div class="flex space-x-4 justify-between mb-4">
+    <div class="relative shadow-md rounded-lg w-full despesa_table">
+        
+        <div class="overflow-y-auto max-h-96">
+            
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 border">
+                
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">Vencimento</th>
+                        <th scope="col" class="px-6 py-3">Descrição</th>
+                        <th scope="col" class="px-6 py-3">Valor</th>
+                        <th scope="col" class="px-6 py-3">Status</th>
+                        <th scope="col" class="px-6 py-3">Cartão</th>
+                        <th scope="col" class="px-6 py-3">Parcela</th>
+                        <th scope="col" class="px-6 py-3">Observação</th>
+                        <th scope="col" class="px-6 py-3">
+                            <span class="sr-only">Editar</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% if despesas_cartao_mes or despesas_filtro %}
+                        {% for despesa in despesas_filtro|default:despesas_cartao_mes %}
+                            <tr class="bg-white border-b">
+                                <td class="px-6 py-4">
+                                    {% if despesa.parcela_do_mes %}
+                                        {% with parcela=despesa.parcela_do_mes.0 %}
+                                            {{ parcela.data_vencimento|default:'-' }}
+                                        {% endwith %}
+                                    {% else %}
+                                        <p>-</p>
+                                    {% endif %}
+                                </td>
+                                
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 break-words whitespace-normal max-w-[300px]">
+                                    <a id="infoDespesaBtn" href="#" onclick="despesaModal('infoDespesa', {{ despesa.id }})">
+                                        {{ despesa.nome }}
+                                    </a>                                                             
+                                </th>
+                                <td class="px-6 py-4 min-w-[150px]">
+                                    {% if despesa.parcela_do_mes %}
+                                        {% with parcela=despesa.parcela_do_mes.0 %}
+                                            {{ parcela.valor_formatado|default:'-' }}
+                                        {% endwith %}
+                                    {% else %}
+                                        <p>-</p>
+                                    {% endif %}
+                                </td>     
+                                
+                                <td class="px-6 py-4  min-w-[140px]">
+                                    <form action="{% url 'financeiro:atualizar_status' despesa_id=despesa.id %}?next={{ request.path }}" method=POST>
+                                        {% csrf_token %}
+                                        {% if despesa.status == 'a_pagar' %}
+                                        <button type="submit" 
+                                                class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-4 py-2 text-center me-2 mb-2">
+                                            À pagar
+                                        </button>
+                                        
+                                        {% elif despesa.status == 'pago' %}
+                                            <button type="submit" 
+                                                    class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2 text-center me-2 mb-2">
+                                                Pago
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                                
+                                <td class="px-6 py-4">
+                                    {{ despesa.notacartao.cartao.nome }}
+                                </td>
+
+                                
+                                <td class="px-6 py-4">
+                                    {% if despesa.parcela_do_mes %}
+                                        {% with parcela=despesa.parcela_do_mes.0 %}
+                                            {{ parcela.numero }}/{{ despesa.notacartao.quant_parcelas }}
+                                        {% endwith %}
+                                    {% else %}
+                                        <p>Sem parcela</p>
+                                    {% endif %}
+                                </td>
+                                                          
+                                
+
+                                <td class="px-6 py-4">
+                                    {{ despesa.observacao|default:'-' }}
+                                </td>
+                                
+                                <td class="px-6 py-4 text-right">
+                                    <button onclick="despesaModal('editarDespesa', {{ despesa.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                            <span>Nenhuma despesa.</span>                                                          
+                        </th>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+{% comment %} {% include "locais/modais/despesa_filtro.html" %} {% endcomment %}
+<style>
+    .despesa_table.darkened {
+        position: relative;
+    }
+    
+    .despesa_table.darkened::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 20;
+        background-color: rgba(0, 0, 0, 0.5); /* Ajuste a opacidade conforme necessário */
+        border-radius: 8px; /* Mantém o design arredondado */
+    }
+</style>    

@@ -1,0 +1,73 @@
+
+<!-- Modal de Escritorio section -->
+<div class="flex space-x-4 items-left justify-between my-6">
+    <h1 class="ml-2 text-3xl font-semibold">Escritório {{ escritorio.nome|capfirst }}</h1>
+</div>
+<form method="POST" id="formEditarEscritorio" action="" class="p-6">
+    {% csrf_token %}
+    <!-- Campo oculto para ID da escritorio -->
+    <input type="hidden" id="escritorioId" name="escritorio_id" value="">
+
+    <!-- Nome da Escritorio -->
+    <div class="mb-4">
+        <label for="nome" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
+        <input type="text" value="{{ escritorio.nome|capfirst }}" id="nomeEscritorio" name="nome" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+    </div>
+
+    <!-- Email da Escritorio -->
+    <div class="mb-4">
+        <label for="email" class="block mb-2 text-sm font-medium text-gray-900">E-mail</label>
+        <input type="email" value="{{ escritorio.email }}" id="emailEscritorio" name="email" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+    </div>
+
+    <div class="mb-4">
+        <label for="telefone" class="block mb-2 text-sm font-medium text-gray-900">Telefone</label>
+        <input type="text" value="{{ escritorio.telefone }}" id="telefoneEscritorio" name="telefone" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+    </div>
+
+    <div class="mb-4">
+        <label for="cnpj" class="block mb-2 text-sm font-medium text-gray-900">CNPJ</label>
+        <input type="text" value="{{ escritorio.cnpj }}" id="cnpjEscritorio" name="cnpj" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>
+    </div>
+
+    <div class="flex mt-8">
+        <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="">Cancelar</button>
+        <button type="submit" class="px-4 py-2 bg-[#287F71] text-white rounded-lg hover:bg-green-700">Salvar Edição</button>
+    </div>
+</form>
+
+{% comment %} APENAS SE USER==ADMIN ESCRITORIO {% endcomment %}
+<div class="mt-8 py-8 border-t-2">
+    <h1 class="ml-4 text-xl font-semibold">Adicionar novo funcionário/administrador ao sistema </h1>
+    <form method="POST" id="formEnviarAcessoEscritorio" action="{% url 'locais:enviar_acesso_escritorio' escritorio_id=escritorio.id %}?next={{ request.path }}" class="p-6">
+        {% csrf_token %}
+        <!-- Campo oculto para ID da escritorio -->
+        <input type="hidden" id="escritorioId" name="escritorio_id" value="">
+
+        <!-- Receptor (User) -->
+        <div class="mb-4">
+            <label for="receptor" class="block mb-2 text-sm font-semibold text-gray-900">Receptor</label>
+            <input type="receptor" id="nomeEscritorio" name="receptor" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" placeholder="Digite o email do receptor" required>
+        </div>
+
+        <!-- Cargo -->
+        <div class="mb-8">
+            <label for="receptor" class="block mt-8 mb-2 text-sm font-semibold text-gray-900">Cargo do Receptor</label>
+            <div class="flex flex-col space-y-2">
+                <div class="">
+                    <input checked id="cargo_funcionario" type="radio" value="FUNC" name="cargo" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 ">
+                    <label for="cargo_funcionario" class="w-full py-4 ms-2 text-sm font-medium">Funcionário</label>
+                </div>
+                <div class="">
+                    <input id="cargo_adm" type="radio" value="ADM" name="cargo" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 ">
+                    <label for="cargo_adm" class="w-full py-4 ms-2 text-sm font-medium">Administrador</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex">
+            <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-[#287F71] text-white rounded-lg hover:bg-green-700">Enviar Acesso</button>
+        </div>
+    </form>
+</div>

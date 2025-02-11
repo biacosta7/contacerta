@@ -74,13 +74,8 @@ def bancos(request):
     }
 
 def cartoes(request):
-    # Obtém todos os cartões com os dados necessários (evitando consultas adicionais)
     cartoes = Cartao.objects.select_related('banco').all()
-
-    # notas_cartao = NotaCartao.objects.select_related('cartao__banco').all()
-
-    # for nota_cartao in notas_cartao:
-    #     nota_cartao.atualizar_proximo_pagamento()
+    faturas = Fatura.objects.select_related('cartao').all()
 
     cartoes_lista = []
     for cartao in cartoes:
@@ -100,8 +95,22 @@ def cartoes(request):
 
         cartoes_lista.append(cartao_dict)
 
+    faturas_lista = []
+    for fatura in faturas:
+        faturas_dict = {
+            'id': fatura.id,
+            'cartao_id': fatura.cartao.id,
+            'valor': formatar_valor(fatura.valor),
+            'observacao': fatura.observacao,
+            'data_pagamento': fatura.data_pagamento.strftime('%d/%m/%Y') if fatura.data_pagamento else None,
+        }
+        faturas_lista.append(faturas_dict)
+
+
     # Serializa os dados para JSON
     cartoes_json = json.dumps(cartoes_lista, cls=DjangoJSONEncoder)
+    faturas_json = json.dumps(faturas_lista, cls=DjangoJSONEncoder)
+
 
     # Verifica se há busca no request
     query = request.GET.get('search')
@@ -113,6 +122,7 @@ def cartoes(request):
         'cartoes': cartoes,
         'cartoes_json': cartoes_json, 
         'cartao_busca': cartao_busca,
+        'faturas_json': faturas_json,
     }
 
 
@@ -139,24 +149,6 @@ def despesas(request):
     mao_de_obra = MaoDeObra.objects.all().values(
         'id', 'despesa_id', 'categoria', 'funcionario_id', 'valor_reembolso'
     )
-
-    # informações sobre os pagamentos das parcelas
-    pagamentos = Pagamento.objects.all().values('nota_cartao_id', 'data_pagamento', 'valor_pago')
-    pagamentos_dict = {}
-    for pagamento in pagamentos:
-        nota_cartao_id = pagamento['nota_cartao_id']
-        if nota_cartao_id not in pagamentos_dict:
-            pagamentos_dict[nota_cartao_id] = []
-        pagamentos_dict[nota_cartao_id].append({
-            'data_pagamento': format_date(pagamento['data_pagamento']),
-            'valor_pago': formatar_valor(pagamento['valor_pago'])
-        })
-
-    # Adiciona os pagamentos ao contexto
-    for nota in nota_cartao:
-        if nota.get('id') in pagamentos_dict:
-            nota['pagamentos'] = pagamentos_dict[nota['id']]
-
 
     return {
         'nota_cartao_json': json.dumps(list(nota_cartao), cls=DjangoJSONEncoder),

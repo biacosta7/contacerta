@@ -7,10 +7,13 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from locais.models import Obra, Escritorio
-from locais.views import calcular_range_meses, formatar_valor
-from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco
+from locais.views import calcular_range_meses, filtrar_despesas, formatar_valor
+from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Fatura, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco, Pagamento, Parcela
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
+from dateutil.relativedelta import relativedelta
+from django.db.models import Prefetch
+
 
 
 import logging
@@ -101,21 +104,46 @@ def criar_despesa(request, tipo, id):
                 # Tratando formas de pagamento
                 if forma_pag == 'cartao':
                     logger.debug("Processando pagamento com cartão...")
+
                     cartao_id = request.POST.get('cartao')
-                    quant_parcelas = request.POST.get('quant_parcelas')
-                    valor_parcela = request.POST.get('valor_parcela')
+                    quant_parcelas = int(request.POST.get('quant_parcelas'))
+                    valor_parcela = limpar_e_converter_valor(request.POST.get('valor_parcela'))
 
                     cartao = get_object_or_404(Cartao, id=cartao_id)
-                    valor_parcela = limpar_e_converter_valor(valor_parcela)
 
-                    despesa = NotaCartao.objects.create(
+                    # Criar a NotaCartao sem chamar `save()` ainda
+                    despesa = NotaCartao(
                         **campos_despesa,
                         cartao=cartao,
                         quant_parcelas=quant_parcelas,
-                        valor_parcela=valor_parcela
+                        valor_parcela=valor_parcela,
+                        status_parcelamento='a_pagar'
                     )
+                    despesa.save()  # Agora salva no banco
+
                     logger.info(f"NotaCartao criada para despesa com cartão {cartao.id}")
-                    print("Nota:", despesa)
+
+                    # Verifica se já existem parcelas antes de criar
+                    if not Parcela.objects.filter(nota_cartao=despesa).exists():
+                        # Gerando as datas de pagamento das parcelas
+                        vencimentos = despesa.calcular_vencimentos_parcelas()
+
+                        # Criando as parcelas
+                        parcelas = []
+                        for i, vencimento in enumerate(vencimentos):
+                            parcela = Parcela.objects.create(
+                                nota_cartao=despesa,
+                                numero=i + 1,
+                                data_vencimento=vencimento,
+                                valor=valor_parcela,
+                                status="a_pagar"
+                            )
+                            parcelas.append(parcela)
+
+                        logger.info(f"{quant_parcelas} parcelas geradas e pagas para NotaCartao com vencimentos a partir de {vencimentos[0]}")
+                    else:
+                        logger.warning(f"Parcelas já existem para NotaCartao {despesa.id}, evitando duplicação.")
+
                 
                 elif forma_pag == 'boleto':
                     logger.debug("Processando pagamento com boleto...")
@@ -325,15 +353,18 @@ def atualizar_status(request, despesa_id):
     next_url = request.GET.get('next')
     # Pega a despesa com o id fornecido, ou retorna 404 se não existir
     despesa = get_object_or_404(Despesa, id=despesa_id)
-    
-    # Alterna o status da despesa entre 'a_pagar' e 'pago'
-    if despesa.status == 'a_pagar':
-        despesa.status = 'pago'
+
+    if despesa.forma_pag == 'cartao':
+        messages.info(request, "Operação indisponível para forma de pagamento 'Cartão'.\nPor favor, pague a fatura do cartão para alterar o status.")
     else:
-        despesa.status = 'a_pagar'
-    
-    # Salva a despesa com o novo status
-    despesa.save()
+        # Alterna o status da despesa entre 'a_pagar' e 'pago'
+        if despesa.status == 'a_pagar':
+            despesa.status = 'pago'
+        else:
+            despesa.status = 'a_pagar'
+        
+        # Salva a despesa com o novo status
+        despesa.save()
     
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
@@ -365,13 +396,6 @@ def criar_cartao(request):
         cartao.save()
 
     return redirect(next_url if next_url else 'financeiro:cartoes')
-
-@login_required
-def ver_cartoes(request):
-    cartoes = Cartao.objects.all()
-    num_cartoes = Cartao.objects.count()
-
-    return render(request, 'financeiro/cartoes.html', {'cartoes': cartoes, 'num_cartoes': num_cartoes})
 
 @login_required
 def editar_cartao(request, cartao_id):
@@ -412,8 +436,7 @@ def deletar_cartao(request, cartao_id):
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
 @login_required
-def ver_cartoes_obra(request, obra_id):
-    obra = get_object_or_404(Obra, id=obra_id)
+def ver_cartoes(request):
 
     cartoes = Cartao.objects.all()
     num_cartoes = Cartao.objects.count()
@@ -432,102 +455,243 @@ def ver_cartoes_obra(request, obra_id):
 
 
     context = {
-        'obra': obra,
-        'obra_id': obra_id,
         'cartoes': cartoes, 
         'num_cartoes': num_cartoes,
         'total_fatura_geral': total_fatura_geral_formatado
     }
 
-    return render(request, 'financeiro/cartoes_obra.html', context)
+    return render(request, 'financeiro/cartoes.html', context)
 
-def fatura_mensal_cartoes(request, obra_id):
-    obra = get_object_or_404(Obra, id=obra_id)
-    
-    cartoes = Cartao.objects.all()
-    num_cartoes = Cartao.objects.count()
+@login_required
+def fatura_mensal_cartoes(request):
 
     hoje = date.today()
 
+    # Definição padrão: mês e ano atuais
     mes = hoje.month
     ano = hoje.year
-
-    notas_cartao = NotaCartao.objects.filter(
-        status='a_pagar',
-        proximo_pagamento__month=mes,
-        proximo_pagamento__year=ano
-    )
-
-    # Obtém os IDs das despesas associadas às notas do cartão
-    ids_despesas = notas_cartao.values_list('despesa_ptr_id', flat=True)
-
-    despesas_cartao_mes = Despesa.objects.filter(id__in=ids_despesas)
-
-    total_fatura_mensal = sum(despesa_cartao.valor for despesa_cartao in despesas_cartao_mes)
-    total_fatura_mensal_formatado = formatar_valor(total_fatura_mensal)
     
+    meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
+
+    ano_mes = f"{ano}/{meses_abreviados[mes]}"
+
+    if request.method == 'GET':
+        ano_mes_filtro = request.GET.get('ano_mes')
+        cartao_filtro = request.GET.get('cartao')
+
+        if ano_mes_filtro:
+            # Divide a string ano_mes_filtro
+            ano_mes_filtro_dividido = ano_mes_filtro.split('/')
+
+            # Extrair o ano
+            ano = int(ano_mes_filtro_dividido[0])
+
+            # Encontrar o mês na lista
+            mes = 0
+            for i, n in enumerate(meses_abreviados):
+                if n == ano_mes_filtro_dividido[1]:
+                    mes = i
+                    break
+
+            ano_mes = ano_mes_filtro
+
+    cartoes = Cartao.objects.all()
+    num_cartoes = cartoes.count()
+
+    if cartao_filtro:
+        notas_cartao = NotaCartao.objects.filter(
+            status='a_pagar',
+            parcelas__status='a_pagar',
+            parcelas__data_vencimento__month=mes,
+            parcelas__data_vencimento__year=ano,
+            cartao=cartao_filtro,
+        ).distinct().prefetch_related(
+            Prefetch(
+                'parcelas',
+                queryset=Parcela.objects.filter(
+                    status='a_pagar',
+                    data_vencimento__month=mes,
+                    data_vencimento__year=ano
+                ),
+                to_attr='parcela_do_mes'
+            )
+        ).order_by('parcelas__data_vencimento')
+        cartao_selecionado = Cartao.objects.filter(id=cartao_filtro).first()
+
+    else:
+        notas_cartao = NotaCartao.objects.filter(
+            status='a_pagar',
+            parcelas__status='a_pagar',
+            parcelas__data_vencimento__month=mes,
+            parcelas__data_vencimento__year=ano,
+        ).distinct().prefetch_related(
+            Prefetch(
+                'parcelas',
+                queryset=Parcela.objects.filter(
+                    status='a_pagar',
+                    data_vencimento__month=mes,
+                    data_vencimento__year=ano
+                ),
+                to_attr='parcela_do_mes'
+            )
+        ).order_by('parcelas__data_vencimento')
+        cartao_selecionado = None
+
+    despesas_cartao_mes = list(notas_cartao)   # Convertendo em lista para manipular diretamente
+
+    # Calcula o total da fatura mensal
+    total_fatura_mensal = 0
+
     for despesa in despesas_cartao_mes:
-        try:
-            nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)  # Busca a NotaCartao correspondente
-            despesa.nota_cartao = nota_cartao  # Adiciona um atributo à instância de Despesa
-            despesa.valor_formatado = formatar_valor(despesa.valor)
-        except NotaCartao.DoesNotExist:
-            despesa.nota_cartao = None  # Garante que a variável não fique indefinida
+        despesa.valor_formatado = formatar_valor(despesa.valor)
+        despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
+
+        despesa.nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
+
+        if despesa.parcela_do_mes:  # Verifique se existe alguma parcela para este mês
+            parcela = despesa.parcela_do_mes[0]
+            parcela.valor_formatado = formatar_valor(parcela.valor)
+            total_fatura_mensal += parcela.valor
 
     
+    total_fatura_mensal_formatado = formatar_valor(total_fatura_mensal)
+
     meses = calcular_range_meses()
 
     context = {
-        'obra': obra,
-        'obra_id': obra_id,
-        'cartoes': cartoes, 
+        'cartoes': cartoes,
         'meses': meses,
         'num_cartoes': num_cartoes,
         'despesas_cartao_mes': despesas_cartao_mes,
         'total_fatura_mensal': total_fatura_mensal_formatado,
+        'ano_mes_selecionado': ano_mes if ano_mes else None,
+        'cartao_selecionado': cartao_selecionado
     }
 
-    return render(request, 'financeiro/cartoes_fatura.html', context)
+    return render(request, 'financeiro/cartoes.html', context)
 
-def atualizar_parcelamento(request, despesa_id):
-    next_url = request.GET.get('next')
-
-    nota_cartao = get_object_or_404(NotaCartao, despesa_ptr_id=despesa_id)
-    despesa = get_object_or_404(Despesa, id=despesa_id)
-
-    proximo_pagamento, quitado = nota_cartao.atualizar_proximo_pagamento()
-
-    proximo_pagamento_formatado = proximo_pagamento.strftime('%d/%m/%Y')
-
-    if quitado == 'pago':
-        messages.success(request, 'Parcelamento quitado.')
-        # atualizar status da despesa para pago
-        # despesa.status = 'pago'
-        # despesa.save()
-        print(f'despesa.status: {despesa.status}')
-        print(f'quitado: {quitado}')
-
-    else:
-        messages.success(request, f'Fatura do mês paga.\nPróximo pagamento: {proximo_pagamento_formatado}')
-        print(f'Fatura do mês paga. Próximo pagamento: {proximo_pagamento_formatado}')
-        print(f'despesa.status: {despesa.status}')
-        print(f'quitado: {quitado}')
-
-    return redirect(next_url if next_url else 'financeiro:cartoes')
-
-
+@login_required
 def pagar_cartao(request, cartao_id):
     next_url = request.GET.get('next')
-    # cartao = get_object_or_404(Cartao, id=cartao_id)
 
-    notas_cartao = NotaCartao.objects.filter(cartao=cartao_id, status='a_pagar')
+    # Obtém o cartão com o ID fornecido
+    cartao = get_object_or_404(Cartao, id=cartao_id)
+
+    hoje = date.today()
+    mes, ano = hoje.month, hoje.year
+
+    meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
+
+    
+    # Obtém as notas de cartão com status "a pagar"
+    notas_cartao = NotaCartao.objects.filter(
+        status='a_pagar',
+        parcelas__status='a_pagar',
+        parcelas__data_vencimento__month=mes,
+        parcelas__data_vencimento__year=ano
+    ).distinct().prefetch_related(
+        Prefetch(
+            'parcelas',
+            queryset=Parcela.objects.filter(
+                status='a_pagar',
+                data_vencimento__month=mes,
+                data_vencimento__year=ano
+            ),
+            to_attr='parcela_do_mes'  # Nome do atributo para acessar no template
+        )
+    )
+
+    if not notas_cartao.exists():
+        messages.info(request, f"Nenhuma fatura pendente para este cartão no mês atual ({meses_abreviados[mes]}/{ano}).")
+        return redirect(next_url if next_url else 'financeiro:cartoes')
+
+    total = 0
 
     for nota in notas_cartao:
+        despesa = Despesa.objects.get(id=nota.despesa_ptr_id)
         nota.atualizar_proximo_pagamento()
-        print(nota)
+
+        if nota.status_parcelamento == 'pago':
+            despesa.status = 'pago'
+            despesa.save()
+
+        for parcela in nota.parcela_do_mes:
+            if parcela.status == 'a_pagar':  # Verifica se a parcela ainda está pendente
+                # Cria o pagamento
+                Pagamento.objects.create(
+                    parcela=parcela,
+                    valor_pago=parcela.valor,
+                    data_pagamento=date.today()
+                )
+
+                # Marca a parcela como paga
+                parcela.status = 'pago'
+                parcela.save()
+                total += parcela.valor
+
+    if request.method == 'POST':
+        observacao = request.POST.get('observacao_fatura')
+
+    Fatura.objects.create(
+        cartao=cartao,
+        data_pagamento=hoje,
+        valor=total,
+        observacao=observacao
+    )
     
+    messages.success(request, "Pagamentos atualizados com sucesso.")
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
+@login_required
+# Editar data pagamento da parcela (que foi colocada automaticamente no pagamento da fatura)
+def editar_fatura(request, fatura_id):
+    next_url = request.GET.get('next')
+
+    fatura = get_object_or_404(Fatura, id=fatura_id)
+    cartao_da_fatura = fatura.cartao
+    data_fatura = fatura.data_pagamento
+    
+
+    if request.method == 'POST':
+        data_form = request.POST.get('data_pagamento')
+        observacao = request.POST.get('observacao_fatura')
+        data = limpar_e_converter_data(data_form, request)
+
+        if data:
+            notas_cartao = NotaCartao.objects.filter(
+                status='pago',
+                parcelas__status='pago',
+                parcelas__data_vencimento__month=data_fatura.month,
+                parcelas__data_vencimento__year=data_fatura.year,
+                cartao=cartao_da_fatura,
+            ).distinct().prefetch_related(
+                Prefetch(
+                    'parcelas',
+                    queryset=Parcela.objects.filter(
+                        status='pago',
+                        data_vencimento__month=data_fatura.month,
+                        data_vencimento__year=data_fatura.year
+                    ),
+                    to_attr='parcela_paga_do_mes'
+                )
+            ).order_by('parcelas__data_vencimento')
+
+            for nota in notas_cartao:
+                for parcela in nota.parcela_paga_do_mes:
+                    pagamento = Pagamento.objects.get(parcela_id=parcela.id)
+                    pagamento.data_pagamento=data
+                    pagamento.save()
+
+            fatura.data_pagamento = data
+       
+        if observacao:
+            fatura.observacao = observacao
+
+        fatura.save()
+
+        messages.success(request, 'Fatura atualizada com sucesso.')
+
+    return redirect(next_url if next_url else 'financeiro:cartoes')
 
 
 
@@ -561,6 +725,10 @@ def criar_funcionario(request):
 
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
+# TO-DO:
+@login_required
+def editar_funcionario(request, funcionario_id):
+    pass
     
 # Aditivos    
 @login_required
