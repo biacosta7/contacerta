@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from financeiro.models import Banco, Cartao, Funcionario, MaoDeObra, NotaCartao, Pagamento, Parcela
-from locais.models import Obra, Escritorio, Despesa
+from locais.models import AcessoEscritorio, Obra, Escritorio, Despesa
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
@@ -331,16 +331,19 @@ def consultar_debito_mensal(request, id):
 # Escritório 
 @login_required
 def acesso_hub(request, user_id):
-    escritorios = Escritorio.objects.all()
+    acessos = AcessoEscritorio.objects.filter(user_receptor=user_id, status='pendente')
+    escritorios = Escritorio.objects.filter(membros=request.user)
 
     context = {
         'user_id': user_id,
-        'escritorios': escritorios
+        'escritorios': escritorios,
+        'acessos': acessos
     }
     return render(request, 'locais/hub.html', context)
 
 @login_required
 def criar_escritorio(request, user_id):
+    next_url = request.GET.get('next')
     user = get_object_or_404(User, id=user_id)
 
     if request.method == 'POST':
@@ -351,7 +354,7 @@ def criar_escritorio(request, user_id):
 
         if Escritorio.objects.filter(nome=nome).exists():
             messages.error(request, 'Já existe um escritório com esse nome.')
-            return redirect('locais:home')
+            return redirect(next_url if next_url else 'locais:hub', user_id=user_id)
 
         escritorio = Escritorio.objects.create(
             nome=nome,
@@ -360,11 +363,87 @@ def criar_escritorio(request, user_id):
             cnpj=cnpj,
         )
         escritorio.admins.add(user)
+        escritorio.membros.add(user)
         escritorio.save()
         messages.success(request, 'Escritório cadastrado com sucesso.')
-        return redirect('locais:home')
+        return redirect('locais:home', escritorio.id)
 
-    return redirect('locais:home')
+    return redirect(next_url if next_url else 'locais:hub', user_id=user_id)
+
+@login_required
+def enviar_acesso_escritorio(request, escritorio_id):
+    next_url = request.GET.get('next')
+
+    admin = request.user
+    escritorio = get_object_or_404(Escritorio, id=escritorio_id)
+
+    # Verifica se o usuário logado é admin do escritório
+    if admin not in escritorio.admins.all():
+        messages.error(request, 'Você não tem permissão para conceder acesso a este escritório.')
+        return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
+
+    if request.method == 'POST':
+        receptor_email = request.POST.get('receptor')
+
+        if not receptor_email:
+            messages.error(request, 'Por favor, informe um e-mail válido.')
+            return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
+
+        user_receptor = User.objects.filter(email=receptor_email).first()
+
+        if not user_receptor:
+            messages.error(request, f'O email "{receptor_email}" não está cadastrado no sistema.')
+            return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
+
+        cargo = request.POST.get('cargo')
+
+        AcessoEscritorio.objects.create(
+            user_receptor=user_receptor,
+            cargo=cargo,
+            escritorio=escritorio,
+            admin=admin,
+        )
+
+        messages.success(request, 'Acesso enviado com sucesso.')
+        return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
+
+    return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
+
+
+@login_required
+def responder_acesso_escritorio(request, acesso_id, escritorio_id):
+    next_url = request.GET.get('next')
+    acesso = get_object_or_404(AcessoEscritorio, id=acesso_id)
+    escritorio = get_object_or_404(Escritorio, id=escritorio_id)
+    
+    if acesso.user_receptor == request.user:
+        if request.method == 'POST':
+            status_form = request.POST.get('status')
+
+            if status_form == 'aprovado':
+                acesso.status = 'aprovado'
+
+                escritorio.membros.add(acesso.user_receptor)
+
+                if acesso.cargo == 'ADM':
+                    escritorio.admins.add(acesso.user_receptor)
+                elif acesso.cargo == 'FUNC':
+                    escritorio.funcionarios.add(acesso.user_receptor)
+
+                acesso.save()
+                escritorio.save()
+
+                messages.success(request, 'Acesso concedido com sucesso.')
+                return redirect('locais:home', escritorio_id=escritorio_id)
+                
+            elif status_form == 'rejeitado':
+                acesso.status = 'rejeitado'
+                acesso.save()
+                messages.info(request, 'Acesso rejeitado com sucesso.')
+            return redirect(next_url) if next_url else redirect('locais:hub', user_id=request.user.id)
+            
+
+    return redirect(next_url) if next_url else redirect('locais:hub', user_id=request.user.id)
 
 
 @login_required

@@ -43,7 +43,6 @@ def criar_user(request):
                     nome=nome,
                     sobrenome=sobrenome,
                     email=email,
-                    cargo=cargo,
                 )
                 user.set_password(password)  # Criptografa a senha
                 user.save()
@@ -53,7 +52,7 @@ def criar_user(request):
                 user = authenticate(request, email=email, password=password)  # Verifique se o username é 'email'
                 if user is not None:
                     login(request, user)  # Faz login automaticamente
-                    return redirect('locais:hub', user.id)  # Redireciona para a página desejada
+                    return redirect('locais:hub', user_id=user.id)  # Redireciona para a página desejada
 
             except IntegrityError:
                 messages.error(request, 'Já existe um usuário com este email. Tente novamente.')
@@ -65,7 +64,10 @@ def criar_user(request):
     
 def login_user(request):
     if request.user.is_authenticated:
-        return redirect('locais:home')
+        escritorios = Escritorio.objects.filter(membros=request.user)
+        if escritorios.exists():
+            return redirect('locais:home', escritorio_id=escritorios.first().id)
+        return redirect('locais:hub', request.user.id)
 
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -84,7 +86,7 @@ def login_user(request):
                 request.session.set_expiry(0) 
 
             # Verifica a qual escritório o usuário pertence
-            escritorios = Escritorio.objects.filter(admins=user)
+            escritorios = Escritorio.objects.filter(membros=user)
 
             if escritorios.exists():
                 # Se houver mais de um escritório, direcionar para um específico ou permitir escolha
@@ -92,7 +94,7 @@ def login_user(request):
                 return redirect('locais:home', escritorio_id=escritorio.id)
             else:
                 messages.warning(request, 'Você não está associado a nenhum escritório.')
-                return redirect('locais:escolher_escritorio')
+                return redirect('locais:hub', user_id=user.id) 
 
         else:
             messages.error(request, 'Email ou senha inválidos. Tente novamente.')

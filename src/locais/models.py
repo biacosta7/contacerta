@@ -6,6 +6,7 @@ from datetime import date, timedelta
 
 from users.models import User
 
+
 class Escritorio(models.Model):
     nome = models.CharField(max_length=100)
     email = models.EmailField()
@@ -15,6 +16,7 @@ class Escritorio(models.Model):
     debito_geral = models.DecimalField(max_digits=10, decimal_places=2, default='0') # todas as despesas com status de 'à pagar' somadas
     funcionarios = models.ManyToManyField(User, related_name='funcionarios_escritorio', blank=True)
     admins = models.ManyToManyField(User, related_name='admin_escritorio', blank=True)
+    membros = models.ManyToManyField(User, related_name='membros', blank=True)
 
     def calcular_debito_geral(self):
         despesas_gerais = Despesa.objects.filter(
@@ -175,3 +177,26 @@ class Obra(models.Model):
         return self.nome
 
         
+class AcessoEscritorio(models.Model):
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('aprovado', 'Aprovado'),
+        ('rejeitado', 'Rejeitado'),
+    ]
+
+    user_receptor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_receptor')
+    admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin')
+    ADMINISTRADOR = 'ADM'
+    FUNCIONARIO = 'FUNC'
+    CARGO_CHOICES = [
+        (ADMINISTRADOR, 'Administrador'),
+        (FUNCIONARIO, 'Funcionário'),
+    ]
+    
+    cargo = models.CharField(
+        max_length=4,
+        choices=CARGO_CHOICES,
+        blank=False,
+    )
+    escritorio = models.ForeignKey(Escritorio, on_delete=models.CASCADE, related_name='escritorio')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')

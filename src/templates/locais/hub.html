@@ -8,57 +8,84 @@
         <img class="mt-2 w-1/4" src="{% static '/assets/contacerta-logoH.png' %}" alt="logo">
         <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mb-4">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                    Acesso ao Escritório
-                </h1>
+            
                 <div class="space-y-3">
                     <span class="text-base font-medium text-gray-900 dark:text-white">
-                        Você é...
+                        Você deseja:
                     </span>
                     <div class="flex space-x-4">
                         <div class="w-1/2">
                             <button id="btn_funcionario" type="button"
                                 class="w-full py-4 text-sm font-medium border border-gray-600 text-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition"
                                 onclick="selecionarCargo('FUNC')">
-                                Funcionário
+                                Acessar Escritório
                             </button>
                         </div>
                         <div class="w-1/2">
                             <button id="btn_adm" type="button"
                                 class="w-full py-4 text-sm font-medium border border-gray-600 text-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 transition"
                                 onclick="selecionarCargo('ADM')">
-                                Administrador
+                                Criar Escritório
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <div id="acessarEscritorioSection" class="hidden space-y-8">
-                    {% if escritorios %}
-                        <h1 class="text-xl font-semibold border-b border-gray-500 leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white py-3">
-                            Acessar Escritório existente
-                        </h1>
-                        <button type="button" class="escritorio-dropdown-button w-full flex items-center justify-between px-6 py-3 rounded-[9px] text-sm font-semibold hover:bg-gray-600 hover:text-[#edf0e9] text-white bg-green-600 shadow-sm focus:outline-none">
+                    <div class="py-4">
+                        {% if acessos %}
+                            <h1 class="text-xl font-semibold border-b border-gray-500 leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white py-3">
+                                Acessar Escritório
+                            </h1>
+                            {% for acesso in acessos %}
+                                <div class="flex flex-col mt-8 mb-8 items-center space-y-4">
+
+                                    <span class="text-white">Você foi convidado ao Escritório <b>{{ acesso.escritorio.nome|capfirst }}</b>.</span>
+                                    <div class="flex space-x-4">
+                                        <form action="{% url 'locais:responder_acesso_escritorio' acesso_id=acesso.id escritorio_id=acesso.escritorio.id %}" method="POST" class="">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="rejeitado">
+                                            <button type="submit" class="w-full text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Recusar</button>
+                                        </form>
+                                        <form action="{% url 'locais:responder_acesso_escritorio' acesso_id=acesso.id escritorio_id=acesso.escritorio.id %}" method="POST" class="">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="aprovado">
+                                            <button type="submit" class="w-full text-white bg-[#66b346] hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Aceitar</button>
+                                        </form>
+                                    </div>
+                                    
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-white mb-3 text-center">Não há convites de acesso à escritórios cadastrados.</p>
+                            <p class="text-sm text-gray-300 text-center font-light">Por favor, solicite o seu convite ao administrador do escritório.</p>
+                        {% endif %}
+                        <p class="flex mt-10 justify-center text-sm font-light text-gray-500 dark:text-gray-400">
+                            <a href="{% url 'logout' %}" class="text-center font-medium text-primary-600 hover:underline dark:text-primary-500">Sair da conta</a>
+                        </p>
+                       
+                    </div>
+
+                    {% comment %} {% if escritorios %}
+                        <button type="button" class="escritorio-dropdown-button w-full flex items-center justify-between px-6 py-3 rounded-[9px] text-sm font-semibold hover:bg-gray-600 hover:text-[#edf0e9] text-white bg-green-600 shadow-sm focus:outline-none" onclick="toggleEscritorios()">
                             <span class="text-base text-left ml-2">
                                 Selecionar Escritório
                             </span>
                             <i class="fa-solid fa-chevron-down"></i>
                         </button>
 
-                        <div id="escritorio-dropdown-menu" class="hidden dropdownMenu w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                        <div id="escritorio-dropdown-menu" class="hidden dropdownMenu w-full right-0 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
                             <div class="h-max-40 overflow-y-auto">
                                 {% for escritorio in escritorios %}
-                                    <label class="{% if escritorio_selecionado.id == escritorio.id %} bg-green-500 {% endif %} block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md" data-value="{{ escritorio.id }}">
-                                        <span class="text-base font-normal">{{ escritorio.nome }}</span>
-                                    </label>
+                                    <a class="block border-b-2 px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md" href="{% url 'locais:home' escritorio_id=escritorio.id %}">{{ escritorio.nome|capfirst }}</a>
                                 {% endfor %}
                             </div>
                         </div>
-                        
+
                         <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Acessar Escritório</button>
                     {% else %}
                         <span class="text-white">Não há escritórios cadastrados.</span>
-                    {% endif %}
+                    {% endif %} {% endcomment %}
                 </div>
 
                 <div id="criarEscritorioSection" class="hidden">
@@ -125,6 +152,25 @@
         }
         
     }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const dropdownButton = document.querySelector(".escritorio-dropdown-button");
+        const dropdownMenu = document.getElementById("escritorio-dropdown-menu");
+    
+        function toggleDropdown() {
+            dropdownMenu.classList.toggle("hidden");
+        }
+    
+        function closeDropdown(event) {
+            if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.classList.add("hidden");
+            }
+        }
+    
+        dropdownButton.addEventListener("click", toggleDropdown);
+        document.addEventListener("click", closeDropdown);
+    });
+    
 
   
 </script>
