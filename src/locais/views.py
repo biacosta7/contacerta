@@ -118,7 +118,8 @@ def filtrar_despesas(request, despesas):
 
 
 @login_required
-def criar_obra(request):
+def criar_obra(request, escritorio_id):
+    escritorio = get_object_or_404(Escritorio, id=escritorio_id)
     if request.method == 'POST':
         nome = request.POST.get('nome')
         local = request.POST.get('local')
@@ -137,7 +138,7 @@ def criar_obra(request):
                 data_final = None
         except ValueError:
             messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
-            return redirect('locais:home')
+            return redirect('locais:home', escritorio_id=escritorio_id)
         
         # Limpar e converter o valor inicial para decimal
         valor_inicial = valor_inicial.replace('.', '').replace(',', '.')
@@ -146,13 +147,14 @@ def criar_obra(request):
             valor_inicial = Decimal(valor_inicial)
         except InvalidOperation:
             messages.error(request, 'Valor inicial inválido.')
-            return redirect('locais:home')
+            return redirect('locais:home', escritorio_id=escritorio_id)
 
         if Obra.objects.filter(nome=nome).exists():
             messages.error(request, 'Já existe uma obra com esse nome.')
-            return redirect('locais:home')
+            return redirect('locais:home', escritorio_id=escritorio_id)
 
         obra = Obra.objects.create(
+            escritorio=escritorio,
             nome=nome,
             local=local,
             data_inicio=data_inicio,
@@ -162,9 +164,9 @@ def criar_obra(request):
         )
         obra.save()
         messages.success(request, 'Obra cadastrada com sucesso.')
-        return redirect('locais:home')
+        return redirect('locais:home', escritorio_id=escritorio_id)
     
-    return render(request, 'locais/home.html') 
+    return render(request, 'locais/home.html', escritorio_id=escritorio_id) 
 
 @login_required
 def listar_obras(request, escritorio_id):
@@ -182,6 +184,7 @@ def listar_obras(request, escritorio_id):
 @login_required
 def editar_obra(request, obra_id):
     obra = get_object_or_404(Obra, id=obra_id)
+    escritorio_id = obra.escritorio.id
 
     if request.method == 'POST':
         nome = request.POST.get('nome')
@@ -203,7 +206,7 @@ def editar_obra(request, obra_id):
                 data_final = None 
         except ValueError:
             messages.error(request, 'Formato de data inválido. Use o formato dd/mm/yyyy.')
-            return redirect('locais:home')
+            return redirect('locais:home', escritorio_id=escritorio_id)
         
         # Limpar e converter o valor inicial para decimal
         valor_inicial = valor_inicial.replace('.', '').replace(',', '.')
@@ -213,7 +216,7 @@ def editar_obra(request, obra_id):
         except InvalidOperation:
             print("erro valor inicial")
             messages.error(request, 'Valor inicial inválido.')
-            return redirect('locais:home')
+            return redirect('locais:home', escritorio_id=escritorio_id)
 
         obra.nome = nome
         obra.local = local
@@ -224,7 +227,7 @@ def editar_obra(request, obra_id):
 
         obra.save()
         messages.success(request, 'Obra atualizada com sucesso.')
-        return redirect('locais:home')
+        return redirect('locais:home', escritorio_id=escritorio_id)
 
     # Renderizar o template com os dados da obra para edição
     return render(request, 'locais/home.html', {'obra': obra})
@@ -241,6 +244,7 @@ def deletar_obra(request, obra_id):
 def detalhar_obra(request, id):
     obra = get_object_or_404(Obra, id=id)
     tipo_local_obra = ContentType.objects.get_for_model(Obra)
+    escritorio_id = obra.escritorio.id
 
     despesas = Despesa.objects.filter(tipo_local=tipo_local_obra, id_local=id).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
     
@@ -292,7 +296,8 @@ def detalhar_obra(request, id):
         'meses': meses,
         'porcentagem_orcamento_usado': porcentagem_orcamento_usado,
         'orcamento_usado': orcamento_usado,
-        'total_filtro': total_filtro
+        'total_filtro': total_filtro,
+        'escritorio_id': escritorio_id
     })
 
 
@@ -324,8 +329,6 @@ def consultar_debito_mensal(request, id):
         debito_mensal = obra.calcular_debito_mensal() if obra else 0
 
     return JsonResponse({"debito_mensal": formatar_valor(debito_mensal)})
-
-
 
 
 # Escritório 
