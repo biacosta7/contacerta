@@ -326,8 +326,6 @@ def consultar_debito_mensal(request, id):
     return JsonResponse({"debito_mensal": formatar_valor(debito_mensal)})
 
 
-
-
 # Escritório 
 @login_required
 def acesso_hub(request, user_id):

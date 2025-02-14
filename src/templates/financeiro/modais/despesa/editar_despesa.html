@@ -50,12 +50,26 @@
 
             <div class="mb-4">
                 <label for="modalidadeDespesaEditar" class="block mb-2 text-sm font-medium text-gray-900">Modalidade</label>
-                <select id="modalidadeDespesaEditar" name="modalidade" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
-                    <option value="" selected disabled hidden>Selecione a modalidade</option>
-                    <option value="mao_de_obra">Mão de Obra</option>
-                    <option value="insumos">Insumos</option>
-                    <option value="combustivel">Combustível</option>
-                </select>
+
+                <div id="modalidadeObraSelect" class='hidden'>
+                    <select id="modalidadeDespesaEditar" name="modalidade" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
+                        <option value="" selected disabled hidden>Selecione a modalidade</option>
+                        <option value="mao_de_obra">Mão de Obra</option>
+                        <option value="insumos">Insumos</option>
+                        <option value="combustivel">Combustível</option>
+                    </select>
+                </div>
+
+                <div id="modalidadeEscritorioSelect" class='hidden'>
+                    <select id="modalidadeDespesaEscritorioEditar" name="modalidade_escritorio" class="bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 appearance-none">
+                        <option value="" selected disabled hidden>Selecione a modalidade</option>
+                        <option value="imposto">Imposto</option>
+                        <option value="contador">Contador</option>
+                        <option value="rastreamento">Rastreamento</option>
+                        <option value="parcela_carro">Parcela do carro</option>
+                    </select>
+                </div>
+
             </div>
 
 

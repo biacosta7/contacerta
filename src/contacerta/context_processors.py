@@ -145,7 +145,7 @@ def despesas(request):
             nota['vencimento'] = format_date(nota['vencimento'])
 
     nota_pix = NotaPix.objects.select_related('banco').all().values()
-    nota_especie = NotaEspecie.objects.all().values()
+    nota_especie = NotaEspecie.objects.all().values('id', 'pagador')
     mao_de_obra = MaoDeObra.objects.all().values(
         'id', 'despesa_id', 'categoria', 'funcionario_id', 'valor_reembolso'
     )

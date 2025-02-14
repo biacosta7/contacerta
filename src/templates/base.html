@@ -405,14 +405,8 @@
                 } else if (despesa.status === 'pago') {
                     statusFormatado = 'Pago';
                 }
-                // modalidade
-                if (despesa.modalidade === 'mao_de_obra') {
-                    modalidadeFormatado = 'Mão de obra';
-                } else if (despesa.modalidade === 'insumos') {
-                    modalidadeFormatado = 'Insumos';
-                } else if (despesa.modalidade === 'combustivel') {
-                    modalidadeFormatado = 'Combustível';
-                }
+
+
                 // forma de pagamento
                 if (despesa.forma_pag === 'cartao') {
                     formaPagFormatado = 'Cartão';
@@ -433,43 +427,60 @@
                 document.getElementById('obsDespesaInfo').innerHTML = "<b>Observação:</b> " + (despesa.observacao|| "-");
                 document.getElementById('statusDespesaInfo').innerHTML = "<b>Status:</b> " + statusFormatado;
                 document.getElementById('dataPagDespesaInfo').innerHTML = "<b>Data de pagamento:</b> " + (despesa.data_pagamento || "Não pago.");
-                document.getElementById('modalidadeDespesaInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeFormatado; 
+                
+                if (despesa.modalidade != null){
+                    if (despesa.modalidade === 'mao_de_obra') {
+                        modalidadeFormatado = 'Mão de obra';
 
-                if (despesa.modalidade == 'mao_de_obra'){
-                    let mdo_despesa = maoDeObras.find(md => md.despesa_id === despesaId); 
+                        let mdo_despesa = maoDeObras.find(md => md.despesa_id === despesaId); 
 
-                    console.log(" md.despesa.id: " +  mdo_despesa);
+                        let funcionario_despesa = funcionarios.find(fd => fd.id === mdo_despesa.funcionario_id); 
 
-                    console.log("mdo_despesa: " + mdo_despesa);
+                        const maoDeObraFieldsDespesa = document.getElementById('maoDeObraFields');
+                        
+                        maoDeObraFieldsDespesa.classList.remove('hidden');
 
-                    let funcionario_despesa = funcionarios.find(fd => fd.id === mdo_despesa.funcionario_id); 
+                        let categoriaFormatado = '';
 
-                    const maoDeObraFieldsDespesa = document.getElementById('maoDeObraFields');
-                    
-                    maoDeObraFieldsDespesa.classList.remove('hidden');
+                        // categoria
+                        if (mdo_despesa.categoria === 'adiantamento') {
+                            categoriaFormatado = 'Adiantamento';
+                        } else if (mdo_despesa.categoria === 'passagem') {
+                            categoriaFormatado = 'Passagem';
+                        } else if (mdo_despesa.categoria === 'alimentacao') {
+                            categoriaFormatado = 'Alimentação';
+                        } else if (mdo_despesa.categoria === 'reembolso') {
+                            categoriaFormatado = 'Reembolso';
+                        }
 
-                    let categoriaFormatado = '';
+                        document.getElementById('despesaFuncionarioMDOInfo').innerHTML = "<b>Funcionário:</b> " + (funcionario_despesa || "-");
+                        document.getElementById('despesaCategoriaMDOInfo').innerHTML = "<b>Categoria:</b> " + categoriaFormatado;
 
-                    // categoria
-                    if (mdo_despesa.categoria === 'adiantamento') {
-                        categoriaFormatado = 'Adiantamento';
-                    } else if (mdo_despesa.categoria === 'passagem') {
-                        categoriaFormatado = 'Passagem';
-                    } else if (mdo_despesa.categoria === 'alimentacao') {
-                        categoriaFormatado = 'Alimentação';
-                    } else if (mdo_despesa.categoria === 'reembolso') {
-                        categoriaFormatado = 'Reembolso';
+                    } else if (despesa.modalidade === 'insumos') {
+                        modalidadeFormatado = 'Insumos';
+                    } else if (despesa.modalidade === 'combustivel') {
+                        modalidadeFormatado = 'Combustível';
                     }
-
-                    document.getElementById('despesaFuncionarioMDOInfo').innerHTML = "<b>Funcionário:</b> " + (funcionario_despesa || "-");
-                    document.getElementById('despesaCategoriaMDOInfo').innerHTML = "<b>Categoria:</b> " + categoriaFormatado;
+                    document.getElementById('modalidadeDespesaInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeFormatado; 
+                    
+                } else if (despesa.modalidadeEscritorio != null){
+                    if (despesa.modalidadeEscritorio === 'imposto') {
+                        modalidadeFormatado = 'Imposto';
+                    } else if (despesa.modalidadeEscritorio === 'contador') {
+                        modalidadeFormatado = 'Contador';
+                    } else if (despesa.modalidadeEscritorio === 'rastreamento') {
+                        modalidadeFormatado = 'Rastreamento';
+                    } else if (despesa.modalidadeEscritorio === 'parcela_carro') {
+                        modalidadeFormatado = 'Parcela do carro';
+                    }
+                    document.getElementById('modalidadeDespesaInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeFormatado; 
                 }
+                
 
                 if (despesa.forma_pag == 'cartao'){
                     let cartao_despesa = notaCartao.find(cd => cd.id === despesaId);
 
                     let item_cartao_despesa = cartoes.find(icd => icd.id === cartao_despesa.cartao_id);
-                    console.log( "item_cartao_despesa.nome: ", item_cartao_despesa.nome );
 
                     const cartaoFieldsDespesaInfo = document.getElementById('cartaoFieldsInfo');
                     
@@ -551,20 +562,36 @@
                 document.getElementById('obsDespesaEditar').value = despesa.observacao;
                 document.getElementById('statusDespesaEditar').value = despesa.status;
                 document.getElementById('dataPagDespesaEditar').value = (despesa.data_pagamento || "-");
-                document.getElementById('modalidadeDespesaEditar').value = despesa.modalidade;
 
-                document.getElementById('deletarDespesaBtn').setAttribute('onclick', `despesaModal('deletarDespesa', ${despesaId})`);       
+                document.getElementById('deletarDespesaBtn').setAttribute('onclick', `despesaModal('deletarDespesa', ${despesaId})`);   
+                
+                let modalidadeEscritorioSelect = document.getElementById('modalidadeEscritorioSelect')
+                let modalidadeObraSelect = document.getElementById('modalidadeObraSelect')
 
-                if (despesa.modalidade == 'mao_de_obra'){
-                    const maoDeObraFieldsDespesa = document.getElementById('maoDeObraFields');
-                    maoDeObraFieldsDespesa.classList.remove('hidden');
+                if (despesa.modalidade != null){
+                    modalidadeObraSelect.classList.remove('hidden')
+                    modalidadeEscritorioSelect.classList.add('hidden')
 
-                    let mdo_despesa = maoDeObras.find(md => md.despesa_id === despesaId); 
-            
-                    document.getElementById('despesaFuncionarioMDOEditar').value = mdo_despesa.funcionario_id;
-                    document.getElementById('despesaCategoriaMDOEditar').value = mdo_despesa.categoria;
+                    if (despesa.modalidade === 'mao_de_obra') {
+
+                        const maoDeObraFieldsDespesa = document.getElementById('maoDeObraFields');
+                        maoDeObraFieldsDespesa.classList.remove('hidden');
+    
+                        let mdo_despesa = maoDeObras.find(md => md.despesa_id === despesaId); 
+                
+                        document.getElementById('despesaFuncionarioMDOEditar').value = mdo_despesa.funcionario_id;
+                        document.getElementById('despesaCategoriaMDOEditar').value = mdo_despesa.categoria;
+                        
+                    } 
+                    document.getElementById('modalidadeDespesaEditar').value = despesa.modalidade; 
                     
+                } else if (despesa.modalidadeEscritorio != null){
+                    modalidadeObraSelect.classList.add('hidden')
+                    modalidadeEscritorioSelect.classList.remove('hidden')
+                    
+                    document.getElementById('modalidadeDespesaEscritorioEditar').value = despesa.modalidadeEscritorio; 
                 }
+
 
                 if (despesa.forma_pag == 'cartao'){
 
@@ -628,6 +655,10 @@
                     especieFieldsDespesa.classList.remove('hidden');
 
                     let especie_despesa = notaEspecie.find(ed => ed.id === despesaId);
+
+                    console.log('especie_despesa: ' + especie_despesa);
+
+                    console.log('especie_despesa.pagador: ' + especie_despesa.pagador);
 
                     document.getElementById('dadosPagTitulo').innerHTML = "Dados do pagamento em Espécie";
                     document.getElementById('despesaPagadorEspecieEditar').value = especie_despesa.pagador;

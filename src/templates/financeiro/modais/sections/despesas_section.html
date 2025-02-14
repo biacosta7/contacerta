@@ -20,8 +20,8 @@
                     Filtrar
                 </button>
                 <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
-                            modalName: 'modalCriarDespesa',
-                            formId: 'formCriarDespesa',
+                            modalName: 'modalCriarDespesaEscritorio',
+                            formId: 'formCriarDespesaEscritorio',
                             currencyFields: ['valor_parcela', 'valor_despesa']
                         });">
                     Adicionar
@@ -108,6 +108,10 @@
 
     </div>
 </div>
+{% include "financeiro/modais/despesa/criar_despesa_escritorio.html" %}
+{% include "financeiro/modais/despesa/editar_despesa.html" %}
+{% include "financeiro/modais/despesa/deletar_despesa.html" %}
+{% include "financeiro/modais/despesa/info_despesa.html" %}
 
 <style>
     .despesa_table.darkened {

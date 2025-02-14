@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.validators import MinValueValidator, MaxValueValidator
 from dateutil.relativedelta import relativedelta
+from django.forms import ValidationError
 
 class Banco(models.Model):
     nome = models.CharField(max_length=100)
@@ -68,16 +69,42 @@ class Despesa(models.Model):
         ('pago', 'Pago'),
     ])
     data_pagamento = models.DateField(blank=True, null=True)
+
     modalidade = models.CharField(max_length=50, choices=[
         ('mao_de_obra', 'Mão de Obra'),
         ('insumos', 'Insumos'),
         ('combustivel', 'Combustível'),
-    ])
+    ], blank=True, null=True)
+
+    modalidadeEscritorio = models.CharField(max_length=50, choices=[
+        ('imposto', 'Imposto'),
+        ('contador', 'Contador'),
+        ('rastreamento', 'Rastreamento'),
+        ('parcela_carro', 'Parcela do carro'),
+    ], blank=True, null=True)
 
     # GFK para associar com Obra ou Escritório
     tipo_local = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     id_local = models.PositiveIntegerField()
     local = GenericForeignKey('tipo_local', 'id_local')
+    
+    def clean(self):
+        super().clean()
+        
+        # Pegando o modelo referenciado pelo tipo_local
+        tipo_modelo = self.tipo_local.model_class()
+
+        if tipo_modelo.__name__ == 'Escritorio':
+            if not self.modalidadeEscritorio:
+                raise ValidationError({'modalidadeEscritorio': 'Este campo é obrigatório para Escritório.'})
+            if self.modalidade:
+                raise ValidationError({'modalidade': 'Este campo não deve ser preenchido para Escritório.'})
+
+        elif tipo_modelo.__name__ == 'Obra':
+            if not self.modalidade:
+                raise ValidationError({'modalidade': 'Este campo é obrigatório para Obra.'})
+            if self.modalidadeEscritorio:
+                raise ValidationError({'modalidadeEscritorio': 'Este campo não deve ser preenchido para Obra.'})
 
     def __str__(self):
         nome_limite = self.nome[:20]
