@@ -38,6 +38,17 @@ def limpar_e_converter_data(data_str, request, redirect_url='locais:home', forma
         messages.error(request, f'Formato de data inválido. Use o formato {formato}.')
         return redirect(redirect_url)
 
+def pegar_escritorio_id(despesa, tipo):
+    id_local = despesa.id_local  # Obtém o ID real do local
+
+    if tipo == 'obra':
+        local = get_object_or_404(Obra, id=id_local)
+        return local.escritorio.id
+    elif tipo == 'escritorio':
+        local = get_object_or_404(Escritorio, id=id_local)
+        return local.id
+    else:
+        logger.error(f"Tipo inválido fornecido: {tipo}")
 
 # Despesas
 @login_required
@@ -196,17 +207,7 @@ def editar_despesa(request, despesa_id):
     despesa = get_object_or_404(Despesa, id=despesa_id)
 
     tipo = despesa.tipo_local.model_class().__name__.lower()  # Obtém o nome do modelo referenciado
-    id_local = despesa.id_local  # Obtém o ID real do local
-
-    if tipo == 'obra':
-        local = get_object_or_404(Obra, id=id_local)
-        escritorio_id = local.escritorio.id
-    elif tipo == 'escritorio':
-        local = get_object_or_404(Escritorio, id=id_local)
-        escritorio_id = local.id
-    else:
-        logger.error(f"Tipo inválido fornecido: {tipo}")
-        return redirect('locais:home')
+    escritorio_id = pegar_escritorio_id(despesa, tipo)
 
     if request.method == 'POST':
         try:

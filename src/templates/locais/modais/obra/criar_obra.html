@@ -6,7 +6,7 @@
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Nova Obra</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarObra'});"></i>
         </div>
-        <form method="POST" id="formCriarObra" action="{% url 'locais:criar_obra' %}">
+        <form method="POST" id="formCriarObra" action="{% url 'locais:criar_obra' escritorio.id %}">
             {% csrf_token %}
             <div class="flex flex-col space-y-4">
                 <div>
