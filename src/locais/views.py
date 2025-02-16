@@ -235,10 +235,11 @@ def editar_obra(request, obra_id):
 @login_required
 def deletar_obra(request, obra_id):
     obra = get_object_or_404(Obra, id=obra_id)
+    escritorio_id = obra.escritorio.id
 
     obra.delete()
     messages.success(request, 'Obra deletada com sucesso.')
-    return redirect('locais:home')
+    return redirect('locais:home', escritorio_id=escritorio_id)
 
 @login_required
 def detalhar_obra(request, id):

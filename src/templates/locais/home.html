@@ -18,7 +18,10 @@
         </form>
     </div>  
 </div>
-<h1 class="mt-4 text-3xl font-semibold text-center">Olá, {{ user.nome }}!</h1>
+<div class="flex flex-col justify-center">
+    <h1 class="mt-4 text-3xl font-semibold text-center">Olá, {{ user.nome }}!</h1>
+    <span class="mt-2 text-xl text-gray-400 text-center">Você está no escritório {{ escritorio.nome }}.</span>
+</div>
 <div class="container mx-12 mt-8">
     <div class="flex space-x-4 items-center justify-between">
         <h1 class="text-3xl font-semibold">Obras</h1>
@@ -33,29 +36,33 @@
     {% include "locais/modais/obra/criar_obra.html" %}
     
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {% for obra in obras %}
-            <div class="pt-3.5 pb-2 p-4 py-6 bg-gray-50 text-black rounded-[9px] border relative">
-                <div>
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-lg">{{ obra.nome }}</h3>
-                        <i id="dots-{{ forloop.counter }}" class="fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]" onclick="toggleDotsMenu(event, {{ forloop.counter }})"></i>
+        {% if obras %}
+            {% for obra in obras %}
+                <div class="pt-3.5 pb-2 p-4 py-6 bg-gray-50 text-black rounded-[9px] border relative">
+                    <div>
+                        <div class="flex justify-between items-center">
+                            <h3 class="font-bold text-lg">{{ obra.nome }}</h3>
+                            <i id="dots-{{ forloop.counter }}" class="fa-solid fa-ellipsis-vertical fa-lg p-3 pt-3.5 pb-3.5 rounded-[9px]" onclick="toggleDotsMenu(event, {{ forloop.counter }})"></i>
+                        </div>
+                        <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-2"></i>{{ obra.local }}</p>
+                        <p class="text-sm break-words"><i class="fa-solid fa-circle-dollar-to-slot mr-1"></i>{{ obra.valor_inicial }}</p>
                     </div>
-                    <p class="text-sm break-words"><i class="fa-solid fa-location-dot mr-2"></i>{{ obra.local }}</p>
-                    <p class="text-sm break-words"><i class="fa-solid fa-circle-dollar-to-slot mr-1"></i>{{ obra.valor_inicial }}</p>
+                    <div class="pt-2 pb-2 text-right">
+                        <!-- botão de ir -->
+                        <a href="{% url 'locais:detalhe_obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-gray-700 text-black p-3 rounded-full cursor-pointer hover:bg-gray-500" style="color:rgb(255, 255, 255);"></i></a>
+                    </div>
+                    <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
+                        <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>
+                        <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})">Editar</button>
+                    </div>
                 </div>
-                <div class="pt-2 pb-2 text-right">
-                    <!-- botão de ir -->
-                    <a href="{% url 'locais:detalhe_obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-gray-700 text-black p-3 rounded-full cursor-pointer hover:bg-gray-500" style="color:rgb(255, 255, 255);"></i></a>
-                </div>
-                <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2">
-                    <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>
-                    <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})">Editar</button>
-                </div>
-            </div>
-            {% include "locais/modais/obra/editar_obra.html" %}
-            {% include "locais/modais/obra/info_obra.html" %}
-            {% include "locais/modais/obra/deletar_obra.html" %}
-        {% endfor %}
+                {% include "locais/modais/obra/editar_obra.html" %}
+                {% include "locais/modais/obra/info_obra.html" %}
+                {% include "locais/modais/obra/deletar_obra.html" %}
+            {% endfor %}
+        {% else %}
+            <span class="mt-2 text-xl text-gray-400">Não há obras cadastradas.</span>
+        {% endif %}
     </div>  
     
 

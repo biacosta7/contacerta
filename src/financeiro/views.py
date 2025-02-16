@@ -431,35 +431,12 @@ def deletar_cartao(request, cartao_id):
     messages.success(request, 'Cartão deletado com sucesso.')
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
-@login_required
-def ver_cartoes(request):
-
-    cartoes = Cartao.objects.all()
-    num_cartoes = Cartao.objects.count()
-
-    #Calcular soma notas
-    #pega todas as despesas nao pagas
-    despesas_cartao_gerais = Despesa.objects.filter(
-        status='a_pagar',
-        forma_pag='cartao'
-    )
-
-    total_fatura_geral = sum(despesa_cartao.valor for despesa_cartao in despesas_cartao_gerais)
-    #total_fatura_gerais = formatar_valor(total_fatura_gerais)
-
-    total_fatura_geral_formatado = formatar_valor(total_fatura_geral)
-
-
-    context = {
-        'cartoes': cartoes, 
-        'num_cartoes': num_cartoes,
-        'total_fatura_geral': total_fatura_geral_formatado
-    }
-
-    return render(request, 'financeiro/cartoes.html', context)
 
 @login_required
 def fatura_mensal_cartoes(request):
+    escritorios = Escritorio.objects.filter(membros=request.user)
+    if escritorios.exists():
+        escritorio_id=escritorios.first().id
 
     hoje = date.today()
 
@@ -561,7 +538,9 @@ def fatura_mensal_cartoes(request):
         'despesas_cartao_mes': despesas_cartao_mes,
         'total_fatura_mensal': total_fatura_mensal_formatado,
         'ano_mes_selecionado': ano_mes if ano_mes else None,
-        'cartao_selecionado': cartao_selecionado
+        'cartao_selecionado': cartao_selecionado,
+        'escritorio_id': escritorio_id
+
     }
 
     return render(request, 'financeiro/cartoes.html', context)
