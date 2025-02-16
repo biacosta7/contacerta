@@ -28,6 +28,7 @@ class Escritorio(models.Model):
 
         self.debito_geral = total_despesas_gerais
         self.save()
+        return self.debito_geral
 
     def calcular_debito_mensal(self, mes=None, ano=None):
         hoje = date.today()
@@ -46,10 +47,10 @@ class Escritorio(models.Model):
         total_mensal = sum(despesa.valor for despesa in despesas_mensais)
         self.debito_mensal = total_mensal
         self.save()
+        return self.debito_mensal
 
     def __str__(self):
         return f"{self.nome} (CNPJ: {self.cnpj})"
-
 
 
 class Obra(models.Model):

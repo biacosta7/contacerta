@@ -1,11 +1,50 @@
 
-<div class="flex space-x-4 justify-between mb-4">
+<div class="flex flex-col space-x-4 justify-between mb-4">
+
+    <div class="ml-4 my-4 flex space-x-4">
+        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+            <h3 class="text-base font-medium">Débito Geral</h3>
+            <span class="custo-total-obra text-2xl font-bold">{{ escritorio.debito_geral_formatado }}</span>
+        </div>
+
+        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+            <button class="absolute top-4 right-4 text-gray-700" data-modal-id="modal_3">
+                <i class="mesesDropdownIcon fa-solid fa-chevron-down" 
+                data-modal-id="modal_3" 
+                onclick="toggleMesesMenu(event, 'modal_3')"></i>
+            </button>
+        
+            <h3 class="text-base font-medium block">Débito do mês</h3>
+            <span class="debito-mensal-escritorio text-2xl font-semibold block" data-modal-id="modal_3">{{ escritorio.debito_mensal_formatado }}</span>
+        
+            <div class="mesesDropdownList hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2" data-modal-id="modal_3">
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto overflow-x-hidden">
+                        <ul class="list-none">
+                            {% for ano_mes_valor in meses %}
+                            <li>
+                                <button type="submit" name="ano_mes" value="{{ ano_mes_valor }}" class="consultarDebitoMensalBtn dropdown-item text-left text-base py-2 border-b w-full" data-modal-id="modal_3">
+                                    {{ ano_mes_valor }}
+                                </button>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </form>
+            </div>
+        </div>  
+    </div>  
+
+    
+
     <div class="relative shadow-md rounded-lg w-full despesa_table">
         <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
             <div class="flex space-x-2 items-center">
                 <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
                 <h1 class="text-xl">Despesas</h1>
             </div>
+
             <div id="" class="text-base px-6 py-3 font-semibold" >
                 {% if despesas_filtro %}
                 Com Filtro: {% for k, v in filtros_preenchidos.items %}
@@ -46,7 +85,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    {% for despesa in despesas_filtro|default:despesas %}
+                    {% for despesa in despesas_filtro|default:despesas_escritorio %}
 
                         <tr class="bg-white border-b">
 

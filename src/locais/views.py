@@ -303,14 +303,20 @@ def detalhar_obra(request, id):
 
 
 @login_required
-def consultar_debito_mensal(request, id):
-    obra = get_object_or_404(Obra, id=id)
+def consultar_debito_mensal(request, tipo, id):
+    if tipo == 'escritorio':
+        tipo = ContentType.objects.get_for_model(Escritorio)
+        local = get_object_or_404(Escritorio, id=id)
+
+    elif tipo == 'obra':
+        tipo = ContentType.objects.get_for_model(Obra)
+        local = get_object_or_404(Obra, id=id)
+    
     ano_mes = request.GET.get("ano_mes")
 
     meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
 
     if ano_mes:
-        print(ano_mes)
         # Divida a string ano_mes
         ano_mes_dividido = ano_mes.split('/')
 
@@ -324,10 +330,9 @@ def consultar_debito_mensal(request, id):
                 mes = i
                 break
 
-        debito_mensal = obra.calcular_debito_mensal(mes, ano) if obra else 0
-        print(debito_mensal)
+        debito_mensal = local.calcular_debito_mensal(mes, ano) if local else 0
     else:
-        debito_mensal = obra.calcular_debito_mensal() if obra else 0
+        debito_mensal = local.calcular_debito_mensal() if local else 0
 
     return JsonResponse({"debito_mensal": formatar_valor(debito_mensal)})
 
@@ -460,8 +465,8 @@ def detalhar_escritorio(request, escritorio_id=None):
 
     if escritorio_id:
         escritorio = get_object_or_404(Escritorio, id=escritorio_id)
-        escritorio.debito_mensal = escritorio.calcular_debito_geral()
-        escritorio.valor_total = escritorio.calcular_debito_mensal()
+        escritorio.debito_geral_formatado = formatar_valor(escritorio.calcular_debito_geral())
+        escritorio.debito_mensal_formatado = formatar_valor(escritorio.calcular_debito_mensal())
     else:
         escritorio = None
 
@@ -469,6 +474,9 @@ def detalhar_escritorio(request, escritorio_id=None):
         tipo_local=tipo_local_escritorio,
         id_local=escritorio_id
     ).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
+
+    acessos = AcessoEscritorio.objects.all()
+    meses = calcular_range_meses()
     
     for despesa in despesas:
         try:
@@ -494,7 +502,10 @@ def detalhar_escritorio(request, escritorio_id=None):
         'funcionarios': funcionarios,
         'bancos': bancos,
         'cartoes': cartoes,
-        'escritorio': escritorio
+        'escritorio': escritorio,
+        'acessos': acessos,
+        'despesas_escritorio': despesas,
+        'meses': meses
     })
 
 

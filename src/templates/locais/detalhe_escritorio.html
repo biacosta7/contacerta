@@ -96,8 +96,58 @@
         const selectedButton = `${action.replace("Section", "Btn")}`;
         const selectedButtonElement = document.getElementById(selectedButton);
         selectedButtonElement.classList.add("bg-gray-200");
+
+        // Salva a seção ativa no LocalStorage
+        localStorage.setItem("activeSection", action);
     }
+
+    // Remove o estado salvo quando o usuário sai da página
+    document.querySelector("a[href='{% url 'locais:home' escritorio_id=escritorio.id %}']").addEventListener("click", function () {
+      localStorage.removeItem("activeSection");
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Recupera a última seção acessada do LocalStorage
+        const savedSection = localStorage.getItem("activeSection") || "escritorioSection";
+        sectionModal(savedSection); // Ativa a seção salva
+    });
     
-    
+
+    document.querySelectorAll(".consultarDebitoMensalBtn").forEach(button => {
+      button.addEventListener("click", function(event) {
+          event.preventDefault();
+  
+          const anoMes = this.value;
+          const modalId = this.getAttribute("data-modal-id"); 
+          const pathSegments = window.location.pathname.split('/');
+          const escritorioId = pathSegments[pathSegments.length - 1] || pathSegments[pathSegments.length - 2];
+  
+          console.log("Consultando débito mensal para escritório ID:", escritorioId, "Mês:", anoMes);
+  
+          fetch(`/consultar-debito-mensal/escritorio/${escritorioId}/?ano_mes=${encodeURIComponent(anoMes)}`, {
+              method: "GET",
+              headers: {
+                  "X-Requested-With": "XMLHttpRequest"
+              }
+          })
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error(`Erro HTTP! Status: ${response.status}`);
+              }
+              return response.json();
+          })
+          .then(data => {
+              console.log("Resposta da API:", data);
+              if (data.debito_mensal) {
+                  document.querySelectorAll(`.debito-mensal-escritorio[data-modal-id="${modalId}"]`).forEach(el => {
+                      el.innerText = data.debito_mensal;
+                  });
+              }
+          })
+          .catch(error => console.error("Erro ao buscar débito mensal:", error));
+      });
+    });
+  
+
 </script>
 {% endblock content %}

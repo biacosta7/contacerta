@@ -71,3 +71,59 @@
         </div>
     </form>
 </div>
+
+<div class="mt-8 py-8 border-t-2">
+    <div class="flex space-x-4 justify-between">
+        <div class="relative shadow-md rounded-lg w-full">
+            <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
+                <div class="flex space-x-2 items-center">
+                    <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
+                    <h1 class="text-xl">Acessos Enviados</h1>
+                </div>
+                
+            </div>
+            <div class="overflow-y-auto max-h-96">
+                
+                <table class="w-full text-sm text-left rtl:text-right text-gray-500 border">
+                    
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Nome</th>
+                            <th scope="col" class="px-6 py-3">Email</th>
+                            <th scope="col" class="px-6 py-3">Cargo</th>
+                            <th scope="col" class="px-6 py-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% for acesso in acessos %}
+                            <tr class="bg-white border-b">
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                    {{ acesso.user_receptor.nome }}
+                                </th>
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                    {{ acesso.user_receptor.email }}
+                                </th>
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                    {% if acesso.cargo == 'FUNC' %}
+                                        Funcionário
+                                    {% elif acesso.cargo == 'ADMIN' %}
+                                        Administrador
+                                    {% endif %}
+                                </th>
+                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                    {% if acesso.status == 'aprovado' %}
+                                        Aprovado
+                                    {% elif acesso.status == 'pendente' %}
+                                        Pendente
+                                    {% elif acesso.status == 'rejeitado' %}
+                                        Rejeitado
+                                    {% endif %}
+                                </th>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
