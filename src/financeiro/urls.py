@@ -13,7 +13,7 @@ urlpatterns = [
     # Cartões
     path('cartoes/', views.fatura_mensal_cartoes, name='cartoes'),
 
-    path('cartoes/criar/', views.criar_cartao, name='criar_cartao'),
+    path('cartoes/criar/<int:escritorio_id>/', views.criar_cartao, name='criar_cartao'),
     path('cartoes/editar/<int:cartao_id>/', views.editar_cartao, name='editar_cartao'),
     path('cartoes/deletar/<int:cartao_id>/', views.deletar_cartao, name='deletar_cartao'),
 

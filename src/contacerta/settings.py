@@ -120,7 +120,6 @@ WSGI_APPLICATION = 'contacerta.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 # Carregar as variáveis do arquivo .env
-# Carregar variáveis do .env
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -132,7 +131,7 @@ if NOT_PROD:
     # Ambiente de Desenvolvimento
     DEBUG = True
     SECRET_KEY = os.getenv("SECRET_KEY")
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "127.0.0.1:8000"]
 
     DATABASES = {
         "default": {

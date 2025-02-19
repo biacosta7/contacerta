@@ -367,7 +367,7 @@ def atualizar_status(request, despesa_id):
 
 # Cartões
 @login_required
-def criar_cartao(request):
+def criar_cartao(request, escritorio_id):
     next_url = request.GET.get('next')
 
     if request.method == 'POST':
@@ -380,6 +380,7 @@ def criar_cartao(request):
 
         # Obtenha a instância do banco ou retorne um erro 404 se não existir
         banco = get_object_or_404(Banco, id=banco_id)
+        escritorio = get_object_or_404(Escritorio, id=escritorio_id)
 
         # Criando o cartão
         cartao = Cartao.objects.create(
@@ -388,6 +389,7 @@ def criar_cartao(request):
             final=final,
             vencimento=vencimento,
             quant_dias=quant_dias,
+            escritorio=escritorio
         )
         cartao.save()
 
