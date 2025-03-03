@@ -50,6 +50,7 @@ def filtrar_despesas(request, despesas):
         data = request.GET.get('data_filtro')
         funcionario = request.GET.getlist('funcionario_filtro')
         modalidade = request.GET.getlist('modalidade')
+        modalidade_escritorio = request.GET.getlist('modalidade_escritorio')
         categoria = request.GET.getlist('categoria')
         forma_pag = request.GET.getlist('forma_pag')
 
@@ -60,6 +61,7 @@ def filtrar_despesas(request, despesas):
             "modalidade": modalidade,
             "categoria": categoria,
             "forma_pag": forma_pag,
+            "modalidade_escritorio": modalidade_escritorio
         }
 
         filtros_preenchidos_filtrados = {}
@@ -101,6 +103,9 @@ def filtrar_despesas(request, despesas):
 
         if modalidade:
             despesas_filtro = despesas_filtro.filter(modalidade__in=modalidade) if modalidade else despesas_filtro
+
+        if modalidade_escritorio:
+            despesas_filtro = despesas_filtro.filter(modalidade_escritorio__in=modalidade_escritorio) if modalidade_escritorio else despesas_filtro
 
         if forma_pag:
             despesas_filtro = despesas_filtro.filter(forma_pag__in=forma_pag) if forma_pag else despesas_filtro
@@ -477,6 +482,8 @@ def detalhar_escritorio(request, escritorio_id=None):
 
     acessos = AcessoEscritorio.objects.all()
     meses = calcular_range_meses()
+
+    despesas_filtro, filtros_preenchidos, total_filtro = filtrar_despesas(request, despesas.order_by('-data'))
     
     for despesa in despesas:
         try:
@@ -505,7 +512,10 @@ def detalhar_escritorio(request, escritorio_id=None):
         'escritorio': escritorio,
         'acessos': acessos,
         'despesas_escritorio': despesas,
-        'meses': meses
+        'meses': meses,
+        'despesas_filtro': despesas_filtro, 
+        'filtros_preenchidos': filtros_preenchidos, 
+        'total_filtro': total_filtro
     })
 
 

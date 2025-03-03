@@ -118,7 +118,7 @@
                 document.getElementById('obraTituloInfo').innerHTML = "Obra " + obra.nome;
                 document.getElementById('nomeObraInfo').innerHTML = "<b>Nome:</b> " + obra.nome;
                 document.getElementById('localObraInfo').innerHTML = "<b>Local:</b> " + obra.local;
-                document.getElementById('valorInicialObraInfo').innerHTML = "<b>Valor inicial:</b> R$" + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(obra.valor_inicial);
+                document.getElementById('valorInicialObraInfo').innerHTML = "<b>Valor inicial: </b>" + obra.valor_inicial;
                 document.getElementById('dataInicioObraInfo').innerHTML = "<b>Data de início:</b> " + obra.data_inicio;
                 document.getElementById('dataFinalObraInfo').innerHTML = "<b>Data de término:</b> " + (obra.data_final || "-");
                 document.getElementById('prazoInicialObraInfo').innerHTML = "<b>Prazo inicial (Data de término estipulada):</b> " + obra.prazo_inicial;
