@@ -533,6 +533,9 @@ def fatura_mensal_cartoes(request):
 
     meses = calcular_range_meses()
 
+    if not cartoes.exists():
+        messages.warning(request, 'Nenhum cartão cadastrado.')
+
     context = {
         'cartoes': cartoes,
         'meses': meses,
@@ -542,7 +545,6 @@ def fatura_mensal_cartoes(request):
         'ano_mes_selecionado': ano_mes if ano_mes else None,
         'cartao_selecionado': cartao_selecionado,
         'escritorio_id': escritorio_id
-
     }
 
     return render(request, 'financeiro/cartoes.html', context)

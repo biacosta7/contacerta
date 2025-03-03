@@ -5,7 +5,7 @@
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Novo Cartão</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarCartao'});"></i>
         </div>
-        <form method="POST" id="formCriarCartao" action="{% url 'financeiro:criar_cartao' escritorio_id=escritorio.id %}?next={{ request.path }}">
+        <form method="POST" id="formCriarCartao" action="{% url 'financeiro:criar_cartao' escritorio_id=escritorio_id %}?next={{ request.path }}">
             {% csrf_token %}
             <div class="flex flex-col space-y-4">
                 <div>

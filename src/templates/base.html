@@ -317,16 +317,14 @@
                     console.error('Cartão não encontrado:', cartaoId);
                     return;  
                 }
-            
-                console.log('Cartão encontrada:', cartao);
-                console.log('ID da cartão:', cartao.id);
-                
+
                 document.getElementById('formEditarCartao').action = `/financeiro/cartoes/editar/${id}/?next=${window.location.pathname}`;
                 
                 document.getElementById('cartaoTituloEditar').innerHTML = `Editar "${cartao.nome}"`;
                 document.getElementById('cartaoId').value = cartao.id;
                 document.getElementById('nomeCartao').value = cartao.nome;
                 document.getElementById('finalCartao').value = cartao.final;
+                document.getElementById('bancoCartao').value = cartao.banco_id;
                 document.getElementById('vencimentoCartao').value = cartao.vencimento;
                 document.getElementById('quantdiasCartao').value = cartao.quant_dias;
                                   
