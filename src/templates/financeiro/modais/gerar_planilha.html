@@ -8,23 +8,13 @@
         <form method="GET" id="formGerarPlanilha" action="{% url 'financeiro:gerar_planilha' obra.id %}">
             {% csrf_token %}
             <div class="mb-8">
-                {% if filtros_aplicados %} 
-                    {% comment %} <input type="hidden" id="despesas_filtradas" name="despesas_filtradas" value="{% if despesas_filtro %}{{ despesas_filtro }}{% else %}{{ despesas }}{% endif %}"> {% endcomment %}
-                    {% comment %} <input type="text" id="despesas_filtradas" name="despesas_filtradas" value="{{ despesas_ids|safe }}">
-                    {% for despesa in despesas_id %}
-                    <p>{{despesa}}</p>
-                    {% endfor %} {% endcomment %}
-
-
-                    {% comment %} input oculto para mandar para a view se tiver filtro, atribuir valor de despesas_filtro, se nao tiver, atribuir valor de despesas {% endcomment %}
-
+                {% if despesas_filtro %} 
                     <h2 class="mt-4 mb-2 text-base font-semibold text-gray-900">Os seguintes filtros estão sendo aplicados:</h2>
-                
                     
-                    <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside dark:text-gray-400">
-                        {% for filtro in filtros_aplicados %}
+                    <ul class="max-w-md space-y-1 text-gray-500 list-disc list-inside">
+                        {% for k,v in filtros_preenchidos.items %}
                             <li>
-                                {{ filtro }}
+                                {{ k|capfirst }}: {{ v|join:", " |capfirst }}
                             </li>
                         {% endfor %}
                     </ul>

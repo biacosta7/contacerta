@@ -1152,7 +1152,7 @@ def gerar_planilha(request, id):
         col_letter = col[0].column_letter  # Obtém a letra da coluna
         ws.column_dimensions[col_letter].width = 18
 
-    nome_obra = (obra.nome).strip()
+    nome_obra = obra.nome.replace(" ", "")
 
     # Criar a resposta HTTP com o arquivo
     response = HttpResponse(

@@ -8,11 +8,12 @@
             </div>
             <div id="" class="text-base px-6 py-3 font-semibold" >
                 {% if despesas_filtro %}
-                Com Filtro: {% for k, v in filtros_preenchidos.items %}
-                    {{ k | capfirst }} - {{ v|join:", " |capfirst }}
+                <span class="text-green-500">(Com Filtro)</span> {% for k, v in filtros_preenchidos.items %}
+                    {{ k | capfirst }}: {{ v|join:", " |capfirst }}
+                    {% if not forloop.last %} <span class="font-light">|</span> {% endif %}
                     {% endfor %}
                 {% else %}
-                Sem Filtro
+                <span class="text-gray-400">Sem Filtro</span>
                 {% endif %}
             </div>
             <div class="flex space-x-2 items-center">

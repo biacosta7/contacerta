@@ -54,15 +54,27 @@ def filtrar_despesas(request, despesas):
         modalidade_escritorio = request.GET.getlist('modalidade_escritorio')
         categoria = request.GET.getlist('categoria')
         forma_pag = request.GET.getlist('forma_pag')
+        
+        forma_pag_formatado = []
 
+        for i in forma_pag:
+            if i == "cartao":
+                forma_pag_formatado.append("Cartão")
+            elif i == "boleto":
+                forma_pag_formatado.append("Boleto")
+            elif i == "pix":
+                forma_pag_formatado.append("Pix")
+            elif i == "especie":
+                forma_pag_formatado.append("Espécie")
+        
         filtros_preenchidos = {
-            "ano_mes": ano_mes,
-            "data": data,
-            "funcionario": funcionario,
-            "modalidade": modalidade,
-            "categoria": categoria,
-            "forma_pag": forma_pag,
-            "modalidade_escritorio": modalidade_escritorio
+            "Ano-Mês": ano_mes,
+            "Data": data,
+            "Funcionario": funcionario,
+            "Modalidade": modalidade,
+            "Categoria": categoria,
+            "Forma": forma_pag_formatado,
+            "Modalidade escritório": modalidade_escritorio
         }
 
         filtros_preenchidos_filtrados = {}
@@ -291,9 +303,12 @@ def detalhar_obra(request, id):
 
     despesas_filtro, filtros_preenchidos, total_filtro = filtrar_despesas(request, despesas.order_by('-data'))
 
+    if despesas_filtro:
+        for despesa in despesas_filtro:
+            despesa.valor_formatado = formatar_valor(despesa.valor)
+
     total_filtro = formatar_valor(total_filtro)
 
-    
 
     request.session['despesas_ids'] = list(despesas_filtro.values_list("id", flat=True)) if despesas_filtro else list(despesas.values_list("id", flat=True))
 
