@@ -1,5 +1,6 @@
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
+import json
 from pyexpat.errors import messages
 from django.contrib import messages
 from django.db import IntegrityError
@@ -1029,3 +1030,139 @@ def get_debito_mensal(request, id, ano, mes):
     print(debito_mensal)
 
     return JsonResponse({"debito_mensal": debito_mensal})
+
+
+import openpyxl
+from django.http import HttpResponse
+from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
+
+def gerar_planilha(request, id):
+    obra = get_object_or_404(Obra, id=id)
+
+    # Recupera a lista de despesas da sessão
+    despesas_ids = request.session.get('despesas_ids', [])
+
+    # Garante que despesas_ids é uma lista
+    if not isinstance(despesas_ids, list):
+        despesas_ids = []  # Garante que sempre será uma lista
+
+    # Filtra as despesas corretamente
+    despesas = Despesa.objects.filter(id__in=despesas_ids) if despesas_ids else Despesa.objects.filter(tipo_local=ContentType.objects.get_for_model(obra), id_local=id)
+
+    # Criar um novo arquivo Excel
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = f"Despesas {obra.nome}"
+
+    # Adicionar cabeçalhos
+    headers = ["Data", "Descrição", "Valor", "Forma", "Status", "Parcelamento", "Cartão", "Nº Nota Fiscal", "Banco/Remetente",  "Observação"]
+
+    # Definir a linha de cabeçalho
+    header_row = 1
+    for col_num, header in enumerate(headers, start=1):
+        cell = ws.cell(row=header_row, column=col_num, value=header)
+
+        # Estilizar as células do cabeçalho
+        cell.font = Font(bold=True, color="FFFFFF")  # Negrito e texto branco
+        cell.fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")  # Cor de fundo azul
+        cell.alignment = Alignment(horizontal="center", vertical="center")  # Alinhamento centralizado
+        cell.border = Border(
+            top=Side(border_style="thin", color="000000"),
+            bottom=Side(border_style="thin", color="000000"),
+            left=Side(border_style="thin", color="000000"),
+            right=Side(border_style="thin", color="000000")
+        )  # Bordas finas em todas as direções
+
+    # Definir altura mínima para todas as linhas
+    for row in ws.iter_rows():
+        ws.row_dimensions[row[0].row].height = 20
+        for cell in row:
+            cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+    # Adicionar as despesas à planilha
+    for despesa in despesas:
+        nome_cartao = '-'
+        num_nota_fiscal = '-'
+
+        despesa_status = "À pagar" if despesa.status == 'a_pagar' else "Pago"
+        
+        if despesa.forma_pag == 'cartao':
+            nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
+
+            parcelamento_quant = f"{nota_cartao.quant_parcelas}x"
+            
+            parcelas = Parcela.objects.filter(nota_cartao=nota_cartao)
+            pagamentos = Pagamento.objects.filter(parcela__in=parcelas)
+            pagamentos_formatados = ", ".join([formatar_valor(p.valor) for p in pagamentos])
+
+            nome_cartao = nota_cartao.cartao.nome
+
+            remetente = nota_cartao.cartao.banco.nome
+
+            forma_pag = "Cartão"
+
+        elif despesa.forma_pag == 'boleto':
+            nota_boleto = NotaBoleto.objects.get(despesa_ptr_id=despesa.id)
+            parcelamento_quant = f"{nota_boleto.quant_boletos}x"
+
+            num_nota_fiscal = nota_boleto.num_notafiscal
+
+            remetente = nota_boleto.banco.nome
+
+            forma_pag = "Boleto"
+        
+        else:
+            parcelamento_quant = f"1x"
+            
+            if despesa.forma_pag == 'especie':
+                nota_especie = NotaEspecie.objects.get(despesa_ptr_id=despesa.id)
+                remetente = nota_especie.pagador
+                forma_pag = "Espécie"
+            
+            elif despesa.forma_pag == 'pix':
+                nota_pix = NotaPix.objects.get(despesa_ptr_id=despesa.id)
+                remetente = nota_pix.banco.nome
+                forma_pag = "Pix"
+            
+
+        despesa.observacao = despesa.observacao or '-'
+
+        ws.append([
+            despesa.data.strftime("%d/%m/%Y"),
+            despesa.nome,
+            despesa.valor,
+            forma_pag,
+            despesa_status,
+            parcelamento_quant,
+            nome_cartao,
+            num_nota_fiscal,
+            remetente,
+            despesa.observacao,
+        ])
+
+        # Aplica formatação de moeda na coluna de valor (coluna C = índice 3)
+        valor_cell = ws.cell(row=ws.max_row, column=3)
+        valor_cell.number_format = 'R$ #,##0.00'  # Formato brasileiro
+
+        # Aplicar alinhamento e quebra de linha na nova linha
+        for cell in ws[ws.max_row]:
+            cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+
+    for col in ws.columns:
+        col_letter = col[0].column_letter  # Obtém a letra da coluna
+        ws.column_dimensions[col_letter].width = 18
+
+    nome_obra = (obra.nome).strip()
+
+    # Criar a resposta HTTP com o arquivo
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = f'attachment; filename="despesas_obra_{nome_obra}.xlsx"'
+
+    del request.session['despesas_ids']
+
+    # Salvar a planilha no response
+    wb.save(response)
+
+    return response

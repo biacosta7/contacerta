@@ -43,4 +43,7 @@ urlpatterns = [
     path('banco/criar/', views.criar_banco, name='criar_banco'),
 
     path('funcionario/criar/', views.criar_funcionario, name='criar_funcionario'),
+
+    path('obra/<int:id>/exportar_despesas/', views.gerar_planilha, name='gerar_planilha'),
+
 ]

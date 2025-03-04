@@ -16,6 +16,8 @@
                 {% endif %}
             </div>
             <div class="flex space-x-2 items-center">
+                <button class="text-base px-2 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick="document.getElementById('modalGerarPlanilha').classList.remove('hidden');"><i class="mr-2 fa-solid fa-file-arrow-down"></i>Exportar</button>
+
                 <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick="filtroModal('abrir');"><i class="mr-1 fa-solid fa-filter"></i>
                     Filtrar
                 </button>
@@ -109,6 +111,8 @@
     </div>
 </div>
 {% include "locais/modais/despesa_filtro.html" %}
+{% include "financeiro/modais/gerar_planilha.html" %}
+
 <style>
     .despesa_table.darkened {
         position: relative;

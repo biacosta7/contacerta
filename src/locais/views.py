@@ -1,3 +1,4 @@
+import json
 import locale
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -294,6 +295,10 @@ def detalhar_obra(request, id):
 
     total_filtro = formatar_valor(total_filtro)
 
+    
+
+    request.session['despesas_ids'] = list(despesas_filtro.values_list("id", flat=True)) if despesas_filtro else list(despesas.values_list("id", flat=True))
+
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
         'despesas': despesas,
@@ -503,9 +508,9 @@ def detalhar_escritorio(request, escritorio_id=None):
         despesa.valor_formatado = formatar_valor(despesa.valor)
         despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
       
-    
     return render(request, 'locais/detalhe_escritorio.html', {
         'escritorio': escritorio,
+        'escritorio_id': escritorio.id,
         'funcionarios': funcionarios,
         'bancos': bancos,
         'cartoes': cartoes,
