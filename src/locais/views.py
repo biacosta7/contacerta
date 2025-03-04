@@ -1,3 +1,4 @@
+import json
 import locale
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -50,16 +51,30 @@ def filtrar_despesas(request, despesas):
         data = request.GET.get('data_filtro')
         funcionario = request.GET.getlist('funcionario_filtro')
         modalidade = request.GET.getlist('modalidade')
+        modalidade_escritorio = request.GET.getlist('modalidade_escritorio')
         categoria = request.GET.getlist('categoria')
         forma_pag = request.GET.getlist('forma_pag')
+        
+        forma_pag_formatado = []
 
+        for i in forma_pag:
+            if i == "cartao":
+                forma_pag_formatado.append("Cartão")
+            elif i == "boleto":
+                forma_pag_formatado.append("Boleto")
+            elif i == "pix":
+                forma_pag_formatado.append("Pix")
+            elif i == "especie":
+                forma_pag_formatado.append("Espécie")
+        
         filtros_preenchidos = {
-            "ano_mes": ano_mes,
-            "data": data,
-            "funcionario": funcionario,
-            "modalidade": modalidade,
-            "categoria": categoria,
-            "forma_pag": forma_pag,
+            "Ano-Mês": ano_mes,
+            "Data": data,
+            "Funcionario": funcionario,
+            "Modalidade": modalidade,
+            "Categoria": categoria,
+            "Forma": forma_pag_formatado,
+            "Modalidade escritório": modalidade_escritorio
         }
 
         filtros_preenchidos_filtrados = {}
@@ -101,6 +116,9 @@ def filtrar_despesas(request, despesas):
 
         if modalidade:
             despesas_filtro = despesas_filtro.filter(modalidade__in=modalidade) if modalidade else despesas_filtro
+
+        if modalidade_escritorio:
+            despesas_filtro = despesas_filtro.filter(modalidade_escritorio__in=modalidade_escritorio) if modalidade_escritorio else despesas_filtro
 
         if forma_pag:
             despesas_filtro = despesas_filtro.filter(forma_pag__in=forma_pag) if forma_pag else despesas_filtro
@@ -194,8 +212,6 @@ def editar_obra(request, obra_id):
         valor_inicial = request.POST.get('valor_inicial')
         prazo_inicial = request.POST.get('prazo_inicial')
 
-        print(nome, "\t", local,"\t", data_inicio,"\t", data_final,"\t", valor_inicial,"\t", prazo_inicial)
-
         # Converter as datas do formato dd/mm/yyyy para yyyy-mm-dd
         try:
             data_inicio = datetime.strptime(data_inicio, '%d/%m/%Y').date()
@@ -287,7 +303,14 @@ def detalhar_obra(request, id):
 
     despesas_filtro, filtros_preenchidos, total_filtro = filtrar_despesas(request, despesas.order_by('-data'))
 
+    if despesas_filtro:
+        for despesa in despesas_filtro:
+            despesa.valor_formatado = formatar_valor(despesa.valor)
+
     total_filtro = formatar_valor(total_filtro)
+
+
+    request.session['despesas_ids'] = list(despesas_filtro.values_list("id", flat=True)) if despesas_filtro else list(despesas.values_list("id", flat=True))
 
     return render(request, 'locais/detalhe_obra.html', {
         'obra': obra,
@@ -477,6 +500,8 @@ def detalhar_escritorio(request, escritorio_id=None):
 
     acessos = AcessoEscritorio.objects.all()
     meses = calcular_range_meses()
+
+    despesas_filtro, filtros_preenchidos, total_filtro = filtrar_despesas(request, despesas.order_by('-data'))
     
     for despesa in despesas:
         try:
@@ -496,16 +521,19 @@ def detalhar_escritorio(request, escritorio_id=None):
         despesa.valor_formatado = formatar_valor(despesa.valor)
         despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
       
-    
     return render(request, 'locais/detalhe_escritorio.html', {
         'escritorio': escritorio,
+        'escritorio_id': escritorio.id,
         'funcionarios': funcionarios,
         'bancos': bancos,
         'cartoes': cartoes,
         'escritorio': escritorio,
         'acessos': acessos,
         'despesas_escritorio': despesas,
-        'meses': meses
+        'meses': meses,
+        'despesas_filtro': despesas_filtro, 
+        'filtros_preenchidos': filtros_preenchidos, 
+        'total_filtro': total_filtro
     })
 
 

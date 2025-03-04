@@ -102,6 +102,10 @@
             }
         }
 
+        function removerFormatacaoBR(valor) {
+            return parseFloat(valor.replace(/R\$\s*/g, "").replace(/\./g, "").replace(",", "."));
+        }
+
         // modal de editar e excluir obra
         function obraModal(action, id) {
             const infoModal = document.getElementById('modalInfoObra');
@@ -118,7 +122,7 @@
                 document.getElementById('obraTituloInfo').innerHTML = "Obra " + obra.nome;
                 document.getElementById('nomeObraInfo').innerHTML = "<b>Nome:</b> " + obra.nome;
                 document.getElementById('localObraInfo').innerHTML = "<b>Local:</b> " + obra.local;
-                document.getElementById('valorInicialObraInfo').innerHTML = "<b>Valor inicial:</b> R$" + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(obra.valor_inicial);
+                document.getElementById('valorInicialObraInfo').innerHTML = "<b>Valor inicial: </b>" + obra.valor_inicial;
                 document.getElementById('dataInicioObraInfo').innerHTML = "<b>Data de início:</b> " + obra.data_inicio;
                 document.getElementById('dataFinalObraInfo').innerHTML = "<b>Data de término:</b> " + (obra.data_final || "-");
                 document.getElementById('prazoInicialObraInfo').innerHTML = "<b>Prazo inicial (Data de término estipulada):</b> " + obra.prazo_inicial;
@@ -143,8 +147,9 @@
                 document.getElementById('obraId').value = obra.id;
                 document.getElementById('nomeObra').value = obra.nome;
                 document.getElementById('localObra').value = obra.local;
-        
-                ToBRCurrency('valorInicialObra', obra.valor_inicial);
+                
+                let valorNumerico = removerFormatacaoBR(obra.valor_inicial);
+                ToBRCurrency('valorInicialObraE', valorNumerico);
                   
                 // Atribuir os valores formatados aos campos do formulário
                 document.getElementById('dataInicioObraE').value = obra.data_inicio;
@@ -317,16 +322,14 @@
                     console.error('Cartão não encontrado:', cartaoId);
                     return;  
                 }
-            
-                console.log('Cartão encontrada:', cartao);
-                console.log('ID da cartão:', cartao.id);
-                
+
                 document.getElementById('formEditarCartao').action = `/financeiro/cartoes/editar/${id}/?next=${window.location.pathname}`;
                 
                 document.getElementById('cartaoTituloEditar').innerHTML = `Editar "${cartao.nome}"`;
                 document.getElementById('cartaoId').value = cartao.id;
                 document.getElementById('nomeCartao').value = cartao.nome;
                 document.getElementById('finalCartao').value = cartao.final;
+                document.getElementById('bancoCartao').value = cartao.banco_id;
                 document.getElementById('vencimentoCartao').value = cartao.vencimento;
                 document.getElementById('quantdiasCartao').value = cartao.quant_dias;
                                   
@@ -556,8 +559,7 @@
                 document.getElementById('formaPagDespesaEditar').value = despesa.forma_pag;
                 document.getElementById('dataDespesaEditar').value = despesa.data;
 
-                ToBRCurrency('valorDespesaEditar', despesa.valor)
-                console.log(' despesa.valor: ' +  despesa.valor )
+                ToBRCurrency('valorDespesaEditar', despesa.valor);
 
                 document.getElementById('obsDespesaEditar').value = despesa.observacao;
                 document.getElementById('statusDespesaEditar').value = despesa.status;
@@ -565,12 +567,12 @@
 
                 document.getElementById('deletarDespesaBtn').setAttribute('onclick', `despesaModal('deletarDespesa', ${despesaId})`);   
                 
-                let modalidadeEscritorioSelect = document.getElementById('modalidadeEscritorioSelect')
-                let modalidadeObraSelect = document.getElementById('modalidadeObraSelect')
+                let modalidadeEscritorioSelect = document.getElementById('modalidadeEscritorioSelect');
+                let modalidadeObraSelect = document.getElementById('modalidadeObraSelect');
 
                 if (despesa.modalidade != null){
-                    modalidadeObraSelect.classList.remove('hidden')
-                    modalidadeEscritorioSelect.classList.add('hidden')
+                    modalidadeObraSelect.classList.remove('hidden');
+                    modalidadeEscritorioSelect.classList.add('hidden');
 
                     if (despesa.modalidade === 'mao_de_obra') {
 
@@ -586,8 +588,8 @@
                     document.getElementById('modalidadeDespesaEditar').value = despesa.modalidade; 
                     
                 } else if (despesa.modalidadeEscritorio != null){
-                    modalidadeObraSelect.classList.add('hidden')
-                    modalidadeEscritorioSelect.classList.remove('hidden')
+                    modalidadeObraSelect.classList.add('hidden');
+                    modalidadeEscritorioSelect.classList.remove('hidden');
                     
                     document.getElementById('modalidadeDespesaEscritorioEditar').value = despesa.modalidadeEscritorio; 
                 }

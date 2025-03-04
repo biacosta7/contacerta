@@ -85,6 +85,7 @@ def cartoes(request):
             'final': cartao.final,
             'vencimento': cartao.vencimento,
             'banco': cartao.banco.nome,
+            'banco_id': cartao.banco.id,
             'quant_dias': cartao.quant_dias,
             'melhor_dia': cartao.melhor_dia.strftime('%d/%m/%Y') if cartao.melhor_dia else None,
         }
