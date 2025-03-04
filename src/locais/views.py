@@ -200,8 +200,6 @@ def editar_obra(request, obra_id):
         valor_inicial = request.POST.get('valor_inicial')
         prazo_inicial = request.POST.get('prazo_inicial')
 
-        print(nome, "\t", local,"\t", data_inicio,"\t", data_final,"\t", valor_inicial,"\t", prazo_inicial)
-
         # Converter as datas do formato dd/mm/yyyy para yyyy-mm-dd
         try:
             data_inicio = datetime.strptime(data_inicio, '%d/%m/%Y').date()

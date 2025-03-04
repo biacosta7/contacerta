@@ -102,6 +102,10 @@
             }
         }
 
+        function removerFormatacaoBR(valor) {
+            return parseFloat(valor.replace(/R\$\s*/g, "").replace(/\./g, "").replace(",", "."));
+        }
+
         // modal de editar e excluir obra
         function obraModal(action, id) {
             const infoModal = document.getElementById('modalInfoObra');
@@ -143,8 +147,9 @@
                 document.getElementById('obraId').value = obra.id;
                 document.getElementById('nomeObra').value = obra.nome;
                 document.getElementById('localObra').value = obra.local;
-        
-                ToBRCurrency('valorInicialObra', obra.valor_inicial);
+                
+                let valorNumerico = removerFormatacaoBR(obra.valor_inicial);
+                ToBRCurrency('valorInicialObraE', valorNumerico);
                   
                 // Atribuir os valores formatados aos campos do formulário
                 document.getElementById('dataInicioObraE').value = obra.data_inicio;
@@ -554,8 +559,7 @@
                 document.getElementById('formaPagDespesaEditar').value = despesa.forma_pag;
                 document.getElementById('dataDespesaEditar').value = despesa.data;
 
-                ToBRCurrency('valorDespesaEditar', despesa.valor)
-                console.log(' despesa.valor: ' +  despesa.valor )
+                ToBRCurrency('valorDespesaEditar', despesa.valor);
 
                 document.getElementById('obsDespesaEditar').value = despesa.observacao;
                 document.getElementById('statusDespesaEditar').value = despesa.status;
@@ -563,12 +567,12 @@
 
                 document.getElementById('deletarDespesaBtn').setAttribute('onclick', `despesaModal('deletarDespesa', ${despesaId})`);   
                 
-                let modalidadeEscritorioSelect = document.getElementById('modalidadeEscritorioSelect')
-                let modalidadeObraSelect = document.getElementById('modalidadeObraSelect')
+                let modalidadeEscritorioSelect = document.getElementById('modalidadeEscritorioSelect');
+                let modalidadeObraSelect = document.getElementById('modalidadeObraSelect');
 
                 if (despesa.modalidade != null){
-                    modalidadeObraSelect.classList.remove('hidden')
-                    modalidadeEscritorioSelect.classList.add('hidden')
+                    modalidadeObraSelect.classList.remove('hidden');
+                    modalidadeEscritorioSelect.classList.add('hidden');
 
                     if (despesa.modalidade === 'mao_de_obra') {
 
@@ -584,8 +588,8 @@
                     document.getElementById('modalidadeDespesaEditar').value = despesa.modalidade; 
                     
                 } else if (despesa.modalidadeEscritorio != null){
-                    modalidadeObraSelect.classList.add('hidden')
-                    modalidadeEscritorioSelect.classList.remove('hidden')
+                    modalidadeObraSelect.classList.add('hidden');
+                    modalidadeEscritorioSelect.classList.remove('hidden');
                     
                     document.getElementById('modalidadeDespesaEscritorioEditar').value = despesa.modalidadeEscritorio; 
                 }
