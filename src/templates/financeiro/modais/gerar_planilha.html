@@ -5,7 +5,7 @@
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Detalhes da Planilha</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="document.getElementById('modalGerarPlanilha').classList.add('hidden');"></i>
         </div>
-        <form method="GET" id="formGerarPlanilha" action="{% if tipo_local_obra == 'obra' %}{% url 'financeiro:gerar_planilha' tipo='obra' id=obra.id %}{% else %}{% url 'financeiro:gerar_planilha' tipo='escritorio' id=escritorio.id %}{% endif %}">
+        <form method="GET" id="formGerarPlanilha" action="{% if tipo_local == 'obra' %}{% url 'financeiro:gerar_planilha' tipo='obra' id=obra.id %}{% elif tipo_local == 'escritorio' %}{% url 'financeiro:gerar_planilha' tipo='escritorio' id=escritorio.id %}{% endif %}">
             {% csrf_token %}
             <div class="mb-8">
                 {% if despesas_filtro %} 

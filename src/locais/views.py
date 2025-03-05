@@ -130,6 +130,9 @@ def filtrar_despesas(request, despesas):
         
         total_filtro = sum(despesa.valor for despesa in despesas_filtro)
 
+        if not despesas_filtro.exists():
+            messages.error(request, "Não há despesas correspondentes aos filtros aplicados.")
+
         return despesas_filtro, filtros_preenchidos_filtrados, total_filtro
     
     return None, {}, 0
