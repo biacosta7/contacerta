@@ -1036,9 +1036,7 @@ import openpyxl
 from django.http import HttpResponse
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 
-def gerar_planilha(request, id):
-    obra = get_object_or_404(Obra, id=id)
-
+def gerar_planilha(request, id, tipo):
     # Recupera a lista de despesas da sessão
     despesas_ids = request.session.get('despesas_ids', [])
 
@@ -1046,13 +1044,25 @@ def gerar_planilha(request, id):
     if not isinstance(despesas_ids, list):
         despesas_ids = []  # Garante que sempre será uma lista
 
-    # Filtra as despesas corretamente
-    despesas = Despesa.objects.filter(id__in=despesas_ids) if despesas_ids else Despesa.objects.filter(tipo_local=ContentType.objects.get_for_model(obra), id_local=id)
+    if tipo == 'obra':
+        obra = get_object_or_404(Obra, id=id)
+        # Filtra as despesas corretamente
+        despesas = Despesa.objects.filter(id__in=despesas_ids) if despesas_ids else Despesa.objects.filter(tipo_local=ContentType.objects.get_for_model(obra), id_local=id)
+
+    elif tipo == 'escritorio':
+        escritorio = get_object_or_404(Escritorio, id=id)
+        # Filtra as despesas corretamente
+        despesas = Despesa.objects.filter(id__in=despesas_ids) if despesas_ids else Escritorio.objects.filter(tipo_local=ContentType.objects.get_for_model(escritorio), id_local=id)
+
 
     # Criar um novo arquivo Excel
     wb = openpyxl.Workbook()
     ws = wb.active
-    ws.title = f"Despesas {obra.nome}"
+
+    if tipo == 'obra':
+        ws.title = f"Despesas {obra.nome}"
+    elif tipo == 'escritorio':
+        ws.title = f"Despesas {escritorio.nome}"
 
     # Adicionar cabeçalhos
     headers = ["Data", "Descrição", "Valor", "Forma", "Status", "Parcelamento", "Cartão", "Nº Nota Fiscal", "Banco/Remetente",  "Observação"]
@@ -1064,7 +1074,7 @@ def gerar_planilha(request, id):
 
         # Estilizar as células do cabeçalho
         cell.font = Font(bold=True, color="FFFFFF")  # Negrito e texto branco
-        cell.fill = PatternFill(start_color="4F81BD", end_color="4F81BD", fill_type="solid")  # Cor de fundo azul
+        cell.fill = PatternFill(start_color="1F2937", end_color="1F2937", fill_type="solid")  # Cor de fundo azul
         cell.alignment = Alignment(horizontal="center", vertical="center")  # Alinhamento centralizado
         cell.border = Border(
             top=Side(border_style="thin", color="000000"),
@@ -1075,7 +1085,7 @@ def gerar_planilha(request, id):
 
     # Definir altura mínima para todas as linhas
     for row in ws.iter_rows():
-        ws.row_dimensions[row[0].row].height = 20
+        ws.row_dimensions[row[0].row].height = 30
         for cell in row:
             cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
@@ -1091,10 +1101,6 @@ def gerar_planilha(request, id):
 
             parcelamento_quant = f"{nota_cartao.quant_parcelas}x"
             
-            parcelas = Parcela.objects.filter(nota_cartao=nota_cartao)
-            pagamentos = Pagamento.objects.filter(parcela__in=parcelas)
-            pagamentos_formatados = ", ".join([formatar_valor(p.valor) for p in pagamentos])
-
             nome_cartao = nota_cartao.cartao.nome
 
             remetente = nota_cartao.cartao.banco.nome
@@ -1151,14 +1157,19 @@ def gerar_planilha(request, id):
     for col in ws.columns:
         col_letter = col[0].column_letter  # Obtém a letra da coluna
         ws.column_dimensions[col_letter].width = 18
-
-    nome_obra = obra.nome.replace(" ", "")
-
+    
     # Criar a resposta HTTP com o arquivo
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
-    response["Content-Disposition"] = f'attachment; filename="despesas_obra_{nome_obra}.xlsx"'
+
+    if tipo == 'obra':
+        nome_obra = obra.nome.replace(" ", "")
+        response["Content-Disposition"] = f'attachment; filename="despesas_obra_{nome_obra}.xlsx"'
+    elif tipo == 'escritorio':
+        nome_escritorio = escritorio.nome.replace(" ", "")
+        response["Content-Disposition"] = f'attachment; filename="despesas_escritorio_{nome_escritorio}.xlsx"'
+
 
     del request.session['despesas_ids']
 

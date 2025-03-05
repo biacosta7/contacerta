@@ -44,6 +44,6 @@ urlpatterns = [
 
     path('funcionario/criar/', views.criar_funcionario, name='criar_funcionario'),
 
-    path('obra/<int:id>/exportar_despesas/', views.gerar_planilha, name='gerar_planilha'),
+    path('exportar_despesas/<int:id>/<str:tipo>/', views.gerar_planilha, name='gerar_planilha'),
 
 ]

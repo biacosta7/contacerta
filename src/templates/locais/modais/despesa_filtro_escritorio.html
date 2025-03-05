@@ -1,10 +1,10 @@
-<div id="filtroMenu" class="hidden drop-shadow min-w-64 text-gray-700 z-30 border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-36 left-2/3 -translate-x-2/3 flex flex-col space-y-4 mt-20">
+<div id="filtroMenuEscritorio" class="hidden drop-shadow min-w-64 text-gray-700 z-30 border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-36 left-2/3 -translate-x-2/3 flex flex-col space-y-4 mt-20">
     <div class="flex space-x-8 justify-between items-center">
         <span class="text-xl text-left py-2 flex-grow" onclick="">Filtrar por:</span>
-        <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="filtroModal('fechar');"></i>
+        <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="document.getElementById('filtroMenuEscritorio').classList.add('hidden');"></i>
     </div>
     
-    <form method="GET" action="{% url 'locais:home' escritorio_id=escritorio.id %}">
+    <form method="GET" action="{% url 'locais:detalhe_escritorio' escritorio_id=escritorio.id %}">
         {% csrf_token %}
         <div class="flex flex-row space-x-4">
             <div class="space-y-4">
@@ -17,7 +17,7 @@
                         </div>
                         <i class="fa-solid fa-chevron-down"></i>
                     </button>
-                    <div id="dropdown-menu" class="hidden dropdownMenu w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1 ">
+                    <div  class="hidden dropdownMenu w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1 ">
                     <!-- Search input -->
                     <input id="search-input" class="block text-base font-normal w-full px-4 py-2 text-gray-800 border rounded-md  border-gray-300 focus:outline-none" type="text" placeholder="Buscar mês" autocomplete="off">
                         <div class="h-40 overflow-y-auto">
@@ -42,7 +42,7 @@
                         </div>
                         <i class="fa-solid fa-chevron-down"></i>
                     </button>
-                    <div id="dropdown-menu" class="hidden dropdownMenu right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                    <div  class="hidden dropdownMenu right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
                         <input
                             type="text"
                             id="data_filtro"
@@ -64,7 +64,7 @@
                         </div>
                         <i class="fa-solid fa-chevron-down"></i>
                     </button>
-                    <div id="dropdown-menu" class="hidden dropdownMenu right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                    <div  class="hidden dropdownMenu right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
                         <!-- Dropdown content -->
                         <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
                             <input type="checkbox" name="forma_pag" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="cartao"/>
@@ -97,7 +97,7 @@
                         </div>
                         <i class="fa-solid fa-chevron-down"></i>
                     </button>
-                    <div id="dropdown-menu" class="hidden dropdownMenu right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                    <div  class="hidden dropdownMenu right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
                         <!-- Dropdown content -->
                         <label class="block px-4 py-2 text-gray-700 hover:bg-gray-100 active:bg-blue-100 cursor-pointer rounded-md">
                             <input type="checkbox" name="modalidade_escritorio" class="form-checkbox h-5 w-5 text-gray-600 rounded-sm" value="imposto"/>
@@ -127,7 +127,7 @@
                         </div>
                         <i class="fa-solid fa-chevron-down"></i>
                     </button>
-                    <div id="dropdown-menu" class="hidden dropdownMenu w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
+                    <div class="hidden dropdownMenu w-full right-0 mt-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1 space-y-1">
                         <!-- Search input -->
                         <input id="search-input" class="block text-base font-normal w-full px-4 py-2 text-gray-800 border rounded-md  border-gray-300 focus:outline-none" type="text" placeholder="Buscar funcionário" autocomplete="off">
                         <div class="h-max-40 overflow-y-auto">
@@ -157,6 +157,35 @@
             dateFormat: 'dd/mm/yy',
             changeMonth: true,     
             changeYear: true     
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const dropdownButtons = document.querySelectorAll(".dropdown-button");
+
+        dropdownButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const menu = this.nextElementSibling;
+
+                // Fecha outros dropdowns abertos
+                document.querySelectorAll(".dropdownMenu").forEach(dropdown => {
+                    if (dropdown !== menu) {
+                        dropdown.classList.add("hidden");
+                    }
+                });
+
+                // Alterna o menu do botão clicado
+                menu.classList.toggle("hidden");
+            });
+        });
+
+        // Fecha o dropdown ao clicar fora
+        document.addEventListener("click", function (event) {
+            if (!event.target.closest(".relative")) {
+                document.querySelectorAll(".dropdownMenu").forEach(dropdown => {
+                    dropdown.classList.add("hidden");
+                });
+            }
         });
     });
     

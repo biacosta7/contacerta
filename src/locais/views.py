@@ -46,7 +46,7 @@ def calcular_range_meses():
 def filtrar_despesas(request, despesas):
     if request.method == 'GET':
         despesas_filtro = despesas
-
+        
         ano_mes = request.GET.getlist('ano_mes')
         data = request.GET.get('data_filtro')
         funcionario = request.GET.getlist('funcionario_filtro')
@@ -309,10 +309,10 @@ def detalhar_obra(request, id):
 
     total_filtro = formatar_valor(total_filtro)
 
-
     request.session['despesas_ids'] = list(despesas_filtro.values_list("id", flat=True)) if despesas_filtro else list(despesas.values_list("id", flat=True))
 
     return render(request, 'locais/detalhe_obra.html', {
+        'tipo_local': 'obra',
         'obra': obra,
         'despesas': despesas,
         'despesas_filtro': despesas_filtro,
@@ -502,6 +502,12 @@ def detalhar_escritorio(request, escritorio_id=None):
     meses = calcular_range_meses()
 
     despesas_filtro, filtros_preenchidos, total_filtro = filtrar_despesas(request, despesas.order_by('-data'))
+
+    if despesas_filtro:
+        for despesa in despesas_filtro:
+            despesa.valor_formatado = formatar_valor(despesa.valor)
+
+    request.session['despesas_ids'] = list(despesas_filtro.values_list("id", flat=True)) if despesas_filtro else list(despesas.values_list("id", flat=True))
     
     for despesa in despesas:
         try:
@@ -522,6 +528,7 @@ def detalhar_escritorio(request, escritorio_id=None):
         despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
       
     return render(request, 'locais/detalhe_escritorio.html', {
+        'tipo_local': 'escritorio',
         'escritorio': escritorio,
         'escritorio_id': escritorio.id,
         'funcionarios': funcionarios,
