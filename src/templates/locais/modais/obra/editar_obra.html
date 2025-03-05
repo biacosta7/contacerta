@@ -5,7 +5,7 @@
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Editar {{ obra.nome }}</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="obraModal('fecharEditar')"></i>
         </div>
-        <form method="POST" id="formEditarObra" action="" class="p-6">
+        <form method="POST" id="formEditarObra" action="" class="p-6" enctype="multipart/form-data">
             {% csrf_token %}
             <!-- Campo oculto para ID da obra -->
             <input type="hidden" id="obraId" name="obra_id" value="">
@@ -67,8 +67,14 @@
                         data-date-format="dd-mm-yyyy"
                 />
             </div>
+            <div>
+                <label for="imagemEditar" class="block mb-2 text-sm font-medium text-gray-900">Imagem da capa <span class="text-xs text-gray-400">  (opcional)</span></label>
+                <label for="imagemEditar" class="custom-file-upload block mb-2 text-sm font-nomal text-gray-900 border border-gray-300 bg-gray-100 hover:bg-gray-300 rounded-lg py-4 px-3"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Fazer upload</label>
+                <input type="file" id="imagemEditar" name="imagem_editar" accept="image/*">
+                <p class="file-name-editar mt-2 text-gray-500 text-xs pl-1">Nenhum arquivo selecionado</p>
+            </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end mt-4">
                 <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="obraModal('fecharEditar')">Cancelar</button>
                 <button type="submit" class="px-4 py-2 bg-[#287F71] text-white rounded-lg hover:bg-[#4DBCAA] mx-4">Salvar</button>
                 <button id="deletarObraBtn" type="button" class="px-4 py-2 bg-red-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="">Deletar</button>
@@ -77,3 +83,24 @@
         
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $('#dataInicioObraE, #dataFinalObraE, #prazoObraE').datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,     
+            changeYear: true     
+        });
+
+    });
+
+    document.getElementById('imagemEditar').addEventListener('change', function() {
+        let fileName = this.files.length > 0 ? this.files[0].name : 'Nenhum arquivo selecionado';
+        document.querySelector('.file-name-editar').textContent = fileName;
+    });
+
+</script>
+<style>
+    input[type="file"] {
+        display: none; /* Esconde o input padrão */
+    }
+</style>

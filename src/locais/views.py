@@ -164,13 +164,6 @@ def filtrar(request, dados, tipo_filtro):
 
     return dados_filtrados, filtros_preenchidos_filtrados, total_filtro
 
-from urllib.parse import urlparse
-
-def is_valid_url(url):
-    parsed_url = urlparse(url)
-    return bool(parsed_url.netloc) and bool(parsed_url.scheme)
-
-
 
 @login_required
 def criar_obra(request, escritorio_id):
@@ -244,7 +237,7 @@ def listar_obras(request, escritorio_id):
     for obra in obras:
         if obra.public_id:  # Usa o public_id armazenado
             auto_crop_url, _ = cloudinary_url(
-                obra.public_id, width=500, height=250, crop="auto", gravity="auto"
+                obra.public_id, gravity="auto"
             )
             obra.imagem = auto_crop_url
         else:
@@ -262,6 +255,7 @@ def editar_obra(request, obra_id):
     escritorio_id = obra.escritorio.id
 
     if request.method == 'POST':
+        imagem = request.FILES.get('imagem_editar')
         nome = request.POST.get('nome')
         local = request.POST.get('local')
         data_inicio = request.POST.get('data_inicio')
@@ -289,6 +283,13 @@ def editar_obra(request, obra_id):
         except InvalidOperation:
             messages.error(request, 'Valor inicial inválido.')
             return redirect('locais:home', escritorio_id=escritorio_id)
+        
+        if imagem: 
+            upload_result = cloudinary.uploader.upload(imagem)
+            imagem_url = upload_result.get('secure_url')
+            public_id = upload_result.get('public_id')  # Salva o ID gerado pelo Cloudinary
+            obra.imagem_url = imagem_url
+            obra.public_id = public_id
 
         obra.nome = nome
         obra.local = local
