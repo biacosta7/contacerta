@@ -12,6 +12,10 @@ from decimal import Decimal, InvalidOperation
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 
+import cloudinary
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
+
 from users.models import User
 
 def formatar_valor(valor):
@@ -160,12 +164,20 @@ def filtrar(request, dados, tipo_filtro):
 
     return dados_filtrados, filtros_preenchidos_filtrados, total_filtro
 
+from urllib.parse import urlparse
+
+def is_valid_url(url):
+    parsed_url = urlparse(url)
+    return bool(parsed_url.netloc) and bool(parsed_url.scheme)
+
 
 
 @login_required
 def criar_obra(request, escritorio_id):
     escritorio = get_object_or_404(Escritorio, id=escritorio_id)
     if request.method == 'POST':
+
+        imagem = request.FILES.get('imagem')
         nome = request.POST.get('nome')
         local = request.POST.get('local')
         data_inicio = request.POST.get('data_inicio')
@@ -197,8 +209,18 @@ def criar_obra(request, escritorio_id):
         if Obra.objects.filter(nome=nome).exists():
             messages.error(request, 'Já existe uma obra com esse nome.')
             return redirect('locais:home', escritorio_id=escritorio_id)
+        
+        if imagem: 
+            upload_result = cloudinary.uploader.upload(imagem)
+            imagem_url = upload_result.get('secure_url')
+            public_id = upload_result.get('public_id')  # Salva o ID gerado pelo Cloudinary
+        else:
+            imagem_url = None
+            public_id = None
 
         obra = Obra.objects.create(
+            imagem_url = imagem_url,
+            public_id=public_id,
             escritorio=escritorio,
             nome=nome,
             local=local,
@@ -219,8 +241,16 @@ def listar_obras(request, escritorio_id):
 
     # Pegando apenas as obras do escritório do usuário
     obras = Obra.objects.filter(escritorio=escritorio)
-
     for obra in obras:
+        if obra.public_id:  # Usa o public_id armazenado
+            auto_crop_url, _ = cloudinary_url(
+                obra.public_id, width=500, height=250, crop="auto", gravity="auto"
+            )
+            obra.imagem = auto_crop_url
+        else:
+            obra.imagem = "https://s2-casavogue.glbimg.com/itdyzyUXwCOr9zHMqy1L_C-SXl4=/0x0:6000x4000/1000x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_d72fd4bf0af74c0c89d27a5a226dbbf8/internal_photos/bs/2022/u/4/Pml4bDR3S37ZhsiKxMDg/limpeza-pos-obra-01.jpg"
+
+        # Formatar o valor inicial (presumivelmente você tenha uma função formatar_valor())
         obra.valor_inicial = formatar_valor(obra.valor_inicial)
 
     return render(request, 'locais/home.html', {'obras': obras, 'escritorio': escritorio})

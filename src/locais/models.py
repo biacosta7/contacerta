@@ -54,6 +54,9 @@ class Escritorio(models.Model):
 
 
 class Obra(models.Model):
+    imagem_url = models.URLField(blank=True, null=True)
+    public_id = models.CharField(max_length=255, null=True, blank=True)
+
     nome = models.CharField(max_length=100)
     local = models.CharField(max_length=100)
     data_inicio = models.DateField()

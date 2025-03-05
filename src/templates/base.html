@@ -967,24 +967,6 @@
 
 
         // modal do filtro
-        {% comment %} function filtroModal(action) {
-            const modalFiltro = document.getElementById('filtroMenu');
-            var despesaTable = document.querySelector(".despesa_table");
-            console.log(despesaTable);
-
-
-            if (action === 'abrir') {
-                modalFiltro.classList.remove('hidden');
-                despesaTable.classList.add("darkened");
-                    
-            } else if (action === 'fechar') {
-                modalFiltro.classList.add('hidden');
-                despesaTable.classList.remove("darkened"); 
-
-            }
-            
-        } {% endcomment %}
-
         function filtroModal(action, modalId, table) {
             const modalFiltro = document.getElementById(modalId);
             const filtroTable = document.querySelector(table);

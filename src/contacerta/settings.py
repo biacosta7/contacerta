@@ -125,6 +125,18 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+import cloudinary
+import cloudinary.uploader
+
+# Configuration       
+cloudinary.config( 
+    cloud_name = os.getenv("CLOUD_NAME"), 
+    api_key = os.getenv("CLOUD_API_KEY"), 
+    api_secret = os.getenv("CLOUD_API_SECRET"),
+    secure=True
+)
+
 # Verifica se está rodando em ambiente de desenvolvimento
 NOT_PROD = os.getenv("NOT_PROD", "False").lower() in ["true", "t", "1"]
 
