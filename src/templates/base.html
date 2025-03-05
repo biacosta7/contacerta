@@ -967,14 +967,13 @@
 
 
         // modal do filtro
-        function filtroModal(action) {
+        {% comment %} function filtroModal(action) {
             const modalFiltro = document.getElementById('filtroMenu');
             var despesaTable = document.querySelector(".despesa_table");
             console.log(despesaTable);
 
 
             if (action === 'abrir') {
-
                 modalFiltro.classList.remove('hidden');
                 despesaTable.classList.add("darkened");
                     
@@ -984,7 +983,30 @@
 
             }
             
+        } {% endcomment %}
+
+        function filtroModal(action, modalId, table) {
+            const modalFiltro = document.getElementById(modalId);
+            const filtroTable = document.querySelector(table);
+        
+            if (!modalFiltro) {
+                console.error(`Modal com ID "${modalId}" não encontrado.`);
+                return;
+            }
+        
+            if (action === 'abrir') {
+                modalFiltro.classList.remove('hidden');
+                if (filtroTable) {
+                    filtroTable.classList.add("darkened");
+                }
+            } else if (action === 'fechar') {
+                modalFiltro.classList.add('hidden');
+                if (filtroTable) {
+                    filtroTable.classList.remove("darkened");
+                }
+            }
         }
+        
 
         // Débito mensal
         function toggleMesesMenu(event, modalId) {

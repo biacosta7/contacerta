@@ -60,7 +60,6 @@ def filtrar(request, dados, tipo_filtro):
     
     if tipo_filtro == 'aditivo':
         modalidade_aditivo = request.GET.getlist('modalidade_aditivo')
-        print('modalidade aditivo: ', modalidade_aditivo)
 
     else:
         funcionario = request.GET.getlist('funcionario_filtro')
@@ -258,7 +257,6 @@ def editar_obra(request, obra_id):
         try:
             valor_inicial = Decimal(valor_inicial)
         except InvalidOperation:
-            print("erro valor inicial")
             messages.error(request, 'Valor inicial inválido.')
             return redirect('locais:home', escritorio_id=escritorio_id)
 
@@ -346,8 +344,6 @@ def detalhar_obra(request, id):
                     if aditivo.modalidade == "valor":
                         aditivo.valor_formatado = formatar_valor(aditivo.valor) 
             
-            print("aditivos_filtro: ", aditivos_filtro)
-
         else:
             despesas_filtro, filtros_preenchidos, total_filtro = filtrar(request, despesas, tipo_filtro)
 
@@ -550,7 +546,11 @@ def detalhar_escritorio(request, escritorio_id=None):
     acessos = AcessoEscritorio.objects.all()
     meses = calcular_range_meses()
 
-    despesas_filtro, filtros_preenchidos, total_filtro = filtrar(request, despesas.order_by('-data'))
+    total_filtro = 0
+
+    despesas_filtro, filtros_preenchidos, total_filtro = filtrar(request, despesas.order_by('-data'), 'escritorio')
+
+    total_filtro = formatar_valor(total_filtro)
 
     if despesas_filtro:
         for despesa in despesas_filtro:

@@ -33,12 +33,16 @@
                     </div>
                 </form>
             </div>
+        </div>
+        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+            <div>
+                <h3 class="text-base font-medium block">Total <span class="text-base font-light">(filtro)</span></h3>
+                <span class="text-2xl font-semibold block">{{ total_filtro|default:"0" }}</span>
+            </div>
         </div>  
     </div>  
 
-    
-
-    <div class="relative shadow-md rounded-lg w-full despesa_table">
+    <div class="relative shadow-md rounded-lg w-full escritorio_table">
         <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
             <div class="flex space-x-2 items-center">
                 <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
@@ -57,7 +61,7 @@
             </div>
             <div class="flex space-x-2 items-center">
                 <button class="text-base px-2 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick="document.getElementById('modalGerarPlanilha').classList.remove('hidden');"><i class="mr-2 fa-solid fa-file-arrow-down"></i>Exportar</button>
-                <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick="document.getElementById('filtroMenuEscritorio').classList.remove('hidden');"><i class="mr-1 fa-solid fa-filter"></i>
+                <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick="filtroModal('abrir', 'filtroMenuEscritorio', '.escritorio_table');"><i class="mr-1 fa-solid fa-filter"></i>
                     Filtrar
                 </button>
                 <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
@@ -157,11 +161,11 @@
 {% include "financeiro/modais/gerar_planilha.html" %}
 
 <style>
-    .despesa_table.darkened {
+    .escritorio_table.darkened {
         position: relative;
     }
     
-    .despesa_table.darkened::after {
+    .escritorio_table.darkened::after {
         content: "";
         position: absolute;
         top: 0;

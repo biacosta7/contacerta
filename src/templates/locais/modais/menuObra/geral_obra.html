@@ -6,6 +6,7 @@
         <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <h3 class="text-base font-medium">Valor Total</h3>
             <span class="valor-total-obra text-2xl font-bold"></span>
+            <p class="mt-2 text-gray-500 text-xs">Valor Inicial da Obra + Aditivos</p>
         </div>
 
         <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
@@ -22,6 +23,7 @@
       
           <h3 class="text-base font-medium block">Débito do mês</h3>
           <span class="debito-mensal-obra text-2xl font-semibold block" data-modal-id="modal_1"></span>
+          <p class="mt-2 text-gray-500 text-xs">Total de despesas não pagas no mês</p>
       
           <div class="mesesDropdownList hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2" data-modal-id="modal_1">
               <form method="post" action="">
@@ -45,6 +47,7 @@
         <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <h3 class="text-base font-medium">Custo total</h3>
             <span class="custo-total-obra text-2xl font-bold">R$ {{ obra.custo_total|default:"0" }}</span>
+            <p class="mt-2 text-gray-500 text-xs">Total de todas as despesas</p>
         </div>
     </div>
 </div>
