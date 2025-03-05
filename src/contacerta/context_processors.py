@@ -184,18 +184,26 @@ def funcionarios(request):
     }
 
 def aditivos(request):
-    aditivos = Aditivo.objects.select_related('obra', 'banco').all()
+    aditivos = Aditivo.objects.select_related('obra').all()
 
     aditivos_lista = []
     for aditivo in aditivos:
+
+        if aditivo.banco != None:
+            banco_nome = aditivo.banco.nome
+            banco_id = aditivo.banco.id
+        else:
+            banco_nome = None
+            banco_id = None
+            
         aditivo_dict = {
             'id': aditivo.id,
             'nome': aditivo.nome,
             'valor': formatar_valor(aditivo.valor) if aditivo.valor else None,
             'dias': aditivo.dias,
             'data': aditivo.data.strftime('%d/%m/%Y') if aditivo.data else None,
-            'banco': aditivo.banco.nome,
-            'banco_id': aditivo.banco.id,
+            'banco': banco_nome,
+            'banco_id': banco_id,
             'modalidade': aditivo.modalidade,
             'observacao': aditivo.observacao,
         }

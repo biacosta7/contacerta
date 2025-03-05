@@ -201,36 +201,45 @@
         const dropdownMenu = dropdownWrapper.querySelector('.dropdownMenu'); // Menu do dropdown
         const searchInput = dropdownWrapper.querySelector('input[type="text"]'); // Input de busca
         let isOpen = false;
+
+        if (dropdownMenu) {
     
-        // Ao clicar no botão de dropdown
-        dropdownButton.addEventListener('click', (event) => {
-        toggleDropdown(dropdownButton, dropdownMenu);
-        event.stopPropagation(); // Previne o evento de propagação
-        });
-    
-        // Adiciona filtro de busca
-        if (searchInput) {
-        searchInput.addEventListener('input', () => {
-            const searchTerm = searchInput.value.toLowerCase();
-            const items = dropdownMenu.querySelectorAll('label');
-    
-            items.forEach((item) => {
-            const itemSpan = item.querySelector('span');
-            if (itemSpan) {
-                const text = itemSpan.innerHTML.toLowerCase();
-                item.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            // Ao clicar no botão de dropdown
+            dropdownButton.addEventListener('click', (event) => {
+            toggleDropdown(dropdownButton, dropdownMenu);
+            event.stopPropagation(); // Previne o evento de propagação
+            });
+        
+            // Adiciona filtro de busca
+            if (searchInput) {
+                searchInput.addEventListener('input', () => {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    const items = dropdownMenu.querySelectorAll('label');
+                
+                    items.forEach((item) => {
+                        const itemSpan = item.querySelector('span');
+                        if (itemSpan) {
+                            const text = itemSpan.innerHTML.toLowerCase();
+                            item.style.display = text.includes(searchTerm) ? 'block' : 'none';
+                        }
+                    });
+                });
+            }
+
+            
+            
+        
+            // Fechar o menu ao clicar fora (aqui?)
+            document.addEventListener('click', (event) => {
+            if (!dropdownWrapper.contains(event.target)) {
+                dropdownMenu.classList.add('hidden');
+                isOpen = false;
             }
             });
-        });
+        } else {
+            console.error('Dropdown menu não encontrado');
         }
-    
-        // Fechar o menu ao clicar fora
-        document.addEventListener('click', (event) => {
-        if (!dropdownWrapper.contains(event.target)) {
-            dropdownMenu.classList.add('hidden');
-            isOpen = false;
-        }
-        });
+        
     });
   
 

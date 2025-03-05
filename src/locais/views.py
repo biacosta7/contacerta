@@ -3,7 +3,7 @@ import locale
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from financeiro.models import Banco, Cartao, Funcionario, MaoDeObra, NotaCartao, Pagamento, Parcela
+from financeiro.models import Aditivo, Banco, Cartao, Funcionario, MaoDeObra, NotaCartao, Pagamento, Parcela
 from locais.models import AcessoEscritorio, Obra, Escritorio, Despesa
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
@@ -43,99 +43,124 @@ def calcular_range_meses():
 
     return resultado
 
-def filtrar_despesas(request, despesas):
-    if request.method == 'GET':
-        despesas_filtro = despesas
-        
-        ano_mes = request.GET.getlist('ano_mes')
-        data = request.GET.get('data_filtro')
+def filtrar(request, dados, tipo_filtro):
+    dados_filtrados = dados
+    
+    modalidade_aditivo = None
+    funcionario = []
+    categoria = []
+    modalidade = []
+    modalidade_escritorio = []
+    forma_pag_formatado = []
+    total_filtro = 0
+
+    ano_mes = request.GET.getlist('ano_mes')
+    data = request.GET.get('data_filtro')
+    forma_pag = request.GET.getlist('forma_pag')
+    
+    if tipo_filtro == 'aditivo':
+        modalidade_aditivo = request.GET.getlist('modalidade_aditivo')
+        print('modalidade aditivo: ', modalidade_aditivo)
+
+    else:
         funcionario = request.GET.getlist('funcionario_filtro')
+        categoria = request.GET.getlist('categoria')
         modalidade = request.GET.getlist('modalidade')
         modalidade_escritorio = request.GET.getlist('modalidade_escritorio')
-        categoria = request.GET.getlist('categoria')
-        forma_pag = request.GET.getlist('forma_pag')
-        
-        forma_pag_formatado = []
+    
+    for i in forma_pag:
+        if i == "cartao":
+            forma_pag_formatado.append("Cartão")
+        elif i == "boleto":
+            forma_pag_formatado.append("Boleto")
+        elif i == "pix":
+            forma_pag_formatado.append("Pix")
+        elif i == "especie":
+            forma_pag_formatado.append("Espécie")
+    
+    filtros_preenchidos = {
+        "Ano-Mês": ano_mes,
+        "Data": data,
+        "Funcionario": funcionario,
+        "Modalidade": modalidade,
+        "Categoria": categoria,
+        "Forma": forma_pag_formatado,
+        "Modalidade escritório": modalidade_escritorio,
+        "Tipo do Aditivo": modalidade_aditivo
+    }
 
-        for i in forma_pag:
-            if i == "cartao":
-                forma_pag_formatado.append("Cartão")
-            elif i == "boleto":
-                forma_pag_formatado.append("Boleto")
-            elif i == "pix":
-                forma_pag_formatado.append("Pix")
-            elif i == "especie":
-                forma_pag_formatado.append("Espécie")
-        
-        filtros_preenchidos = {
-            "Ano-Mês": ano_mes,
-            "Data": data,
-            "Funcionario": funcionario,
-            "Modalidade": modalidade,
-            "Categoria": categoria,
-            "Forma": forma_pag_formatado,
-            "Modalidade escritório": modalidade_escritorio
-        }
+    filtros_preenchidos_filtrados = {}
 
-        filtros_preenchidos_filtrados = {}
+    # Itera sobre cada chave e valor de 'filtros_preenchidos'
+    for k, v in filtros_preenchidos.items():
+        if v:
+            filtros_preenchidos_filtrados[k] = v
 
-        # Itera sobre cada chave e valor de 'filtros_preenchidos'
-        for k, v in filtros_preenchidos.items():
-            if v:
-                filtros_preenchidos_filtrados[k] = v
+    if not any(filtros_preenchidos.values()):
+        return None, {}, 0
 
-        if not any(filtros_preenchidos.values()):
-            return None, {}, 0
+    meses_map = {
+        "JAN": 1, "FEV": 2, "MAR": 3, "ABR": 4,
+        "MAI": 5, "JUN": 6, "JUL": 7, "AGO": 8,
+        "SET": 9, "OUT": 10, "NOV": 11, "DEZ": 12
+    }
 
-        meses_map = {
-            "JAN": 1, "FEV": 2, "MAR": 3, "ABR": 4,
-            "MAI": 5, "JUN": 6, "JUL": 7, "AGO": 8,
-            "SET": 9, "OUT": 10, "NOV": 11, "DEZ": 12
-        }
+    if ano_mes:
+        filtros = Q()
 
-        if ano_mes:
-            filtros = Q()
+        for item in ano_mes:
+            ano, mes_abrev = item.split('/')  # '2024/FEV' -> '2024', 'FEV'
+            mes = meses_map.get(mes_abrev.upper())  # Converte 'FEV' para 2
+            
+            if mes:  # Apenas adiciona se o mês for válido
+                filtros |= Q(data__year=int(ano), data__month=mes)
+        if filtros:
+            dados_filtrados = dados_filtrados.filter(filtros)
+    
+    if data:
+        data = datetime.strptime(data, '%d/%m/%Y').date()
+        dados_filtrados = dados_filtrados.filter(data=data)
 
-            for item in ano_mes:
-                ano, mes_abrev = item.split('/')  # '2024/FEV' -> '2024', 'FEV'
-                mes = meses_map.get(mes_abrev.upper())  # Converte 'FEV' para 2
+    if forma_pag:
+        dados_filtrados = dados_filtrados.filter(forma_pag__in=forma_pag) if forma_pag else dados_filtrados
+
+    if tipo_filtro == "aditivo":
+            dados_filtrados = dados_filtrados.filter(modalidade__in=modalidade_aditivo) if modalidade_aditivo else dados_filtrados
+
+            for elemento in modalidade_aditivo:
+                if elemento == "valor":
+                    total_filtro = sum(aditivo.valor for aditivo in dados_filtrados)
+
+    elif tipo_filtro == 'adiantamento-bm':
+        pass
+    
+    else:
+        if tipo_filtro == 'obra':
+            if modalidade:
+                dados_filtrados = dados_filtrados.filter(modalidade__in=modalidade) if modalidade else dados_filtrados
+
+        elif tipo_filtro == 'escritorio':
+            if modalidade_escritorio:
+                dados_filtrados = dados_filtrados.filter(modalidade_escritorio__in=modalidade_escritorio) if modalidade_escritorio else dados_filtrados
                 
-                if mes:  # Apenas adiciona se o mês for válido
-                    filtros |= Q(data__year=int(ano), data__month=mes)
-            if filtros:
-                despesas_filtro = despesas_filtro.filter(filtros)
-        
-        if data:
-            data = datetime.strptime(data, '%d/%m/%Y').date()
-            despesas_filtro = despesas_filtro.filter(data=data)
-
         if funcionario:
             mao_de_obra_filtro = MaoDeObra.objects.filter(funcionario_id__in=funcionario)
             if mao_de_obra_filtro.exists():
-                despesas_filtro = despesas_filtro.filter(id__in=mao_de_obra_filtro.values_list('despesa_id', flat=True))
-
-        if modalidade:
-            despesas_filtro = despesas_filtro.filter(modalidade__in=modalidade) if modalidade else despesas_filtro
-
-        if modalidade_escritorio:
-            despesas_filtro = despesas_filtro.filter(modalidade_escritorio__in=modalidade_escritorio) if modalidade_escritorio else despesas_filtro
-
-        if forma_pag:
-            despesas_filtro = despesas_filtro.filter(forma_pag__in=forma_pag) if forma_pag else despesas_filtro
+                dados_filtrados = dados_filtrados.filter(id__in=mao_de_obra_filtro.values_list('despesa_id', flat=True))
 
         if categoria:
             categoria_filtro = MaoDeObra.objects.filter(categoria__in=categoria)
             if categoria_filtro.exists():
-                despesas_filtro = despesas_filtro.filter(id__in=categoria_filtro.values_list('despesa_id', flat=True))
-        
-        total_filtro = sum(despesa.valor for despesa in despesas_filtro)
+                dados_filtrados = dados_filtrados.filter(id__in=categoria_filtro.values_list('despesa_id', flat=True))
 
-        if not despesas_filtro.exists():
-            messages.error(request, "Não há despesas correspondentes aos filtros aplicados.")
 
-        return despesas_filtro, filtros_preenchidos_filtrados, total_filtro
-    
-    return None, {}, 0
+        total_filtro = sum(despesa.valor for despesa in dados_filtrados)
+
+    if not dados_filtrados.exists():
+        messages.error(request, "Não há despesas correspondentes aos filtros aplicados.")
+
+    return dados_filtrados, filtros_preenchidos_filtrados, total_filtro
+
 
 
 @login_required
@@ -267,6 +292,8 @@ def detalhar_obra(request, id):
     escritorio_id = obra.escritorio.id
 
     despesas = Despesa.objects.filter(tipo_local=tipo_local_obra, id_local=id).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
+
+    aditivos = Aditivo.objects.filter(obra_id=obra.id).order_by('-data')
     
     for despesa in despesas:
         try:
@@ -304,11 +331,29 @@ def detalhar_obra(request, id):
 
     meses = calcular_range_meses()
 
-    despesas_filtro, filtros_preenchidos, total_filtro = filtrar_despesas(request, despesas.order_by('-data'))
+    aditivos_filtro = None
+    despesas_filtro = None
+    filtros_preenchidos = {}
+    total_filtro = 0
 
-    if despesas_filtro:
-        for despesa in despesas_filtro:
-            despesa.valor_formatado = formatar_valor(despesa.valor)
+    if request.method == 'GET':
+        tipo_filtro = request.GET.get('tipo_filtro')
+        if tipo_filtro == 'aditivo':
+            aditivos_filtro, filtros_preenchidos, total_filtro = filtrar(request, aditivos, tipo_filtro)
+
+            if aditivos_filtro:
+                for aditivo in aditivos_filtro:
+                    if aditivo.modalidade == "valor":
+                        aditivo.valor_formatado = formatar_valor(aditivo.valor) 
+            
+            print("aditivos_filtro: ", aditivos_filtro)
+
+        else:
+            despesas_filtro, filtros_preenchidos, total_filtro = filtrar(request, despesas, tipo_filtro)
+
+            if despesas_filtro:
+                for despesa in despesas_filtro:
+                    despesa.valor_formatado = formatar_valor(despesa.valor) 
 
     total_filtro = formatar_valor(total_filtro)
 
@@ -319,6 +364,7 @@ def detalhar_obra(request, id):
         'obra': obra,
         'despesas': despesas,
         'despesas_filtro': despesas_filtro,
+        'aditivos_filtro': aditivos_filtro,
         'filtros_preenchidos': filtros_preenchidos,
         'meses': meses,
         'porcentagem_orcamento_usado': porcentagem_orcamento_usado,
@@ -504,7 +550,7 @@ def detalhar_escritorio(request, escritorio_id=None):
     acessos = AcessoEscritorio.objects.all()
     meses = calcular_range_meses()
 
-    despesas_filtro, filtros_preenchidos, total_filtro = filtrar_despesas(request, despesas.order_by('-data'))
+    despesas_filtro, filtros_preenchidos, total_filtro = filtrar(request, despesas.order_by('-data'))
 
     if despesas_filtro:
         for despesa in despesas_filtro:

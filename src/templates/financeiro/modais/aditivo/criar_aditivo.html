@@ -13,15 +13,6 @@
                     <label for="nome" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
                     <input type="text" name="nome" class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
                 </div>
-                <div class="mb-2">
-                    <label for="banco" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
-                    <select id="banco" name="banco" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
-                        <option value="" selected disabled hidden>Selecione o banco</option>
-                        {% for banco in bancos %}
-                        <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
-                        {% endfor %}
-                    </select>
-                </div>
 
                 <div>
                     <label for="modalidadeAditivo" class="block mb-2 text-sm font-medium text-gray-900">Modalidade*</label>
@@ -41,9 +32,21 @@
 
                 <!-- Campo para Valor -->
                 <div id="campoValor" class="hidden">
-                    <label for="valor" class="block mb-2 text-sm font-medium text-gray-900">Valor*</label>
-                    <input type="text" id="valor" placeholder="5.200,00" name="valor"
-                        class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3">
+                    <div class="mb-2">
+                        <label for="banco" class="block mb-2 text-sm font-medium text-gray-900">Banco</label>
+                        <select id="banco" name="banco" class="bg-gray-100 w-full border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                            <option value="" selected disabled hidden>Selecione o banco</option>
+                            {% for banco in bancos %}
+                            <option class="" value="{{banco.id}}">{{banco.nome}}</option> 
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mb-2">
+                        <label for="valor" class="block mb-2 text-sm font-medium text-gray-900">Valor*</label>
+                        <input type="text" id="valor" placeholder="5.200,00" name="valor"
+                            class="bg-gray-100 mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3">
+                    </div>
                 </div>
                 <div class="flex-1 mb-2">
                     <label for="dataAssinaturaAditivo" class="block mb-2 text-sm font-medium text-gray-900">Data de assinatura*</label>

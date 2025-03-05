@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from locais.models import Obra, Escritorio
-from locais.views import calcular_range_meses, filtrar_despesas, formatar_valor
+from locais.views import calcular_range_meses, formatar_valor
 from .models import BM, Adiantamento, Aditivo, Despesa, Cartao, Fatura, Funcionario, NotaBoleto, NotaPix, NotaEspecie, NotaCartao, MaoDeObra, Banco, Pagamento, Parcela
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
@@ -740,7 +740,10 @@ def criar_aditivo(request, id):
             return redirect('locais:home')
 
         # Obtenha a instância do banco ou retorne um erro 404 se não existir
-        banco = get_object_or_404(Banco, id=banco_id)
+        if banco_id:
+            banco = get_object_or_404(Banco, id=banco_id)
+        else:
+            banco = None
 
         # Obtenha a instância da obra ou retorne um erro 404 se não existir
         obra = get_object_or_404(Obra, id=id)

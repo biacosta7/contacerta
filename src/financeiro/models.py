@@ -29,7 +29,7 @@ class Aditivo(models.Model):
     valor = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     dias = models.IntegerField(null=True, blank=True)
     data = models.DateField()
-    banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
+    banco = models.ForeignKey(Banco, on_delete=models.PROTECT, null=True, blank=True)
     modalidade = models.CharField(max_length=10, choices=[
         ('prazo', 'Prazo'),
         ('valor', 'Valor'),

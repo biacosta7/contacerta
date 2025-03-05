@@ -6,6 +6,8 @@
     
     <form method="GET" action="{% url 'locais:detalhe_escritorio' escritorio_id=escritorio.id %}">
         {% csrf_token %}
+        <input type="text" name="tipo_filtro" class="hidden" value="escritorio"/>
+
         <div class="flex flex-row space-x-4">
             <div class="space-y-4">
                 <!-- Meses -->

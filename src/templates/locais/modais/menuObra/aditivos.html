@@ -1,20 +1,21 @@
 <!-- Modal de Aditivos section -->
-
 <div class="flex space-x-8 justify-between mb-4">
     <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
         <h3 class="text-base font-medium">Valor Total</h3>
         <span class="valor-total-obra text-2xl font-bold"></span>
+        <p class="mt-2 text-gray-500 text-xs">Valor Inicial da Obra + Aditivos</p>
     </div>
     <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
         <div>
             <h3 class="text-base font-medium block">Prazo atual</h3>
             <span id="prazoAtualObra" class="text-2xl font-semibold block"></span>
+            <p class="mt-2 text-gray-500 text-xs">Prazo Inicial da Obra + Aditivos</p>
         </div>
     </div>
     <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
         <div>
             <h3 class="text-base font-medium block">Total <span class="text-base font-light">(filtro)</span></h3>
-            <span class="text-2xl font-semibold block">R$ {{ obra.debito_mensal|default:"0" }}</span>
+            <span class="text-2xl font-semibold block">{{ total_filtro|default:"0" }}</span>
         </div>
     </div>
     
@@ -27,8 +28,18 @@
                 <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
                 <h1 class="text-xl">Aditivos</h1>
             </div>
+            <div id="" class="text-base px-6 py-3 font-semibold" >
+                {% if aditivos_filtro %}
+                <span class="text-green-500">(Com Filtro)</span> {% for k, v in filtros_preenchidos.items %}
+                    {{ k | capfirst }}: {{ v|join:", " |capfirst }}
+                    {% if not forloop.last %} <span class="font-light">|</span> {% endif %}
+                    {% endfor %}
+                {% else %}
+                <span class="text-gray-400">Sem Filtro</span>
+                {% endif %}
+            </div>
             <div class="flex space-x-2 items-center">
-                <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="mr-1 fa-solid fa-filter"></i>
+                <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick="document.getElementById('filtroMenuAditivo').classList.remove('hidden');"><i class="mr-1 fa-solid fa-filter"></i>
                     Filtrar
                 </button>
                 <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
@@ -59,7 +70,7 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    {% for aditivo in aditivos %}
+                    {% for aditivo in aditivos_filtro|default:aditivos %}
                         <tr class="bg-white border-b">
                             
                             <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
@@ -71,13 +82,13 @@
                                 {{ aditivo.dias|default:"-" }}
                             </td>
                             <td id="valorAditivo" class="px-6 py-4">
-                                {{ aditivo.valor|default:"-" }}
+                                {% if aditivo.valor_formatado %}{{ aditivo.valor_formatado|default:"-" }}{% else %}{{ aditivo.valor|default:"-" }}{% endif %}
                             </td>
                             <td class="px-6 py-4">
                                 {{ aditivo.data }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ aditivo.banco }}
+                                {{ aditivo.banco|default:"-" }}
                             </td>
                             <td class="px-6 py-4">
                                 {% if aditivo.modalidade == 'prazo' %}
@@ -99,6 +110,5 @@
         </div>
     </div>
 </div>
-<script>
-    
-</script>
+
+{% include 'financeiro/modais/aditivo/filtrar_aditivo.html' %}
