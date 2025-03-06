@@ -136,6 +136,8 @@ def despesas(request):
             despesa['data'] = format_date(despesa['data'])
         if despesa.get('data_pagamento'):
             despesa['data_pagamento'] = format_date(despesa['data_pagamento'])
+        if despesa.get('valor'):
+            despesa['valor_formatado'] = formatar_valor(despesa['valor'])
 
 
     # Otimização usando select_related e prefetch_related

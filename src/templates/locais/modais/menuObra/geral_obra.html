@@ -1,173 +1,261 @@
 <!-- Modal de geral section -->
 
-<div class="flex flex-wrap space-x-4 justify-center mb-4">
-    <div class="flex space-x-4">
-
-        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
-            <h3 class="text-base font-medium">Valor Total</h3>
-            <span class="valor-total-obra text-2xl font-bold"></span>
-            <p class="mt-2 text-gray-500 text-xs">Valor Inicial da Obra + Aditivos</p>
-        </div>
-
-        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
-            <h3 class="text-base font-medium">Valor à receber</h3>
-            <span class="valor-receber-obra text-2xl font-bold"></span>
-            <p class="mt-2 text-gray-500 text-xs">Valor Total da Obra - (Total Adiantamentos + Total BMs)</p>
-        </div>
-
-        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
-          <button class="absolute top-4 right-4 text-gray-700" data-modal-id="modal_1">
-            <i class="mesesDropdownIcon fa-solid fa-chevron-down" 
-            data-modal-id="modal_1" 
-            onclick="toggleMesesMenu(event, 'modal_1')"></i>
-          </button>
-      
-          <h3 class="text-base font-medium block">Débito do mês</h3>
-          <span class="debito-mensal-obra text-2xl font-semibold block" data-modal-id="modal_1"></span>
-          <p class="mt-2 text-gray-500 text-xs">Total de despesas não pagas no mês</p>
-      
-          <div class="mesesDropdownList hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2" data-modal-id="modal_1">
-              <form method="post" action="">
-                  {% csrf_token %}
-                  <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto overflow-x-hidden">
-                      <ul class="list-none">
-                          {% for ano_mes_valor in meses %}
-                          <li>
-                              <button type="submit" name="ano_mes" value="{{ ano_mes_valor }}" class="consultarDebitoMensalBtn dropdown-item text-left text-base py-2 border-b w-full" data-modal-id="modal_1">
-                                  {{ ano_mes_valor }}
-                              </button>
-                          </li>
-                          {% endfor %}
-                      </ul>
-                  </div>
-              </form>
-          </div>
-      </div>
-      
-
-        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
-            <h3 class="text-base font-medium">Custo total</h3>
-            <span class="custo-total-obra text-2xl font-bold">R$ {{ obra.custo_total|default:"0" }}</span>
-            <p class="mt-2 text-gray-500 text-xs">Total de todas as despesas</p>
-        </div>
+<div class="flex flex-wrap space-y-4 mb-4 px-20">
+    
+  <div class="flex space-x-6 w-full justify-center">
+    <!-- Valor Total -->
+    <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+        <h3 class="text-base font-medium">Valor Total</h3>
+        <span class="valor-total-obra text-2xl font-bold"></span>
+        <p class="mt-2 text-gray-500 text-xs">Valor Inicial da Obra + Aditivos</p>
     </div>
+
+    <!-- Débito do mês -->
+    <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+      <button class="absolute top-4 right-4 text-gray-700" data-modal-id="modal_1">
+        <i class="mesesDropdownIcon fa-solid fa-chevron-down" 
+        data-modal-id="modal_1" 
+        onclick="toggleMesesMenu(event, 'modal_1')"></i>
+      </button>
+  
+      <h3 class="text-base font-medium block">Débito do mês</h3>
+      <span class="debito-mensal-obra text-2xl font-semibold block" data-modal-id="modal_1"></span>
+      <p class="mt-2 text-gray-500 text-xs">Total de despesas não pagas no mês</p>
+  
+      <div class="mesesDropdownList hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2" data-modal-id="modal_1">
+        <form method="post" action="">
+          {% csrf_token %}
+          <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto overflow-x-hidden">
+            <ul class="list-none">
+              {% for ano_mes_valor in meses %}
+              <li>
+                  <button type="submit" name="ano_mes" value="{{ ano_mes_valor }}" class="consultarDebitoMensalBtn dropdown-item text-left text-base py-2 border-b w-full" data-modal-id="modal_1">
+                      {{ ano_mes_valor }}
+                  </button>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Custo total -->
+    <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+      <h3 class="text-base font-medium">Custo total</h3>
+      <span class="custo-total-obra text-2xl font-bold">R$ {{ obra.custo_total|default:"0" }}</span>
+      <p class="mt-2 text-gray-500 text-xs">Total de todas as despesas</p>
+    </div>
+
+    <!-- valor a receber -->
+    <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+      <h3 class="text-base font-medium">Valor à receber</h3>
+      <span class="valor-receber-obra text-2xl font-bold"></span>
+      <p class="mt-2 text-gray-500 text-xs">Valor Total da Obra - (Total Adiantamentos + Total BMs)</p>
+    </div>
+    
+    
+    
+  </div>
+
+  <div class="flex space-x-4 w-full justify-center">
+    <!-- informações gerais -->
+    <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-2/3">
+      <h5 class="w-full text-xl font-bold leading-none text-gray-900 pe-1">Informações gerais</h5>
+      
+      <div class="flex flex-row space-x-20 pl-1 mt-8">
+
+        <div class="flex flex-col space-y-3 pl-1">
+          <div class="flex text-sm text-gray-600"> 
+            <p class="font-bold ">
+              <i class="fa-solid fa-file-signature mr-1" style="color:rgb(163, 163, 163);"></i>
+              Nome:
+            </p> 
+            <p class="ml-1 font-normal">{{ obra.nome }}</p>
+          </div>
+
+          <div class="flex text-sm text-gray-600"> 
+            <p class="font-bold ">
+              <i class="fa-solid fa-location-dot mr-1" style="color:rgb(163, 163, 163);"></i>
+              Local:
+            </p> 
+            <p class="ml-1 font-normal">{{ obra.local }}</p>
+          </div>
+
+          <div class="flex text-sm text-gray-600"> 
+            <p class="font-bold ">
+              <i class="fa-solid fa-dollar-sign mr-1" style="color:rgb(163, 163, 163);"></i>
+              Valor inicial:
+            </p> 
+            <p class="ml-1 font-normal">{{ obra.valor_inicial_formatado }}</p>
+          </div>
+
+        </div>   
+
+
+        <div class="flex flex-col space-y-3 pl-1">
+
+          <div class="flex text-sm text-gray-600"> 
+            <p class="font-bold ">
+              <i class="fa-solid fa-calendar mr-1" style="color:rgb(163, 163, 163);"></i>
+              Data de início:
+            </p> 
+            <p class="ml-1 font-normal">{{ obra.data_inicio|date:"d/m/Y" }}</p>
+          </div>
+
+          <div class="flex text-sm text-gray-600">
+            <p class="font-bold ">
+              <i class="fa-solid fa-calendar-xmark mr-1" style="color:rgb(163, 163, 163);"></i>
+              Data de término:
+            </p> 
+            <p class="ml-1 font-normal">{{ obra.data_final|date:"d/m/Y"|default:"-" }}</p>
+          </div> 
+
+          <div class="flex text-sm text-gray-600">
+            <p class="font-bold ">
+              <i class="fa-solid fa-hourglass-start mr-1" style="color:rgb(163, 163, 163);"></i>
+              Prazo inicial:
+            </p> 
+            <p class="ml-1 font-normal">{{ obra.prazo_inicial|date:"d/m/Y" }}</p>
+          </div>
+
+          <div class="flex text-sm text-gray-600">
+            <p class="font-bold ">
+              <i class="fa-solid fa-hourglass-half mr-1" style="color:rgb(163, 163, 163);"></i>
+              Prazo atual:
+            </p> 
+            <p class="ml-1 font-normal">{{ obra.prazo_atual|date:"d/m/Y" }}</p>
+          </div>
+
+        </div>   
+      </div>   
+      
+    </div>
+
+    <!-- donut -->
+    <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative justify-center text-left w-1/3">
+      <h5 class="w-full text-xl font-bold leading-none text-gray-900 pe-1">Orçamento utilizado</h5>
+      
+      <div class="mt-1 flex flex-col items-center justify-center">
+        <div class="py-2 flex items-center space-y-4">
+            <div id="donut-chart"></div> <!-- donut chart -->
+        </div> 
+        <div class="flex flex-col pl-3 justify-center"> 
+            <span class=" text-2xl font-bold ">{{ orcamento_usado }}</span> <!-- alterar valor -->
+            <span class=" text-gray-500 text-xs">Valor Total - Custo Total</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
 </div>
 
-<div class="flex space-x-4 justify-between mb-4">
-    <div class="relative shadow-md rounded-lg w-full">
-      <!-- table despesas -->
-      <div class="flex space-x-4 justify-between mb-4">
-        <div class="relative shadow-md rounded-lg w-full">
-            <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
-                <div class="flex space-x-2 items-center">
-                    <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
-                    <h1 class="text-xl">Despesas</h1>
-                </div>
-                <div class="flex space-x-2 items-center">
-                    <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]"onclick="sectionModal('despesasSection')"><i class="mr-1 fa-solid fa-angle-right"></i></i>
-                        Ver mais
-                    </button>
-                    <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
-                                modalName: 'modalCriarDespesa',
-                                formId: 'formCriarDespesa',
-                                currencyFields: ['valor_parcela', 'valor_despesa']
-                            });">
-                        Adicionar
-                    </button>                   
-                </div>
-            </div>
-            <div class="overflow-y-auto max-h-96">
-                
-                <table class="w-full text-sm text-left rtl:text-right text-gray-500 border">
+<div class="px-20">
+  <div class="relative shadow-md rounded-lg">
+    <!-- table despesas -->
+    <div class="flex space-x-4 justify-between mb-4">
+      <div class="relative shadow-md rounded-lg w-full">
+        <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
+          <div class="flex space-x-2 items-center">
+              <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
+              <h1 class="text-xl">Despesas</h1>
+          </div>
+          <div class="flex space-x-2 items-center">
+              <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]"onclick="sectionModal('despesasSection')"><i class="mr-1 fa-solid fa-angle-right"></i></i>
+                  Ver mais
+              </button>
+              <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
+                          modalName: 'modalCriarDespesa',
+                          formId: 'formCriarDespesa',
+                          currencyFields: ['valor_parcela', 'valor_despesa']
+                      });">
+                  Adicionar
+              </button>                   
+          </div>
+        </div>
+        <div class="overflow-y-auto max-h-96">
+          <table class="w-full text-sm text-left rtl:text-right text-gray-500 border">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
+              <tr>
+                  <th scope="col" class="px-6 py-3">Data da compra</th>
+                  <th scope="col" class="px-6 py-3">Descrição</th>
+                  <th scope="col" class="px-6 py-3">Valor</th>
+                  <th scope="col" class="px-6 py-3">Forma</th>
+                  <th scope="col" class="px-6 py-3">Status</th>
+                  <th scope="col" class="px-6 py-3">Observação</th>
+                  <th scope="col" class="px-6 py-3">
+                      <span class="sr-only">Editar</span>
+                  </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              {% for despesa in despesas %}
+                <tr class="bg-white border-b">
+                  <td class="px-6 py-4">
+                    {{ despesa.data }}
+                  </td>
                     
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">Data da compra</th>
-                            <th scope="col" class="px-6 py-3">Descrição</th>
-                            <th scope="col" class="px-6 py-3">Valor</th>
-                            <th scope="col" class="px-6 py-3">Forma</th>
-                            <th scope="col" class="px-6 py-3">Status</th>
-                            <th scope="col" class="px-6 py-3">Observação</th>
-                            <th scope="col" class="px-6 py-3">
-                                <span class="sr-only">Editar</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        {% for despesa in despesas %}
-                            <tr class="bg-white border-b">
-                              <td class="px-6 py-4">
-                                {{ despesa.data }}
-                              </td>
-                                
-                              <th scope="row" class="px-6 py-4 font-medium text-gray-900 break-words whitespace-normal max-w-[300px]">
-                                <a id="infoDespesaBtn" href="#" onclick="despesaModal('infoDespesa', {{ despesa.id }})">
-                                        {{ despesa.nome }}
-                                    </a>                                                             
-                              </th>
+                  <th scope="row" class="px-6 py-4 font-medium text-gray-900 break-words whitespace-normal max-w-[300px]">
+                    <a id="infoDespesaBtn" href="#" onclick="despesaModal('infoDespesa', {{ despesa.id }})">
+                            {{ despesa.nome }}
+                        </a>                                                             
+                  </th>
 
-                              <td class="px-6 py-4 min-w-[150px]">
-                                  {{ despesa.valor_formatado }}
-                              </td>
-                                
-                              <td class="px-6 py-4">
-                                {% if despesa.forma_pag == 'cartao' %}
-                                    Cartão
-                                {% elif despesa.forma_pag == 'boleto' %}
-                                    Boleto
-                                {% elif despesa.forma_pag == 'pix' %}
-                                    Pix
-                                {% elif despesa.forma_pag == 'especie' %}
-                                    Espécie
-                                {% endif %}
-                              </td>
-                                
-                                <td class="px-6 py-4">
-                                  <form action="{% url 'financeiro:atualizar_status' despesa_id=despesa.id %}?next={{ request.path }}" method=POST>
-                                      {% csrf_token %}
-                                      {% if despesa.status == 'a_pagar' %}
-                                      <button type="submit" 
-                                              class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-4 py-2 text-center me-2 mb-2 min-w-[100px]">
-                                          À pagar
-                                      </button>
-                                      
-                                      {% elif despesa.status == 'pago' %}
-                                          <button type="submit" 
-                                                  class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2 text-center me-2 mb-2 min-w-[100px]">
-                                              Pago
-                                          </button>
-                                      {% endif %}
-                                  </form>
-                                </td>
-                                
-                                <td class="px-6 py-4">
-                                    {{ despesa.observacao|default:'-' }}
-                                </td>
+                  <td class="px-6 py-4 min-w-[150px]">
+                      {{ despesa.valor_formatado }}
+                  </td>
+                    
+                  <td class="px-6 py-4">
+                    {% if despesa.forma_pag == 'cartao' %}
+                        Cartão
+                    {% elif despesa.forma_pag == 'boleto' %}
+                        Boleto
+                    {% elif despesa.forma_pag == 'pix' %}
+                        Pix
+                    {% elif despesa.forma_pag == 'especie' %}
+                        Espécie
+                    {% endif %}
+                  </td>
+                    
+                  <td class="px-6 py-4">
+                    <form action="{% url 'financeiro:atualizar_status' despesa_id=despesa.id %}?next={{ request.path }}" method=POST>
+                        {% csrf_token %}
+                        {% if despesa.status == 'a_pagar' %}
+                        <button type="submit" 
+                                class="text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-4 py-2 text-center me-2 mb-2 min-w-[100px]">
+                            À pagar
+                        </button>
+                        
+                        {% elif despesa.status == 'pago' %}
+                            <button type="submit" 
+                                    class="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2 text-center me-2 mb-2 min-w-[100px]">
+                                Pago
+                            </button>
+                        {% endif %}
+                    </form>
+                  </td>
+                  
+                  <td class="px-6 py-4">
+                      {{ despesa.observacao|default:'-' }}
+                  </td>
 
-                                <td class="px-6 py-4 text-right">
-                                  <button onclick="despesaModal('editarDespesa', {{ despesa.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
+                  <td class="px-6 py-4 text-right">
+                    <button onclick="despesaModal('editarDespesa', {{ despesa.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-      </div>
 
+      </div>
     </div>
 
-      <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[90px] md:w-[120px] lg:w-[150px] xl:w-[300px] flex flex-col items-center"> 
-          <h5 class="w-full text-xl font-bold leading-none text-gray-900 pe-1">Orçamento utilizado</h5>
-          <div class="py-2 flex items-center justify-start space-x-4">
-              <div id="donut-chart"></div> <!-- donut chart -->
-          </div> <div class="flex flex-col items-center"> 
-              <span class=" text-2xl font-bold">{{ orcamento_usado }}</span> <!-- alterar valor -->
-              <span class="pl-2 text-gray-500 text-xs">Valor Total - Custo Total</span>
-          </div>
-      </div>
+  </div>
 </div>
+
 
   
 <script>
@@ -182,7 +270,7 @@ const getChartOptions = () => {
       ],
       colors: ["#1f2937", "#C2C2C2"],
       chart: {
-        height: 220,
+        height: 120,
         width: "55%",
         type: "donut",
       },

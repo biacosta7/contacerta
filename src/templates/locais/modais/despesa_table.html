@@ -63,7 +63,7 @@
                                 </a>                                                             
                             </th>
 
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 min-w-[130px]">
                                 {{ despesa.valor_formatado|default:despesa.valor }}
                             </td>
                             
@@ -79,7 +79,7 @@
                                 {% endif %}
                             </td>
 
-                            <td class="px-6 py-4">
+                            <td class="px-6 py-4 min-w-[140px]">
                                     <form action="{% url 'financeiro:atualizar_status' despesa_id=despesa.id %}?next={{ request.path }}" method=POST>
                                         {% csrf_token %}
                                         {% if despesa.status == 'a_pagar' %}

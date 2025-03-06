@@ -349,6 +349,7 @@ def detalhar_obra(request, id):
     obra.debito_geral = obra.calcular_debito_geral()
     obra.custo_total = obra.calcular_custo_total()
     obra.prazo_atual = obra.calcular_prazo_atual()
+    obra.valor_inicial_formatado = formatar_valor(obra.valor_inicial)
 
     orcamento_usado = obra.valor_total - obra.custo_total if obra.valor_total else 0
     

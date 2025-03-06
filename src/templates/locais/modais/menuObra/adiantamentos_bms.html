@@ -31,9 +31,9 @@
                 <h1 class="text-xl">Adiantamentos</h1>
             </div>
             <div class="flex space-x-2 items-center">
-                <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="mr-1 fa-solid fa-filter"></i>
+                {% comment %} <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="mr-1 fa-solid fa-filter"></i>
                     Filtrar
-                </button>
+                </button> {% endcomment %}
                 <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
                             modalName: 'modalCriarAdiantamento',
                             formId: 'formCriarAdiantamento',
@@ -89,13 +89,14 @@
             </table>
         </div>
     </div>
-    
-    <div class="space-y-4">
+
+    <!-- total filtro -->
+    {% comment %} <div class="space-y-4">
         <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <h3 class="text-base font-medium block">Total <span class="text-base font-light">(filtro)</span></h3>
-            <span class="text-2xl font-semibold block">R$ {{ obra.debito_mensal|default:"0" }}</span>
+            <span class="text-2xl font-semibold block">R$ {{ "0,00" }}</span>
         </div>
-    </div>
+    </div> {% endcomment %}
 </div>
 
 <!-- BMs -->
@@ -107,9 +108,9 @@
                 <h1 class="text-xl">BMs</h1>
             </div>
             <div class="flex space-x-2 items-center">
-                <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="mr-1 fa-solid fa-filter"></i>
+                {% comment %} <button id="" class="text-base px-6 py-3 font-semibold hover:text-green-600 hover:text-[#edf0e9]" onclick=""><i class="mr-1 fa-solid fa-filter"></i>
                     Filtrar
-                </button>
+                </button> {% endcomment %}
                 <button id="" class="text-base bg-gray-700 px-6 py-3 rounded-[9px] font-semibold hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
                             modalName: 'modalCriarBM',
                             formId: 'formCriarBM',
@@ -170,10 +171,11 @@
         </div>
     </div>
     
-    <div class="space-y-4">
+    <!-- total filtro -->
+    {% comment %} <div class="space-y-4">
         <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <h3 class="text-base font-medium block">Total <span class="text-base font-light">(filtro)</span></h3>
-            <span class="text-2xl font-semibold block">R$ {{ obra.debito_mensal|default:"0" }}</span>
+            <span class="text-2xl font-semibold block">R$ {{ "0,00" }}</span>
         </div>
-    </div>
+    </div> {% endcomment %}
 </div>

@@ -426,7 +426,7 @@
 
                 document.getElementById('formaPagDespesaInfo').innerHTML = "<b>Forma de pagamento:</b> " + formaPagFormatado;
                 document.getElementById('dataDespesaInfo').innerHTML = "<b>Data da compra:</b> " + despesa.data;
-                document.getElementById('valorDespesaInfo').innerHTML = "<b>Valor: </b>" + despesa.valor;
+                document.getElementById('valorDespesaInfo').innerHTML = "<b>Valor: </b>" + despesa.valor_formatado;
                 document.getElementById('obsDespesaInfo').innerHTML = "<b>Observação:</b> " + (despesa.observacao|| "-");
                 document.getElementById('statusDespesaInfo').innerHTML = "<b>Status:</b> " + statusFormatado;
                 document.getElementById('dataPagDespesaInfo').innerHTML = "<b>Data de pagamento:</b> " + (despesa.data_pagamento || "Não pago.");
