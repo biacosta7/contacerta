@@ -243,7 +243,7 @@ class Fatura(models.Model):
     cartao = models.ForeignKey(Cartao, on_delete=models.SET_NULL, null=True)
     data_pagamento = models.DateField()
     valor = models.IntegerField()
-    observacao = models.TextField(null=False, blank=True)
+    observacao = models.TextField(null=True, blank=True)
 
 class NotaBoleto(Despesa):
     recipiente = models.CharField(max_length=100)

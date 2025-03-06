@@ -3,7 +3,7 @@
 <div class="flex space-x-4 items-left justify-between my-6">
     <h1 class="ml-2 text-3xl font-semibold">Escritório {{ escritorio.nome|capfirst }}</h1>
 </div>
-<form method="POST" id="formEditarEscritorio" action="" class="p-6">
+<form method="POST" id="formEditarEscritorio" action="{% url 'locais:editar_escritorio' escritorio_id=escritorio_id %}?next={{ request.path }}" class="p-6">
     {% csrf_token %}
     <!-- Campo oculto para ID da escritorio -->
     <input type="hidden" id="escritorioId" name="escritorio_id" value="">

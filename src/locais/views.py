@@ -333,15 +333,18 @@ def detalhar_obra(request, id):
             despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
             despesa.pagamentos_parcela = pagamentos
             despesa.valor_formatado = formatar_valor(despesa.valor)
+            despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
+
+            print("despesa.pagamentos_parcela:", despesa.pagamentos_parcela)
+
+            for parcela in despesa.pagamentos_parcela:
+                parcela.valor_pago_formatado = formatar_valor(parcela.valor_pago)
+                parcela.data_pagamento_formatado = (parcela.data_pagamento).strftime('%d/%m/%Y')
+
         except NotaCartao.DoesNotExist:
             despesa.nota_cartao = None
             despesa.pagamentos_parcela = None
-    
-    # Formata os valores das despesas
-    for despesa in despesas:
-        despesa.valor_formatado = formatar_valor(despesa.valor)
-        despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
-      
+
     # Calcula os valores para a obra, mas não formata aqui
     obra.debito_mensal = obra.calcular_debito_mensal()
     obra.valor_total = obra.calcular_valor_total()
@@ -398,7 +401,7 @@ def detalhar_obra(request, id):
         'porcentagem_orcamento_usado': porcentagem_orcamento_usado,
         'orcamento_usado': orcamento_usado,
         'total_filtro': total_filtro,
-        'escritorio_id': escritorio_id
+        'escritorio_id': escritorio_id,
     })
 
 
@@ -478,6 +481,27 @@ def criar_escritorio(request, user_id):
         return redirect('locais:home', escritorio.id)
 
     return redirect(next_url if next_url else 'locais:hub', user_id=user_id)
+
+@login_required
+def editar_escritorio(request, escritorio_id):
+    next_url = request.GET.get('next')
+    escritorio = get_object_or_404(Escritorio, id=escritorio_id)
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        email = request.POST.get('email')
+        telefone = request.POST.get('telefone')
+        cnpj = request.POST.get('cnpj')
+
+    escritorio.nome = nome
+    escritorio.email = email
+    escritorio.telefone = telefone
+    escritorio.cnpj = cnpj
+
+    escritorio.save()
+    messages.success(request, 'Escritório atualizado com sucesso.')
+    return redirect(next_url if next_url else 'locais:home', escritorio_id=escritorio_id)
+
 
 @login_required
 def enviar_acesso_escritorio(request, escritorio_id):

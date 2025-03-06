@@ -17,6 +17,7 @@ urlpatterns = [
     path('hub/<int:user_id>/', views.acesso_hub, name='hub'),
     path('detalhes/escritorio/<int:escritorio_id>/', views.detalhar_escritorio, name='detalhe_escritorio'),
     path('criar/escritorio/<int:user_id>/', views.criar_escritorio, name='criar_escritorio'),
+    path('editar/escritorio/<int:escritorio_id>/', views.editar_escritorio, name='editar_escritorio'),
     path('enviar-acesso/escritorio/<int:escritorio_id>/', views.enviar_acesso_escritorio, name='enviar_acesso_escritorio'),
     
     path('responder-acesso/escritorio/<int:acesso_id>/<int:escritorio_id>/', views.responder_acesso_escritorio, name='responder_acesso_escritorio'),

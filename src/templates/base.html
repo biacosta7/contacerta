@@ -266,7 +266,10 @@
                 console.log("faturasCartao: ", faturasCartao);
 
                 document.getElementById('cartaoPagarBtn').action = `/financeiro/cartoes/pagar-fatura/${cartaoId}/?next=${window.location.pathname}`;
-
+                document.getElementById('cartaoPagarBtn').onsubmit = function() {
+                    document.getElementById('cartaoPagarBtn').querySelector('button').disabled = true;
+                };
+                
                 
                 document.getElementById('cartaoTituloInfo').innerHTML =  "Cartão " + cartao.nome;
                 document.getElementById('nomeCartaoInfo').innerHTML = cartao.nome;
@@ -491,18 +494,23 @@
 
                     document.getElementById('despesaCartaoNomeInfo').innerHTML = "<b>Cartão:</b> " + (item_cartao_despesa.nome || "-");
                     document.getElementById('despesaQntParcelasCartaoInfo').innerHTML = "<b>Quantidade de parcelas:</b> " + cartao_despesa.quant_parcelas;
-                    document.getElementById('despesaValorParcelaCartaoInfo').innerHTML = "<b>Valor da parcela:</b> " + cartao_despesa.valor_parcela;
+                    document.getElementById('despesaValorParcelaCartaoInfo').innerHTML = "<b>Valor da parcela:</b> " + cartao_despesa.valor_parcela_formatado;
 
 
-                    // Adicionar a lógica para exibir as parcelas pagas
-                    let parcelasPagas = cartao_despesa.pagamentos || [];  // Pega as parcelas pagas
-                    let parcelasPagasText = parcelasPagas.length > 0 ? parcelasPagas.map(pagamento => {
-                        return `Data: ${pagamento.data_pagamento}, Valor: ${pagamento.valor_pago}`;
-                    }).join('<br>') : "Nenhuma parcela paga ainda";
+                    // Obtém as parcelas pagas da despesa (certifique-se de que `despesa.pagamentos_parcela` tem os dados corretos)
+                    let parcelasPagas = despesa.pagamentos_parcela || [];
 
-                    console.log('parcelasPagas: ', parcelasPagasText);
+                    // Verifica se há parcelas pagas e formata a exibição como uma lista numerada
+                    let parcelasPagasText = parcelasPagas.length > 0 
+                        ? `<ol>${parcelasPagas.map((pagamento, index) => 
+                            `<li><b>Parcela ${index + 1}:</b> Data: ${pagamento.data_pagamento_formatada} | Valor: ${pagamento.valor_pago_formatado}</li>`).join('')}
+                        </ol>`
+                        : "<p>Nenhuma parcela paga ainda</p>";
 
-                    document.getElementById('despesaParcelasPagasCartaoInfo').innerHTML = "<b>Parcelas pagas:</b><br>" + parcelasPagasText;
+                    // Exibe no HTML dentro do elemento com ID 'despesaParcelasPagasCartaoInfo'
+                    document.getElementById('despesaParcelasPagasCartaoInfo').innerHTML = `<b>Parcelas pagas:</b>${parcelasPagasText}`;
+
+                    console.log('parcelasPagas: ', parcelasPagas);
 
 
                 }

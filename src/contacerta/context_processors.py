@@ -7,6 +7,7 @@ from datetime import datetime
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.html import escape
+from django.db.models import Prefetch
 
 
 # Função para formatar a data para 'dd/mm/yyyy'
@@ -127,10 +128,19 @@ def cartoes(request):
     }
 
 
+    
+
 def despesas(request):
     despesas_queryset = Despesa.objects.all().order_by('-data')  # Garante a ordenação
-    despesas = list(despesas_queryset.values())  # Converte para lista de dicionários mantendo a ordem
+    despesas = list(despesas_queryset.values('id', 'nome', 'data', 'forma_pag', 'valor', 'observacao', 'status', 'data_pagamento', 'modalidade', 'modalidadeEscritorio'))  # Converte para lista de dicionários mantendo a ordem
 
+    # Carrega notas de cartão e pré-carrega parcelas e pagamentos para otimizar consultas
+    nota_cartao = NotaCartao.objects.select_related('cartao__banco').prefetch_related(
+        Prefetch('parcelas', queryset=Parcela.objects.all(), to_attr='parcelas_relacionadas')
+    ).all().values('id', 'cartao_id', 'status_parcelamento', 'quant_parcelas', 'valor_parcela', 'despesa_ptr_id')
+
+
+    # Associa os pagamentos da despesa (assumindo que a despesa tem um campo relacionado 'nota_cartao')
     for despesa in despesas:
         if despesa.get('data'):
             despesa['data'] = format_date(despesa['data'])
@@ -138,10 +148,26 @@ def despesas(request):
             despesa['data_pagamento'] = format_date(despesa['data_pagamento'])
         if despesa.get('valor'):
             despesa['valor_formatado'] = formatar_valor(despesa['valor'])
+        try:
+            nota = next((nota for nota in nota_cartao if nota['despesa_ptr_id'] == despesa['id']), None)
+            
+            if nota:
+                nota['valor_parcela_formatado'] =  formatar_valor(nota['valor_parcela'])
+                parcelas = list(Parcela.objects.filter(nota_cartao_id=nota['id']).values())  
+                parcela_ids = [p['id'] for p in parcelas]  # Pegamos apenas os IDs  
+                pagamentos = list(Pagamento.objects.filter(parcela__in=parcela_ids).values())  
+
+                despesa['pagamentos_parcela'] = pagamentos
+
+                # Formata os pagamentos para cada parcela
+                for parcela in despesa['pagamentos_parcela']:
+                    parcela['valor_pago_formatado'] = formatar_valor(parcela['valor_pago'])
+                    parcela['data_pagamento_formatada'] = (parcela['data_pagamento']).strftime('%d/%m/%Y')
+
+        except StopIteration:
+            despesa.pagamentos_parcela = []  # Caso não encontre a nota_cartao associada
 
 
-    # Otimização usando select_related e prefetch_related
-    nota_cartao = NotaCartao.objects.select_related('cartao__banco').all().values()
     nota_boleto = NotaBoleto.objects.select_related('banco').all().values()
     for nota in nota_boleto:
         if nota.get('vencimento'):
