@@ -25,7 +25,7 @@
 <!-- Adiantamentos -->
 <div class="flex space-x-4 justify-between mb-4 ">
     <div class="relative shadow-md rounded-lg w-full">
-        <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
+        <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-white bg-gray-800 pb-3">
             <div class="flex space-x-2 items-center">
                 <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
                 <h1 class="text-xl">Adiantamentos</h1>
@@ -81,7 +81,7 @@
                                 {{ adiantamento.observacao|default:'-' }}
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button onclick="adiantamentoModal('editarAdiantamento', {{ adiantamento.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
+                                <button onclick="adiantamentoModal('editarAdiantamento', {{ adiantamento.id }})" class="font-medium text-blue-500 hover:underline">Editar</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -102,7 +102,7 @@
 <!-- BMs -->
 <div class="flex space-x-4 justify-between mb-4 ">
     <div class="relative shadow-md rounded-lg w-full">
-        <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white dark:text-white dark:bg-gray-800 pb-3">
+        <div class="flex rounded-t-lg justify-between p-5 text-lg font-semibold text-left rtl:text-right text-white bg-gray-800 pb-3">
             <div class="flex space-x-2 items-center">
                 <i class="fa-solid fa-chart-simple" style="color:rgb(6, 172, 0);"></i>
                 <h1 class="text-xl">BMs</h1>
@@ -162,7 +162,7 @@
                                 {{ bm.observacao|default:'-' }}
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <button onclick="bmModal('editarBM', {{ bm.id }})" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
+                                <button onclick="bmModal('editarBM', {{ bm.id }})" class="font-medium text-blue-500 hover:underline">Editar</button>
                             </td>
                         </tr>
                     {% endfor %}

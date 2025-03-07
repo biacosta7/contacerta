@@ -3,14 +3,14 @@
 
 {% block title %}Cadastro{% endblock title %}
 {% block content %}
-<div class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+<div class="bg-gray-900 min-h-screen">
     <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-full lg:py-0 ">
         <img class="mt-2 w-1/4" src="{% static '/assets/contacerta-logoH.png' %}" alt="logo">
-        <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mb-4">
+        <div class="w-full rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-gray-800 border-gray-700 mb-4">
             <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
             
                 <div class="space-y-3">
-                    <span class="text-base font-medium text-gray-900 dark:text-white">
+                    <span class="text-base font-medium text-white">
                         Você deseja:
                     </span>
                     <div class="flex space-x-4">
@@ -34,7 +34,7 @@
                 <div id="acessarEscritorioSection" class="hidden space-y-8">
                     <div class="py-4">
                         {% if acessos %}
-                            <h1 class="text-xl font-semibold border-b border-gray-500 leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white py-3">
+                            <h1 class="text-xl font-semibold border-b border-gray-500 leading-tight tracking-tight md:text-2xl text-white py-3">
                                 Acessar Escritório
                             </h1>
                             {% for acesso in acessos %}
@@ -60,8 +60,8 @@
                             <p class="text-white mb-3 text-center">Não há convites de acesso à escritórios cadastrados.</p>
                             <p class="text-sm text-gray-300 text-center font-light">Por favor, solicite o seu convite ao administrador do escritório.</p>
                         {% endif %}
-                        <p class="flex mt-10 justify-center text-sm font-light text-gray-500 dark:text-gray-400">
-                            <a href="{% url 'logout' %}" class="text-center font-medium text-primary-600 hover:underline dark:text-primary-500">Sair da conta</a>
+                        <p class="flex mt-10 justify-center text-sm font-light text-gray-400">
+                            <a href="{% url 'logout' %}" class="text-center font-medium hover:underline text-primary-500">Sair da conta</a>
                         </p>
                        
                     </div>
@@ -89,38 +89,37 @@
                 </div>
 
                 <div id="criarEscritorioSection" class="hidden">
-                    <h1 class="text-xl font-semibold border-b border-gray-500 leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white py-3">
+                    <h1 class="text-xl font-semibold border-b border-gray-500 leading-tight tracking-tight md:text-2xl text-white py-3">
                         Criar Escritório
                     </h1>
                     <form action="{% url 'locais:criar_escritorio' user_id %}" method="POST" class="space-y-4 md:space-y-6">
                         {% csrf_token %}
                         <div class="flex space-x-4">
                             <div class="w-1/2">
-                                <label for="nome" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome</label>
-                                <input type="text" name="nome" id="nome" value="{{ form_data.nome }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                <label for="nome" class="block mb-2 text-sm font-medium text-white">Nome</label>
+                                <input type="text" name="nome" id="nome" value="{{ form_data.nome }}" class="border text-gray-900 text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500" required>
                             </div>
                             <div class="w-1/2">
-                                <label for="telefone" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Telefone</label>
-                                <input type="text" name="telefone" id="telefone" value="{{ form_data.telefone }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                <label for="telefone" class="block mb-2 text-sm font-medium text-white">Telefone</label>
+                                <input type="text" name="telefone" id="telefone" value="{{ form_data.telefone }}" class="border text-gray-900 text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500" required>
                             </div>
                         </div>                    
                         <div>
-                            <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email do escritório</label>
-                            <input type="text" name="email" id="email" value="{{ form_data.email }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="exemplo@gmail.com" required>
+                            <label for="email" class="block mb-2 text-sm font-medium text-white">Email do escritório</label>
+                            <input type="text" name="email" id="email" value="{{ form_data.email }}" class="border text-gray-900 text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500" placeholder="exemplo@gmail.com" required>
                         </div>
                         <div>
-                            <label for="cnpj" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">CNPJ</label>
-                            <input type="text" name="cnpj" id="cnpj" value="{{ form_data.cnpj }}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                            <label for="cnpj" class="block mb-2 text-sm font-medium text-white">CNPJ</label>
+                            <input type="text" name="cnpj" id="cnpj" value="{{ form_data.cnpj }}" class="border text-gray-900 text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500" required>
                         </div>
                         
-                        
                     
-                        <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Criar</button>
+                        <button type="submit" class="w-full text-white bg-primary-600 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] hover:bg-primary-700 focus:ring-primary-800">Criar</button>
                         
                     </form>
-                    <p class="mt-6 text-sm font-light text-gray-500 dark:text-gray-400">
+                    <p class="mt-6 text-sm font-light text-gray-400">
                         {% comment %} TO-DO: entrar no escritorio existente {% endcomment %}
-                        Já possui um escritório? <a href="{% url 'login' %}" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Entrar</a>
+                        Já possui um escritório? <a href="{% url 'login' %}" class="font-medium hover:underline text-primary-500">Entrar</a>
                     </p>
                 </div>
 
