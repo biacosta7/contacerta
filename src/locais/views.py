@@ -335,8 +335,6 @@ def detalhar_obra(request, id):
             despesa.valor_formatado = formatar_valor(despesa.valor)
             despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
 
-            print("despesa.pagamentos_parcela:", despesa.pagamentos_parcela)
-
             for parcela in despesa.pagamentos_parcela:
                 parcela.valor_pago_formatado = formatar_valor(parcela.valor_pago)
                 parcela.data_pagamento_formatado = (parcela.data_pagamento).strftime('%d/%m/%Y')

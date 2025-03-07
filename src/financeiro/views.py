@@ -143,15 +143,6 @@ def criar_despesa(request, tipo, id):
                         status_parcelamento='a_pagar'
                     )
 
-                    vencimentos = despesa.calcular_vencimentos_parcelas()
-                    for i, vencimento in enumerate(vencimentos):
-                        Parcela.objects.create(
-                            nota_cartao=despesa,
-                            numero=i + 1,
-                            data_vencimento=vencimento,
-                            valor=valor_parcela,
-                            status="a_pagar"
-                        )
 
                 elif forma_pag == 'boleto':
                     banco_id = request.POST.get('banco')
@@ -562,7 +553,6 @@ def pagar_cartao(request, cartao_id):
     mes, ano = hoje.month, hoje.year
 
     meses_abreviados = ["", "JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]
-
     
     # Obtém as notas de cartão com status "a pagar"
     notas_cartao = NotaCartao.objects.filter(

@@ -205,16 +205,19 @@ class NotaCartao(Despesa):
         is_new = self._state.adding  # Verifica se a instância é nova
         super().save(*args, **kwargs)  # Salva a NotaCartao antes de criar as parcelas
 
-        if is_new and not self.parcelas.exists():  # Garante que só cria parcelas se for uma nova NotaCartao
+        if is_new and not self.parcelas.exists():  # Garante que só cria parcelas se for nova
             vencimentos = self.calcular_vencimentos_parcelas()
-            for i, vencimento in enumerate(vencimentos):
-                Parcela.objects.create(
+            parcelas = [
+                Parcela(
                     nota_cartao=self,
                     numero=i + 1,
                     data_vencimento=vencimento,
                     valor=self.valor_parcela,
                     status="a_pagar"
                 )
+                for i, vencimento in enumerate(vencimentos)
+            ]
+            Parcela.objects.bulk_create(parcelas)  # Criação eficiente em lote
 
 
 class Parcela(models.Model):
