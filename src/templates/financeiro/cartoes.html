@@ -95,10 +95,16 @@
                 <div id="cartoes-container" class="flex transition-transform duration-300">
                     {% for cartao in cartoes %}
                         <div class="flex-none w-1/3 p-1">
-                            <div class="credit-card w-64 h-38 rounded-lg bg-gradient-to-r from-purple-800 to-purple-500 text-white p-4 flex flex-col justify-between drop-shadow shadow-lg cursor-pointer" 
+                            <div class="credit-card w-64 h-[144px] rounded-lg bg-gradient-to-r from-purple-800 to-purple-500 text-white p-4 flex flex-col justify-between drop-shadow shadow-lg cursor-pointer" 
                                  onclick="cartaoModal('infoCartao', {{ cartao.id }})">
-                                <div class="bank-logo">
-                                    <img src="{% static cartao.banco.logo_path %}" alt="Bank Logo" class="w-16 h-auto">
+                                <div class="bank-logo">                                    
+                                        <img 
+                                        {% if cartao.banco.imagem %}
+                                            src="{{ cartao.banco.imagem }}"
+                                        {% else %} 
+                                            src="{% static 'assets/bancosLogo/chip.png' %}"
+                                        {% endif %} 
+                                        alt="Bank Logo" class="w-10 h-auto">
                                 </div>
                                 <div class="card-number text-lg font-bold tracking-widest">
                                     •••• •••• •••• <span>{{ cartao.final }}</span>
@@ -130,6 +136,7 @@
     </div>
 
     <div class="p-4 pr-2 w-[28%]">
+        <!-- busca rápida -->
         <div class="flex flex-col mt-2 bg-gray-50 text-black rounded-[9px] border-2 p-6">
             <h1 class="text-xl font-medium">Busca rápida</h1>
             <span class="text-sm text-gray-500 mb-4">(Digite o final do cartão)</span>
@@ -140,13 +147,19 @@
                     <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-gray-700 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </form>
-
+            
             <div class="flex-none w-full p-1 mt-4">
                 {% if cartao_busca %}
-                    <div class="credit-card w-full max-w-sm rounded-lg bg-gradient-to-r from-purple-800 to-purple-500 text-white p-4 flex flex-col justify-between drop-shadow shadow-lg cursor-pointer" 
+                    <div class="credit-card w-64 h-[144px] rounded-lg bg-gradient-to-r from-purple-800 to-purple-500 text-white p-4 flex flex-col justify-between drop-shadow shadow-lg cursor-pointer" 
                         onclick="cartaoModal('infoCartao', {{ cartao_busca.id }})">
                         <div class="bank-logo">
-                            <img src="{% static cartao_busca.banco.logo_path %}" alt="Bank Logo" class="w-16 h-auto">
+                            <img 
+                            {% if cartao.banco.imagem %}
+                                src="{{ cartao.banco.imagem }}"
+                            {% else %} 
+                                src="{% static 'assets/bancosLogo/chip.png' %}"
+                            {% endif %} 
+                            alt="Bank Logo" class="w-10 h-auto">
                         </div>
                         <div class="card-number text-lg font-bold tracking-widest">
                             •••• •••• •••• <span>{{ cartao_busca.final }}</span>
@@ -222,7 +235,7 @@
             </div>
         </div>
 
-
+        <!-- adicionar banco e cartão (botões)-->
         <div class="flex flex-col items-center bg-gray-50 text-black rounded-[9px] border-2 mt-4 p-6">
             <div class="mt-4">
                 <button class="bg-gray-700 text-white px-6 py-3 rounded-[9px] w-full font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
@@ -247,15 +260,11 @@
 {% include 'financeiro/modais/cartao/editar_cartao.html' %}
 {% include 'financeiro/modais/cartao/deletar_cartao.html' %}
 {% include 'financeiro/modais/cartao/info_cartao.html' %}
-{% include 'financeiro/modais/criar_banco.html' %}
+{% include 'financeiro/modais/banco/criar_banco.html' %}
 {% include 'financeiro/modais/despesa/info_despesa.html' %}
 {% include 'financeiro/modais/despesa/editar_despesa.html' %}
 {% include 'financeiro/modais/despesa/deletar_despesa.html' %}
 
-<div>
-</div>
-
-</div>
 <script>
     function toggleModal(action) {
         const modalCriarCartao = document.getElementById('modalCriarCartao');
@@ -352,8 +361,7 @@
         setupDropdown('.dropdown-button', '#dropdown-menu', 'ano_mes');
         setupDropdown('.cartao-dropdown-button', '#cartao-dropdown-menu', 'cartao');
     });
-    
-    
 
 </script>
+
 {% endblock content %}

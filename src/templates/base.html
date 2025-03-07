@@ -195,6 +195,36 @@
             
         }
 
+        function bancoModal(action, id) {
+            const modalDeletarBanco = document.getElementById('modalDeletarBanco');
+            const modalEditarBanco = document.getElementById('modalEditarBanco');
+            const bancoId = id;
+            let banco = bancos.find(b => b.id === bancoId);
+
+            if (action === 'editarBanco') {
+                // Mostra o modal
+                modalEditarBanco.classList.remove('hidden');
+
+                document.getElementById('nomeBancoEditar').value = banco.nome;
+                
+                document.getElementById('formEditarBanco').action = `/financeiro/banco/editar/${bancoId}/?next=${window.location.pathname}`;
+
+                document.getElementById('deletarBancoBtn').setAttribute('onclick', `bancoModal('deletarBanco', ${bancoId})`);
+            }
+            else if (action === 'deletarBanco') {
+                modalEditarBanco.classList.add('hidden');
+                modalDeletarBanco.classList.remove('hidden');
+
+                document.getElementById('tituloDeletarBanco').innerHTML = `Deletar "${banco.nome}"`; 
+    
+                document.getElementById('textDeletarBanco').innerHTML = `Tem certeza de que deseja excluir o banco "${banco.nome}"? Esta ação não pode ser desfeita.`; 
+                
+                // Defina a URL do formulário de exclusão com o ID correto
+                document.getElementById('formDeletarBanco').action = `/financeiro/banco/deletar/${bancoId}/?next=${window.location.pathname}`;
+            }
+            
+        }
+
         // modal de editar fatura
         function faturaModal(action, faturaId) {
             let faturaSelecionada = faturas.find(f => f.id === faturaId);
@@ -249,6 +279,7 @@
             let form = document.getElementById('formEditarFatura');
             form.submit(); // Envia o formulário com os novos dados
         }
+
         
 
         // modal de editar e excluir cartao

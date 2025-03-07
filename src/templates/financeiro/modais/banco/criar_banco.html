@@ -5,13 +5,31 @@
             <h5 class="text-2xl font-semibold text-center flex-grow ml-8">Cadastrar Novo Banco</h5>
             <i class="fa-solid fa-xmark cursor-pointer p-2 rounded hover:bg-gray-200 hover:bg-opacity-50" onclick="modalformCriacao('fechar', {modalName: 'modalCriarBanco'});"></i>
         </div>
-        <form method="POST" id="formCriarBanco" action="{% url 'financeiro:criar_banco' %}?next={{ request.path }}">
+        <form method="POST" id="formCriarBanco" action="{% url 'financeiro:criar_banco' %}?next={{ request.path }}" enctype="multipart/form-data">
             {% csrf_token %}
                 <div>
                     <label for="nome" class="block mb-2 text-sm font-medium text-gray-900">Nome</label>
                     <input type="text" name="nome" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729]  py-2 px-3" required>
                 </div>
+                <!-- Imagem -->
+                <div class='mt-4'>
+                    <label for="imagemCriarBanco" class="block mb-2 text-sm font-medium text-gray-900">Imagem do Banco <span class="text-xs text-gray-400">  (opcional)</span></label>
+                    <label for="imagemCriarBanco" class="custom-file-upload block mb-2 text-sm font-nomal text-gray-900 border border-gray-300 bg-gray-100 hover:bg-gray-300 rounded-lg py-4 px-3"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Fazer upload</label>
+                    <input type="file" id="imagemCriarBanco" name="imagem_banco" accept="image/*">
+                    <p class="file-name-banco mt-2 text-gray-500 text-xs pl-1">Nenhum arquivo selecionado</p>
+                </div>
             <button type="submit" class=" mt-4 w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] dark:hover:bg-primary-700 dark:focus:ring-primary-800">Cadastrar</button>         
         </form>
     </div>
 </div>
+<script>
+    document.getElementById('imagemCriarBanco').addEventListener('change', function() {
+        let fileName = this.files.length > 0 ? this.files[0].name : 'Nenhum arquivo selecionado';
+        document.querySelector('.file-name-banco').textContent = fileName;
+    });
+</script>
+<style>
+    input[type="file"] {
+        display: none; /* Esconde o input padrão */
+    }
+</style>

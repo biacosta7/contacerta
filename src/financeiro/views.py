@@ -14,7 +14,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from dateutil.relativedelta import relativedelta
 from django.db.models import Prefetch
-
+import cloudinary.uploader
+from cloudinary.utils import cloudinary_url
 
 
 import logging
@@ -525,9 +526,19 @@ def fatura_mensal_cartoes(request):
 
     meses = calcular_range_meses()
 
-    if not cartoes.exists():
+    if cartoes.exists():
+        for cartao in cartoes:
+            if cartao.banco.public_id:  # Usa o public_id armazenado
+                auto_crop_url, _ = cloudinary_url(
+                    cartao.banco.public_id, gravity="auto"
+                )
+                cartao.banco.imagem = auto_crop_url
+            else:
+                cartao.banco.imagem = None
+        
+    else:
         messages.warning(request, 'Nenhum cartão cadastrado.')
-
+    
     context = {
         'cartoes': cartoes,
         'meses': meses,
@@ -674,12 +685,53 @@ def criar_banco(request):
     next_url = request.GET.get('next')
 
     if request.method == 'POST':
+        imagem = request.FILES.get('imagem_banco')
         nome = request.POST.get('nome')
-        Banco.objects.create(nome=nome)    
-   
-    # Redireciona para o 'next' ou para uma página padrão 
+
+        if imagem: 
+            upload_result = cloudinary.uploader.upload(imagem)
+            imagem_url = upload_result.get('secure_url')
+            public_id = upload_result.get('public_id')  # Salva o ID gerado pelo Cloudinary
+        else:
+            imagem_url = None
+            public_id = None 
+    
+        Banco.objects.create(nome=nome, public_id=public_id, imagem_url=imagem_url)
+
     return redirect(next_url if next_url else 'financeiro:cartoes')
 
+@login_required
+def editar_banco(request, banco_id):
+    next_url = request.GET.get('next')
+    banco = get_object_or_404(Banco, id=banco_id)
+
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        imagem = request.FILES.get('imagem_banco_editar')
+
+    banco.nome = nome
+
+    if imagem: 
+        upload_result = cloudinary.uploader.upload(imagem)
+        imagem_url = upload_result.get('secure_url')
+        public_id = upload_result.get('public_id')  # Salva o ID gerado pelo Cloudinary
+        banco.imagem_url = imagem_url
+        banco.public_id = public_id
+    
+    banco.save()
+
+    return redirect(next_url if next_url else 'financeiro:cartoes')
+
+
+
+@login_required
+def deletar_banco(request, banco_id):
+    next_url = request.GET.get('next')
+    banco = get_object_or_404(Banco, id=banco_id)
+
+    banco.delete()
+    messages.success(request, 'Banco deletado com sucesso.')
+    return redirect(next_url if next_url else 'locais:home')
 
 # Funcionários
 @login_required

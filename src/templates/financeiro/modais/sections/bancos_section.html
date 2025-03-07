@@ -24,7 +24,7 @@
                 
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
                     <tr>
-                        <th scope="col" class="px-6 py-3">Nome</th>
+                        <th scope="col" class="px-4 py-3">Nome</th>
                         <th scope="col" class="px-6 py-3">
                             <span class="sr-only">Editar</span>
                         </th>
@@ -33,11 +33,22 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     {% for banco in bancos %}
                         <tr class="bg-white border-b">
-                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                
+                            <th scope="row" class="flex items-center px-4 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                <img 
+                                {% if banco.imagem %}
+                                    src="{{ banco.imagem }}"
+                                {% else %}
+                                    src=""
+                                {% endif %}
+                                alt="Bank Logo" class="w-10 h-auto mr-3">
                                 {{ banco.nome }}
                             </th>
-                            <td class="px-6 py-4 text-right">
-                                <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</a>
+                            
+                            <td class="px-4 py-4 text-right">
+                                <button onclick="bancoModal('editarBanco', {{ banco.id }})" 
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline" 
+                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Editar</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -46,4 +57,6 @@
         </div>
     </div>
 </div>
-{% include "financeiro/modais/criar_banco.html" %}
+{% include "financeiro/modais/banco/criar_banco.html" %}
+{% include "financeiro/modais/banco/editar_banco.html" %}
+{% include "financeiro/modais/banco/deletar_banco.html" %}

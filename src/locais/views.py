@@ -12,7 +12,6 @@ from decimal import Decimal, InvalidOperation
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 
-import cloudinary
 import cloudinary.uploader
 from cloudinary.utils import cloudinary_url
 
@@ -584,6 +583,15 @@ def detalhar_escritorio(request, escritorio_id=None):
     bancos = Banco.objects.all()
     cartoes = Cartao.objects.all()
     tipo_local_escritorio = ContentType.objects.get_for_model(Escritorio)
+
+    for banco in bancos:
+        if banco.public_id:  # Usa o public_id armazenado
+            auto_crop_url, _ = cloudinary_url(
+                banco.public_id, gravity="auto"
+            )
+            banco.imagem = auto_crop_url
+        else:
+            banco.imagem = None
 
     if escritorio_id:
         escritorio = get_object_or_404(Escritorio, id=escritorio_id)

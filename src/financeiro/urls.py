@@ -41,6 +41,8 @@ urlpatterns = [
     # Bancos
     #path('banco/', views.ver_banco, name='banco'),
     path('banco/criar/', views.criar_banco, name='criar_banco'),
+    path('banco/editar/<int:banco_id>/', views.editar_banco, name='editar_banco'),
+    path('banco/deletar/<int:banco_id>/', views.deletar_banco, name='deletar_banco'),
 
     path('funcionario/criar/', views.criar_funcionario, name='criar_funcionario'),
 

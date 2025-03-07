@@ -7,12 +7,11 @@ from dateutil.relativedelta import relativedelta
 from django.forms import ValidationError
 
 class Banco(models.Model):
+    imagem_url = models.URLField(blank=True, null=True)
+    public_id = models.CharField(max_length=255, null=True, blank=True)
+
     nome = models.CharField(max_length=100)
-    logo_path = models.CharField(
-        max_length=255,
-        blank=True, 
-        default='assets/bancosLogo/default_logo.png'
-    )
+    
     def __str__(self):
         return self.nome
 
