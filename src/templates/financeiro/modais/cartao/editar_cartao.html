@@ -45,10 +45,27 @@
                 <input type="number" id="quantdiasCartao" name="quant_dias" class="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-[#287F71] focus:border-[#287F71]" required>              
             </div>
 
+            <!-- cor -->
+            <div class="flex flex-col mb-4">
+                <label for="corSelecionadaEditar" class="block text-sm font-medium text-gray-900 mb-2">Cor do cartão*</label>
+                
+                <input type="text" id="corSelecionadaEditar" name="cor" class="hidden">
+            
+                <div class="flex items-center gap-2">
+                    <div class="editar-cor w-10 h-10 bg-blue-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'blue')"></div>
+                    <div class="editar-cor w-10 h-10 bg-green-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'green')"></div>
+                    <div class="editar-cor w-10 h-10 bg-purple-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'purple')"></div>
+                    <div class="editar-cor w-10 h-10 bg-red-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'red')"></div>
+                    <div class="editar-cor w-10 h-10 bg-orange-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'orange')"></div>
+                    <div class="editar-cor w-10 h-10 bg-yellow-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'yellow')"></div>
+                    <div class="editar-cor w-10 h-10 bg-zinc-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'zinc')"></div>
+                </div>
+            </div>
+
 
             <div class="flex justify-end">
-                <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="cartaoModal('fecharEditar')">Cancelar</button>
-                <button type="submit" class="px-4 py-2 bg-[#287F71] text-white rounded-lg hover:bg-green-700">Salvar</button>
+                <button type="button" class="mt-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 mr-2" onclick="cartaoModal('fecharEditar')">Cancelar</button>
+                <button type="submit" class="mt-2 px-4 py-2 bg-[#287F71] text-white rounded-lg hover:bg-green-700">Salvar</button>
             </div>
         </form>
         
@@ -63,4 +80,17 @@
             changeYear: true     
         });
     });
+
+    function selecionarCor(elemento, cor) {
+        // Define o valor do input escondido
+        document.getElementById('corSelecionadaEditar').value = cor;
+    
+        // Remove a borda de todos os círculos
+        document.querySelectorAll('.cursor-pointer').forEach(el => {
+            el.classList.remove('border-black');
+        });
+    
+        // Adiciona borda ao item selecionado
+        elemento.classList.add('border-black');
+    }
 </script>

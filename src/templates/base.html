@@ -366,6 +366,16 @@
                 document.getElementById('bancoCartao').value = cartao.banco_id;
                 document.getElementById('vencimentoCartao').value = cartao.vencimento;
                 document.getElementById('quantdiasCartao').value = cartao.quant_dias;
+
+                // Define a cor selecionada
+                document.getElementById('corSelecionadaEditar').value = cartao.cor;
+                console.log('corSelecionadaEditar: ', document.getElementById('corSelecionadaEditar').value);
+
+                // Seleciona o círculo correspondente à cor do cartão e adiciona a borda
+                let corSelecionada = document.querySelector(`.editar-cor.bg-${cartao.cor}-500`);
+                if (corSelecionada) {
+                    corSelecionada.classList.add('border-black');
+                }
                                   
                 editarModalCartao.classList.remove('hidden');
             } else if (action === 'fecharEditar') {

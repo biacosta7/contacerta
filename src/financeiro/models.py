@@ -113,6 +113,8 @@ class Despesa(models.Model):
 
 
 class Cartao(models.Model):
+    cor = models.CharField(max_length=30, blank=True, default='zinc')
+
     nome = models.CharField(max_length=100)
     banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
     final = models.CharField(max_length=4)

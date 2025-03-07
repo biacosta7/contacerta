@@ -365,6 +365,7 @@ def criar_cartao(request, escritorio_id):
 
     if request.method == 'POST':
         nome = request.POST.get('nome')
+        cor = request.POST.get('cor')
         banco_id = request.POST.get('banco')
         final = request.POST.get('final')
         vencimento = request.POST.get('vencimento')
@@ -378,6 +379,7 @@ def criar_cartao(request, escritorio_id):
         # Criando o cartão
         cartao = Cartao.objects.create(
             nome=nome,
+            cor=cor,
             banco=banco,
             final=final,
             vencimento=vencimento,
@@ -396,6 +398,7 @@ def editar_cartao(request, cartao_id):
 
     if request.method == 'POST':
         nome = request.POST.get('nome')
+        cor = request.POST.get('cor')
         banco_id = request.POST.get('banco')
         final = request.POST.get('final')
         vencimento = request.POST.get('vencimento')
@@ -406,6 +409,7 @@ def editar_cartao(request, cartao_id):
         banco = get_object_or_404(Banco, id=banco_id)
 
         cartao.nome = nome
+        cartao.cor = cor
         cartao.banco = banco
         cartao.final = final
         cartao.vencimento = vencimento

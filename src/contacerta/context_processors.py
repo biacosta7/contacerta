@@ -8,6 +8,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.html import escape
 from django.db.models import Prefetch
+from cloudinary.utils import cloudinary_url
 
 
 # Função para formatar a data para 'dd/mm/yyyy'
@@ -83,6 +84,7 @@ def cartoes(request):
         cartao_dict = {
             'id': cartao.id,
             'nome': cartao.nome,
+            'cor': cartao.cor,
             'final': cartao.final,
             'vencimento': cartao.vencimento,
             'banco': cartao.banco.nome,
@@ -119,6 +121,13 @@ def cartoes(request):
     cartao_busca = None
     if query:
         cartao_busca = cartoes.filter(final=query).first()
+        if cartao_busca.banco.public_id:  # Usa o public_id armazenado
+            auto_crop_url, _ = cloudinary_url(
+                cartao_busca.banco.public_id, gravity="auto"
+            )
+            cartao_busca.banco.imagem = auto_crop_url
+        else:
+            cartao_busca.banco.imagem = None
 
     return {
         'cartoes': cartoes,
