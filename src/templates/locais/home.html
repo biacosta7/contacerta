@@ -10,14 +10,21 @@
         <a href="{% url 'locais:detalhe_escritorio' escritorio_id=escritorio.id %}"><i class="fa-solid fa-building fa-xl" style="color: #7ED957;"></i></a>
         <a href="{% url 'financeiro:cartoes' %}"><i class="fa-solid fa-wallet fa-xl" style="color: #7ED957;"></i></a>
         
-        <form action="{% url 'logout' %}" method="post">
-            {% csrf_token %}
-            <button type="submit" class="">
-                <i class="fa-solid fa-circle-user fa-xl" style="color: #7ED957; padding-right: 30px;"></i>
-            </button>
-        </form>
+        <!-- icone do perfil -->
+        <i id="profile-icon" class="pt-2.5 fa-solid fa-circle-user fa-xl" style="color: #7ED957; padding-right: 30px;" onclick="toggleProfileMenu(event, 'profile-icon')"></i>
     </div>  
 </div>
+
+<!-- menu do perfil -->
+<div id="profileMenu" class="hidden drop-shadow border bg-gray-100 px-3 py-1 rounded-[9px] absolute top-16 right-8 flex flex-col space-y-2">
+    <button class="text-base text-left py-1 px-1 border-b-2 border-b-gray-300" onclick="document.getElementById('modalEditarUser').classList.remove('hidden')">Editar</button>
+    
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="text-base text-red-600 text-left py-1 px-1">Sair</button>
+    </form>
+</div>
+
 <div class="flex flex-col justify-center">
     <h1 class="mt-4 text-3xl font-semibold text-center">Olá, {{ user.nome }}!</h1>
     <span class="mt-2 text-xl text-gray-400 text-center">Você está no escritório {{ escritorio.nome }}.</span>
@@ -70,6 +77,8 @@
 
 </div>
 
+{% include 'users/editar_user.html' %}
+
 <script>
     // Função para alternar o menu de 3 pontos
     function toggleDotsMenu(event, index) {
@@ -95,6 +104,51 @@
                 document.removeEventListener('click', handleClickOutside); // Remove o listener
             }
         });
+    }
+
+    // Função para alternar o menu de 3 pontos
+    function toggleProfileMenu(event, index) {
+        // Impede a propagação do clique para o documento
+        event.stopPropagation();
+        
+        const profileMenu = document.getElementById(`profileMenu`);
+        const profileIcon = document.getElementById(`profile-icon`);
+        
+        // Alterna o menu ao clicar no ícone
+        profileMenu.classList.toggle('hidden');
+        profileMenu.classList.toggle('drop-shadow'); 
+        // Altera a cor do ícone para branco
+        if (profileIcon.style.color === 'rgb(126, 217, 87)') {
+            profileIcon.style.color = 'white';
+        } else {
+            profileIcon.style.color = '#7ED957';
+        }
+
+        // Adiciona um listener para fechar o menu ao clicar fora
+        document.addEventListener('click', function handleClickOutside(e) {
+            // Verifica se o clique foi fora do ícone
+            if (e.target.id !== `profile-icon`) {
+                profileMenu.classList.add('hidden'); 
+                profileMenu.classList.remove('drop-shadow'); 
+                profileIcon.style.color = '#7ED957'; // cor original
+                profileMenu.classList.remove('border');
+                document.removeEventListener('click', handleClickOutside); // Remove o listener
+            }
+        });
+    }
+
+
+    function userModal(action, id) {
+        const modalEditarBanco = document.getElementById('modalEditaUser');
+        const userId = id;
+        let user = users.find(b => b.id === userId);
+
+        if (action === 'editarUser') {
+            // Mostra o modal
+            modalEditarBanco.classList.remove('hidden');
+
+        }
+        
     }
 
     $(document).ready(function () {

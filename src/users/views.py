@@ -107,3 +107,64 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return redirect('login')
+
+@login_required
+def editar_user(request, user_id):
+    if request.method == 'POST':
+        nome = request.POST.get('nome', '').strip()
+        sobrenome = request.POST.get('sobrenome', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '').strip()
+        confirm_password = request.POST.get('confirm_password', '').strip()
+
+        valid_name = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚáéíóúÃÕãõÇç")
+        if not set(nome).issubset(valid_name):
+            messages.error(request, 'O nome não deve conter números ou caracteres especiais')
+            return redirect('locais:hub', user_id=user_id)
+
+        if ' ' in password:
+            messages.error(request, 'A senha não pode conter espaços.')
+            return redirect('locais:hub', user_id=user_id)
+
+        if '@' not in email or email.count('@') != 1:
+            messages.error(request, 'Por favor, insira um email válido')
+            return redirect('locais:hub', user_id=user_id)
+
+        if password != confirm_password:
+            messages.error(request, 'As senhas não coincidem.')
+            return redirect('locais:hub', user_id=user_id)
+        
+        try:
+            user = User.objects.get(id=user_id)
+            user.nome = nome
+            user.sobrenome = sobrenome
+            user.email = email
+            user.set_password(password)
+            user.save()
+
+            messages.success(request, 'Dados atualizados com sucesso!')
+            
+            user = authenticate(request, email=email, password=password)
+            if user is not None:
+                login(request, user)                
+                escritorios = Escritorio.objects.filter(membros=user)
+                if escritorios.exists():
+                    escritorio = escritorios.first()
+                    return redirect('locais:home', escritorio_id=escritorio.id)
+                else:
+                    messages.warning(request, 'Você não está associado a nenhum escritório.')
+                    return redirect('locais:hub', user_id=user.id)
+        
+        except User.DoesNotExist:
+            messages.error(request, 'Usuário não encontrado.')
+        except IntegrityError:
+            messages.error(request, 'Já existe um usuário com este email. Tente novamente.')
+        
+        return redirect('locais:hub', user_id=user_id)
+    
+    try:
+        user = User.objects.get(id=user_id)
+        return redirect('locais:hub', user_id=user.id)
+    except User.DoesNotExist:
+        messages.error(request, 'Usuário não encontrado.')
+        return redirect('locais:hub')

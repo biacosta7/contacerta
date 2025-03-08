@@ -230,6 +230,7 @@ def criar_obra(request, escritorio_id):
 @login_required
 def listar_obras(request, escritorio_id):
     escritorio = get_object_or_404(Escritorio, id=escritorio_id)
+    user = request.user
 
     # Pegando apenas as obras do escritório do usuário
     obras = Obra.objects.filter(escritorio=escritorio)
@@ -245,7 +246,7 @@ def listar_obras(request, escritorio_id):
         # Formatar o valor inicial (presumivelmente você tenha uma função formatar_valor())
         obra.valor_inicial = formatar_valor(obra.valor_inicial)
 
-    return render(request, 'locais/home.html', {'obras': obras, 'escritorio': escritorio})
+    return render(request, 'locais/home.html', {'obras': obras, 'escritorio': escritorio, 'user': user})
 
 
 @login_required
