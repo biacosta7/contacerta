@@ -38,7 +38,7 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {% if obras %}
             {% for obra in obras %}
-                <div class="pt-3.5 pb-2 p-4 py-6 bg-gray-50 text-black rounded-[9px] border relative">
+                <div class="pt-3.5 pb-2 p-4 py-6 bg-gray-100 text-black rounded-[9px] border relative">
                     <div>
                         <img src="{{ obra.imagem }}" class="w-[500px] h-[150px] object-cover rounded-lg">
 
@@ -51,9 +51,9 @@
                     </div>
                     <div class="pt-2 pb-2 text-right">
                         <!-- botão de ir -->
-                        <a href="{% url 'locais:detalhe_obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-gray-700 text-black p-3 rounded-full cursor-pointer hover:bg-gray-500" style="color:rgb(255, 255, 255);"></i></a>
+                        <a href="{% url 'locais:detalhe_obra' obra.id %}"><i class="fa-solid fa-arrow-right bg-gray-700 text-black p-3 rounded-full cursor-pointer hover:bg-gray-1000" style="color:rgb(255, 255, 255);"></i></a>
                     </div>
-                    <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-50 px-3 py-1 rounded-[9px] absolute top-24 right-4 flex flex-col space-y-2">
+                    <div id="dotsMenu-{{ forloop.counter }}" class="hidden drop-shadow border bg-gray-100 px-3 py-1 rounded-[9px] absolute top-24 right-4 flex flex-col space-y-2">
                         <button class="text-base text-left py-2 border-b" onclick="obraModal('infoObra', {{ obra.id }})">Informações</button>
                         <button class="text-base text-left pb-1" onclick="obraModal('editarObra', {{ obra.id }})">Editar</button>
                     </div>

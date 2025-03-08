@@ -2,12 +2,12 @@
 <div class="flex flex-col space-x-4 justify-between mb-4">
 
     <div class="ml-4 my-4 flex space-x-4">
-        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+        <div class="py-4 pr-4 pl-4 bg-gray-100 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <h3 class="text-base font-medium">Débito Geral</h3>
             <span class="custo-total-obra text-2xl font-bold">{{ escritorio.debito_geral_formatado }}</span>
         </div>
 
-        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+        <div class="py-4 pr-4 pl-4 bg-gray-100 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <button class="absolute top-4 right-4 text-gray-700" data-modal-id="modal_3">
                 <i class="mesesDropdownIcon fa-solid fa-chevron-down" 
                 data-modal-id="modal_3" 
@@ -17,7 +17,7 @@
             <h3 class="text-base font-medium block">Débito do mês</h3>
             <span class="debito-mensal-escritorio text-2xl font-semibold block" data-modal-id="modal_3">{{ escritorio.debito_mensal_formatado }}</span>
         
-            <div class="mesesDropdownList hidden z-20 drop-shadow border bg-gray-50 px-2 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2" data-modal-id="modal_3">
+            <div class="mesesDropdownList hidden z-20 drop-shadow border bg-gray-100 px-2 py-1 rounded-[9px] absolute top-11 right-4 flex flex-col space-y-2" data-modal-id="modal_3">
                 <form method="post" action="">
                     {% csrf_token %}
                     <div class="dropdown-menu dropdown-menu-end py-2 h-48 w-28 overflow-y-auto overflow-x-hidden">
@@ -34,7 +34,7 @@
                 </form>
             </div>
         </div>
-        <div class="py-4 pr-4 pl-4 bg-gray-50 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
+        <div class="py-4 pr-4 pl-4 bg-gray-100 text-black rounded-[9px] border relative text-left w-full sm:w-[150px] md:w-[200px] lg:w-[250px] xl:w-[300px]">
             <div>
                 <h3 class="text-base font-medium block">Total <span class="text-base font-light">(filtro)</span></h3>
                 <span class="text-2xl font-semibold block">{{ total_filtro|default:"0" }}</span>
@@ -77,7 +77,7 @@
             
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 border">
                 
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 border sticky top-0 z-10 drop-shadow-md border-b-2">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-100 border sticky top-0 z-10 drop-shadow-md border-b-2">
                     <tr>
                         <th scope="col" class="px-6 py-3">Data da compra</th>
                         <th scope="col" class="px-6 py-3">Descrição</th>

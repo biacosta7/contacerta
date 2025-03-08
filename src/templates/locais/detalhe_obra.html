@@ -13,7 +13,7 @@
             <!-- Div principal com flex-grow-1 -->
             <div class="flex flex-grow items-center">
                 <!-- Conteúdo alinhado à esquerda -->
-                <div class="border-l-4 border-gray-200 px-4 flex-grow">
+                <div class="border-l-4 border-gray-300 px-4 flex-grow">
                     <h1 class="text-2xl font-bold mb-2">Obra {{ obra.nome }}</h1>
                     <div>
                         <p class="text-sm break-words mb-2 text-lg">
@@ -31,7 +31,7 @@
         </div>
 
         <div class="flex mt-4 items-center justify-center text-center w-full space-x-20">
-            <button id="geralBtn" class="px-8 py-2 text-center bg-gray-200 rounded-t-[9px]" onclick="sectionModal('geralSection')">Geral</button>
+            <button id="geralBtn" class="px-8 py-2 text-center bg-gray-300 rounded-t-[9px]" onclick="sectionModal('geralSection')">Geral</button>
             <button id="aditivosBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('aditivosSection')">Aditivos</button>
             <button id="adiabmBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('adiabmSection')">Adiantamentos/BMs</button>
             <button id="despesasBtn" class="px-8 py-2 text-center rounded-t-[9px]" onclick="sectionModal('despesasSection')">Despesas</button>
@@ -144,13 +144,13 @@
         // Oculta todas as seções e remove o destaque dos botões
         sections.forEach((section, index) => {
             document.getElementById(section).classList.add("hidden");
-            document.getElementById(buttons[index]).classList.remove("bg-gray-200");
+            document.getElementById(buttons[index]).classList.remove("bg-gray-300");
         });
 
         // Mostra a seção correspondente e destaca o botão selecionado
         document.getElementById(action).classList.remove("hidden");
         const selectedButton = `${action.replace("Section", "Btn")}`;
-        document.getElementById(selectedButton).classList.add("bg-gray-200");
+        document.getElementById(selectedButton).classList.add("bg-gray-300");
 
         // Salva a seção ativa no LocalStorage
         localStorage.setItem("activeSection", action);

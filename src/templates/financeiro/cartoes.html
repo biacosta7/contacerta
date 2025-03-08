@@ -84,7 +84,7 @@
             
         </div>
         {% include 'financeiro/modais/cartao/faturas_table.html' %}
-        <div class="flex flex-col justify-between bg-gray-50 text-black rounded-[9px] border-2 px-6 py-12 mt-2">
+        <div class="flex flex-col justify-between bg-gray-100 text-black rounded-[9px] border-2 px-6 py-12 mt-2">
             <div class="flex space-x-2 items-center mb-4">
                 <h1 class="text-2xl font-medium">Cartões</h1>
                 <span class="bg-gray-700 text-white py-1 px-1 rounded-full flex items-center justify-center w-7 h-7">{{ num_cartoes }}</span>
@@ -137,13 +137,13 @@
 
     <div class="p-4 pr-2 w-[28%]">
         <!-- busca rápida -->
-        <div class="flex flex-col mt-2 bg-gray-50 text-black rounded-[9px] border-2 p-6">
+        <div class="flex flex-col mt-2 bg-gray-100 text-black rounded-[9px] border-2 p-6">
             <h1 class="text-xl font-medium">Busca rápida</h1>
             <span class="text-sm text-gray-500 mb-4">(Digite o final do cartão)</span>
 
             <form class="w-full mx-auto">   
                 <div class="relative">
-                    <input type="search" id="default-search" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Ex: 1234" name="search" required />
+                    <input type="search" id="default-search" class="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-100 focus:ring-blue-500 focus:border-blue-500" placeholder="Ex: 1234" name="search" required />
                     <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-gray-700 hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </div>
             </form>
@@ -236,7 +236,7 @@
         </div>
 
         <!-- adicionar banco e cartão (botões)-->
-        <div class="flex flex-col items-center bg-gray-50 text-black rounded-[9px] border-2 mt-4 p-6">
+        <div class="flex flex-col items-center bg-gray-100 text-black rounded-[9px] border-2 mt-4 p-6">
             <div class="mt-4">
                 <button class="bg-gray-700 text-white px-6 py-3 rounded-[9px] w-full font-semibold mb-6 hover:bg-gray-600 hover:text-[#edf0e9]" onclick="modalformCriacao('abrir', {
                     modalName: 'modalCriarCartao',
