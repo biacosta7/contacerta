@@ -13,18 +13,22 @@ def criar_user(request):
         nome = request.POST.get('nome')
         sobrenome = request.POST.get('sobrenome')
         email = request.POST.get('email')
-        cargo = request.POST.get('cargo')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
+
+        nome = nome.strip()
+        sobrenome = sobrenome.strip()
+        email = email.strip()
+        password = password.strip()
+        confirm_password = confirm_password.strip()
 
         form_data = {
             'nome': nome,
             'sobrenome': sobrenome,
             'email': email,
-            'cargo': cargo,
         }
 
-        valid_name = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ")
+        valid_name = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZÁÉÍÓÚáéíóúÃÕãõÇç")
         if not set(nome).issubset(valid_name):
             messages.error(request, 'O nome não deve conter números ou caracteres especiais')
             return render(request, 'users/cadastro.html', form_data)
@@ -72,18 +76,15 @@ def login_user(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        remember_me = request.POST.get('remember')
+
+        email = email.strip()
+        password = password.strip()
 
         user = authenticate(email=email, password=password)
 
         if user:
             login_django(request, user)
             messages.success(request, 'Autenticado com sucesso.')
-
-            if remember_me: 
-                request.session.set_expiry(None)  
-            else:
-                request.session.set_expiry(0) 
 
             # Verifica a qual escritório o usuário pertence
             escritorios = Escritorio.objects.filter(membros=user)
