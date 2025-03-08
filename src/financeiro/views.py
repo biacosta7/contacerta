@@ -184,7 +184,7 @@ def criar_despesa(request, tipo, id):
                 # **Redirecionamento após salvar**
                 if next_url:
                     return redirect(next_url)
-                return redirect('locais:detalhe_obra', id=id) if tipo == 'obra' else redirect('locais:detalhe_escritorio', id=id)
+                return redirect('locais:detalhe_obra', id=id) if tipo == 'obra' else redirect('locais:detalhe_escritorio', escritorio_id=id)
 
         except IntegrityError as e:
             logger.exception(f"Erro ao criar despesa: {e}")

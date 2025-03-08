@@ -7,7 +7,7 @@
 <div class="border-b-4 bg-gray-800 flex space-x-4 items-center justify-between px-6 py-2 mb-8">
     <img class="w-44 ml-2" src="{% static '/assets/contacerta-logoH.png' %}" alt="logo">
     <div class="flex flex-nowrap w-min-100 space-x-8">
-        <a href="{% url 'locais:detalhe_escritorio' 1 %}"><i class="fa-solid fa-building fa-xl" style="color: #7ED957;"></i></a>
+        <a href="{% url 'locais:detalhe_escritorio' escritorio_id=escritorio.id %}"><i class="fa-solid fa-building fa-xl" style="color: #7ED957;"></i></a>
         <a href="{% url 'financeiro:cartoes' %}"><i class="fa-solid fa-wallet fa-xl" style="color: #7ED957;"></i></a>
         
         <form action="{% url 'logout' %}" method="post">
