@@ -507,7 +507,12 @@
                         modalidadeFormatado = 'Insumos';
                     } else if (despesa.modalidade === 'combustivel') {
                         modalidadeFormatado = 'Combustível';
+                    } else if (despesa.modalidade === 'administracao') {
+                        modalidadeFormatado = 'Administração';
+                    } else if (despesa.modalidade === 'outra') {
+                        modalidadeFormatado = 'Outra';
                     }
+                
                     document.getElementById('modalidadeDespesaInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeFormatado; 
                     
                 } else if (despesa.modalidadeEscritorio != null){
@@ -519,7 +524,7 @@
                         modalidadeFormatado = 'Rastreamento';
                     } else if (despesa.modalidadeEscritorio === 'parcela_carro') {
                         modalidadeFormatado = 'Parcela do carro';
-                    }
+                    } 
                     document.getElementById('modalidadeDespesaInfo').innerHTML = "<b>Modalidade:</b> " + modalidadeFormatado; 
                 }
                 

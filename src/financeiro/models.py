@@ -73,6 +73,8 @@ class Despesa(models.Model):
         ('mao_de_obra', 'Mão de Obra'),
         ('insumos', 'Insumos'),
         ('combustivel', 'Combustível'),
+        ('administracao', 'Administração'),
+        ('outra', 'Outra'),
     ], blank=True, null=True)
 
     modalidadeEscritorio = models.CharField(max_length=50, choices=[
