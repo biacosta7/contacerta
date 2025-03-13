@@ -432,7 +432,7 @@
             const editarModalDespesa = document.getElementById('modalEditarDespesa');
             const deletarModalDespesa = document.getElementById('modalDeletarDespesa');
         
-              // Converta o ID para o tipo correto
+            // Converta o ID para o tipo correto
             const despesaId = typeof id === 'string' ? parseInt(id, 10) : id;
             const despesa = despesas.find(d => d.id === despesaId);
 
@@ -564,11 +564,21 @@
                     const boletoFieldsDespesaInfo = document.getElementById('boletoFieldsInfo');
                     boletoFieldsDespesaInfo.classList.remove('hidden');
 
-                    document.getElementById('despesaRecipienteBoletoInfo').innerHTML = "<b>Recipiente:</b> " + boleto_despesa.recipiente;
+                    if(boleto_despesa.recipiente){
+                        document.getElementById('despesaRecipienteBoletoInfo').innerHTML = "<b>Recipiente:</b> " + boleto_despesa.recipiente;
+                    }
+                    
                     document.getElementById('despesaQntBoletoInfo').innerHTML = "<b>Quantidade de boletos:</b> " + boleto_despesa.quant_boletos;
                     document.getElementById('despesaVencimentoBoletoInfo').innerHTML = "<b>Vencimento:</b> " + boleto_despesa.vencimento;
-                    document.getElementById('despesaNotaFiscalBoletoInfo').innerHTML = "<b>Número da Nota Fiscal:</b> " + boleto_despesa.num_notafiscal;
-                    document.getElementById('despesaBancoBoletoInfo').innerHTML = "<b>Banco:</b> " + banco_despesa.nome;
+
+                    if(boleto_despesa.num_notafiscal){
+                        document.getElementById('despesaNotaFiscalBoletoInfo').innerHTML = "<b>Número da Nota Fiscal:</b> " + boleto_despesa.num_notafiscal;
+                    }
+                    
+                    if(banco_despesa){
+                        document.getElementById('despesaBancoBoletoInfo').innerHTML = "<b>Banco:</b> " + banco_despesa.nome;
+                    }
+                    
                 }
 
                 else if (despesa.forma_pag == 'pix'){

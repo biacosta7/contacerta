@@ -147,7 +147,11 @@ def criar_despesa(request, tipo, id):
 
                 elif forma_pag == 'boleto':
                     banco_id = request.POST.get('banco')
-                    banco = get_object_or_404(Banco, id=banco_id)
+                    if banco_id:
+                        banco = get_object_or_404(Banco, id=banco_id)
+                    else:
+                        banco = None
+                    
                     vencimento = limpar_e_converter_data(request.POST.get('vencimento'), request) if request.POST.get('vencimento') else None
 
                     despesa = NotaBoleto.objects.create(
@@ -281,8 +285,12 @@ def editar_despesa(request, despesa_id):
                 vencimento = request.POST.get('vencimento')
                 banco_id = request.POST.get('banco')
 
+                if banco_id:
+                    banco = get_object_or_404(Banco, id=banco_id)
+                else:
+                    banco = None
+
                 vencimento = limpar_e_converter_data(vencimento, request)
-                banco = get_object_or_404(Banco, id=banco_id)
 
                 notaBoleto = get_object_or_404(NotaBoleto, id=despesa_id)
 

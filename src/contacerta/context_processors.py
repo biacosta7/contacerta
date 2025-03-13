@@ -157,6 +157,7 @@ def despesas(request):
             despesa['data_pagamento'] = format_date(despesa['data_pagamento'])
         if despesa.get('valor'):
             despesa['valor_formatado'] = formatar_valor(despesa['valor'])
+            
         try:
             nota = next((nota for nota in nota_cartao if nota['despesa_ptr_id'] == despesa['id']), None)
             

@@ -250,11 +250,11 @@ class Fatura(models.Model):
     observacao = models.TextField(null=True, blank=True)
 
 class NotaBoleto(Despesa):
-    recipiente = models.CharField(max_length=100)
+    recipiente = models.CharField(max_length=100, null=True, blank=True)
     quant_boletos = models.IntegerField()
     vencimento = models.DateField(blank=False, null=False)
-    num_notafiscal = models.CharField(max_length=50)
-    banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
+    num_notafiscal = models.CharField(max_length=50, null=True, blank=True)
+    banco = models.ForeignKey(Banco, on_delete=models.PROTECT, null=True, blank=True)
 
 class NotaPix(Despesa):
     banco = models.ForeignKey(Banco, on_delete=models.PROTECT)

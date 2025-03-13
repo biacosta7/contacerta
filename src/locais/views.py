@@ -333,6 +333,7 @@ def detalhar_obra(request, id):
             despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
             despesa.pagamentos_parcela = pagamentos
             despesa.valor_formatado = formatar_valor(despesa.valor)
+            
             despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
 
             for parcela in despesa.pagamentos_parcela:
