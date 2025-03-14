@@ -323,8 +323,11 @@ def detalhar_obra(request, id):
     despesas = Despesa.objects.filter(tipo_local=tipo_local_obra, id_local=id).order_by('-data')  # Ordena por data decrescente (mais nova primeiro)
 
     aditivos = Aditivo.objects.filter(obra_id=obra.id).order_by('-data')
-    
+
     for despesa in despesas:
+        despesa.valor_formatado = formatar_valor(despesa.valor)
+        despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
+
         try:
             nota_cartao = NotaCartao.objects.get(despesa_ptr_id=despesa.id)
             parcelas = Parcela.objects.filter(nota_cartao=nota_cartao)
@@ -332,9 +335,6 @@ def detalhar_obra(request, id):
 
             despesa.nota_cartao = nota_cartao  # Adiciona nota_cartao à instância de Despesa
             despesa.pagamentos_parcela = pagamentos
-            despesa.valor_formatado = formatar_valor(despesa.valor)
-            
-            despesa.data_formatada = (despesa.data).strftime('%d/%m/%Y')
 
             for parcela in despesa.pagamentos_parcela:
                 parcela.valor_pago_formatado = formatar_valor(parcela.valor_pago)
