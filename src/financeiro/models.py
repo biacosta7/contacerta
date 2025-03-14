@@ -118,7 +118,7 @@ class Cartao(models.Model):
     cor = models.CharField(max_length=30, blank=True, default='zinc')
 
     nome = models.CharField(max_length=100)
-    banco = models.ForeignKey(Banco, on_delete=models.PROTECT)
+    banco = models.ForeignKey(Banco, on_delete=models.PROTECT, null=True, blank=True)
     final = models.CharField(max_length=4)
     vencimento = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(31)],

@@ -51,34 +51,21 @@
 
                 <!-- cor -->
                 <div class="flex flex-col">
-                    <label for="corSelecionada" class="block text-sm font-medium text-gray-900 mb-2">Cor do cartão*</label>
+                    <label for="corSelecionadaCriar" class="block text-sm font-medium text-gray-900 mb-2">Cor do cartão*</label>
                     
-                    <input type="text" id="corSelecionada" name="cor" class="hidden">
+                    <input type="text" id="corSelecionadaCriar" name="corCriar" class="hidden">
                 
                     <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 bg-blue-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'blue')"></div>
-                        <div class="w-10 h-10 bg-green-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'green')"></div>
-                        <div class="w-10 h-10 bg-purple-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'purple')"></div>
-                        <div class="w-10 h-10 bg-red-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'red')"></div>
-                        <div class="w-10 h-10 bg-orange-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'orange')"></div>
-                        <div class="w-10 h-10 bg-yellow-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'yellow')"></div>
-                        <div class="w-10 h-10 bg-zinc-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCor(this, 'zinc')"></div>
+                        <div class="w-10 h-10 bg-blue-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCorCriar(this, 'blue')"></div>
+                        <div class="w-10 h-10 bg-green-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCorCriar(this, 'green')"></div>
+                        <div class="w-10 h-10 bg-purple-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCorCriar(this, 'purple')"></div>
+                        <div class="w-10 h-10 bg-red-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCorCriar(this, 'red')"></div>
+                        <div class="w-10 h-10 bg-orange-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCorCriar(this, 'orange')"></div>
+                        <div class="w-10 h-10 bg-yellow-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCorCriar(this, 'yellow')"></div>
+                        <div class="w-10 h-10 bg-zinc-500 rounded-full cursor-pointer border-2 border-transparent hover:scale-110 transition" onclick="selecionarCorCriar(this, 'zinc')"></div>
                     </div>
                 </div>
                 
-                
-                {% comment %} <div class="flex-1 mb-2">
-                    <label for="melhor_dia" class="block mb-2 text-sm font-medium text-gray-900">Melhor dia</label>
-                    <input 
-                        type="number" 
-                        id="melhor_dia" 
-                        name="melhor_dia" 
-                        placeholder="1" 
-                        min="1" 
-                        max="31" 
-                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-[#111729] focus:border-[#111729] text-gray-700 py-2 px-3" 
-                        >
-                </div> {% endcomment %}
 
             </div>
             <button type="submit" class=" mt-4 w-full text-white hover:bg-primary-700 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] hover:bg-primary-700 focus:ring-primary-800">Cadastrar</button>         
@@ -86,9 +73,10 @@
     </div>
 </div>
 <script>
-    function selecionarCor(elemento, cor) {
+    function selecionarCorCriar(elemento, cor) {
         // Define o valor do input escondido
-        document.getElementById('corSelecionada').value = cor;
+        document.getElementById('corSelecionadaCriar').value = cor;
+        console.log('COR: ', document.getElementById('corSelecionadaCriar').value);
     
         // Remove a borda de todos os círculos
         document.querySelectorAll('.cursor-pointer').forEach(el => {

@@ -373,15 +373,18 @@ def criar_cartao(request, escritorio_id):
 
     if request.method == 'POST':
         nome = request.POST.get('nome')
-        cor = request.POST.get('cor')
+        cor = request.POST.get('corCriar')
+        print('COR: ', cor)
         banco_id = request.POST.get('banco')
         final = request.POST.get('final')
         vencimento = request.POST.get('vencimento')
         quant_dias = request.POST.get('quant_dias')
-        # melhor_dia = request.POST.get('melhor_dia')
 
         # Obtenha a instância do banco ou retorne um erro 404 se não existir
-        banco = get_object_or_404(Banco, id=banco_id)
+        if banco_id:
+            banco = get_object_or_404(Banco, id=banco_id)
+        else:
+            banco = None
         escritorio = get_object_or_404(Escritorio, id=escritorio_id)
 
         # Criando o cartão
@@ -411,10 +414,12 @@ def editar_cartao(request, cartao_id):
         final = request.POST.get('final')
         vencimento = request.POST.get('vencimento')
         quant_dias = request.POST.get('quant_dias')
-        # melhor_dia = request.POST.get('melhor_dia')
 
         # Obtenha a instância do banco ou retorne um erro 404 se não existir
-        banco = get_object_or_404(Banco, id=banco_id)
+        if banco_id:
+            banco = get_object_or_404(Banco, id=banco_id)
+        else:
+            banco = None
 
         cartao.nome = nome
         cartao.cor = cor
@@ -422,7 +427,6 @@ def editar_cartao(request, cartao_id):
         cartao.final = final
         cartao.vencimento = vencimento
         cartao.quant_dias = quant_dias
-        #cartao.melhor_dia = melhor_dia
 
         cartao.save()
         messages.success(request, 'Cartão atualizado com sucesso.')
@@ -540,13 +544,14 @@ def fatura_mensal_cartoes(request):
 
     if cartoes.exists():
         for cartao in cartoes:
-            if cartao.banco.public_id:  # Usa o public_id armazenado
-                auto_crop_url, _ = cloudinary_url(
-                    cartao.banco.public_id, gravity="auto"
-                )
-                cartao.banco.imagem = auto_crop_url
-            else:
-                cartao.banco.imagem = None
+            if cartao.banco:
+                if cartao.banco.public_id:  # Usa o public_id armazenado
+                    auto_crop_url, _ = cloudinary_url(
+                        cartao.banco.public_id, gravity="auto"
+                    )
+                    cartao.banco.imagem = auto_crop_url
+                else:
+                    cartao.banco.imagem = None
         
     else:
         messages.warning(request, 'Nenhum cartão cadastrado.')

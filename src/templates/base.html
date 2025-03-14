@@ -304,7 +304,13 @@
                 
                 document.getElementById('cartaoTituloInfo').innerHTML =  "Cartão " + cartao.nome;
                 document.getElementById('nomeCartaoInfo').innerHTML = cartao.nome;
-                document.getElementById('bancoCartaoInfo').innerHTML = cartao.banco;
+
+                if(cartao.banco){
+                    document.getElementById('bancoCartaoInfo').innerHTML = cartao.banco;
+                } else {
+                    document.getElementById('bancoCartaoInfo').innerHTML = '-';
+                }
+
                 document.getElementById('vencimentoCartaoInfo').innerHTML = cartao.vencimento;
                 document.getElementById('finalCartaoInfo').innerHTML = cartao.final;
                 document.getElementById('quantdiasCartaoInfo').innerHTML =  cartao.quant_dias;
