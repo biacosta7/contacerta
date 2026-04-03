@@ -17,21 +17,32 @@
                     {{ form.as_p }}
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-white">Email</label>
-                        <input type="email" name="email" id="email" value="{{ email }}" class="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500" placeholder="exemplo@gmail.com" required>
+                        <input type="email" name="email" id="email" value="{{ email }}"
+                            class="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="exemplo@gmail.com" required>
                     </div>
                     <div>
                         <label for="password" class="block mb-2 text-sm font-medium text-white">Senha</label>
-                        <input type="password" name="password" id="password" placeholder="••••••••" class="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500" required>
+                        <input type="password" name="password" id="password" placeholder="••••••••"
+                            class="border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500"
+                            required>
+                        <div class="flex items-end justify-end mt-2">
+                            <a href="{% url 'password_reset' %}"
+                                class="text-xs text-gray-400 font-light text-primary-500 hover:underline">Esqueci minha
+                                senha</a>
+                        </div>
                     </div>
-                
-                    <button type="submit" class="w-full text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] hover:bg-primary-700 focus:ring-primary-800">Login</button>
+
+                    <button type="submit"
+                        class="w-full text-white focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center bg-[#66b346] hover:bg-primary-700 focus:ring-primary-800">Login</button>
 
                     <p class="text-sm font-light text-gray-400">
-                        Não tem uma conta? <a href="{% url 'criar_user' %}" class="font-medium hover:underline text-primary-500">Fazer cadastro</a>
+                        Não tem uma conta? <a href="{% url 'criar_user' %}"
+                            class="font-medium hover:underline text-primary-500">Fazer cadastro</a>
                     </p>
                 </form>
             </div>
         </div>
     </div>
-</div>            
+</div>
 {% endblock %}

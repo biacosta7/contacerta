@@ -138,12 +138,12 @@ cloudinary.config(
 )
 
 # Verifica se está rodando em ambiente de desenvolvimento
-NOT_PROD = os.getenv("NOT_PROD", "False").lower() in ["true", "t", "1"]
+NOT_PROD = os.getenv("NOT_PROD", "True").lower() in ["true", "t", "1"]
 
 if NOT_PROD:
     # Ambiente de Desenvolvimento
     DEBUG = True
-    SECRET_KEY = os.getenv("SECRET_KEY")
+    SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-secret-key")
     ALLOWED_HOSTS = ["localhost", "127.0.0.1", "127.0.0.1:8000"]
 
     DATABASES = {
@@ -230,3 +230,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Email Configuration (SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', EMAIL_HOST_USER)
